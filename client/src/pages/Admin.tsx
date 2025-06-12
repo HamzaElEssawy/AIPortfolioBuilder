@@ -160,12 +160,13 @@ export default function Admin() {
 
       <div className="max-w-7xl mx-auto px-8 py-8">
         <Tabs defaultValue="overview" className="space-y-8">
-          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-12 text-xs">
+          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-13 text-xs">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="submissions">Contacts</TabsTrigger>
             <TabsTrigger value="content">Content</TabsTrigger>
             <TabsTrigger value="case-studies">Case Studies</TabsTrigger>
             <TabsTrigger value="timeline">Timeline</TabsTrigger>
+            <TabsTrigger value="core-values">Core Values</TabsTrigger>
             <TabsTrigger value="design-system">Design</TabsTrigger>
             <TabsTrigger value="portfolio">Portfolio</TabsTrigger>
             <TabsTrigger value="knowledge">Knowledge</TabsTrigger>
@@ -398,6 +399,11 @@ export default function Admin() {
           {/* Timeline Management Tab */}
           <TabsContent value="timeline" className="space-y-6">
             <TimelineManager />
+          </TabsContent>
+
+          {/* Core Values Management Tab */}
+          <TabsContent value="core-values" className="space-y-6">
+            <CoreValuesManager />
           </TabsContent>
 
           {/* Design System & Visual Hierarchy Tab */}
