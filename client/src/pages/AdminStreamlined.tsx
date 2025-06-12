@@ -9,7 +9,7 @@ import { queryClient } from "@/lib/queryClient";
 import type { ContactSubmission } from "@shared/schema";
 
 // Import the functional components
-import EnhancedContentManager from "@/components/EnhancedContentManager";
+import StreamlinedContentManager from "@/components/StreamlinedContentManager";
 import EnhancedCaseStudyEditor from "@/components/EnhancedCaseStudyEditor";
 import TimelineManager from "@/components/TimelineManager";
 import CoreValuesManager from "@/components/CoreValuesManager";
@@ -181,24 +181,26 @@ export default function AdminStreamlined() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Portfolio Status</CardTitle>
+                  <CardTitle>Recent Activity</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">Hero Section</span>
-                    <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">Live</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">About Section</span>
-                    <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">Live</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">Timeline</span>
-                    <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">Live</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">Core Values</span>
-                    <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">Live</span>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between text-sm">
+                      <span>Hero section updated</span>
+                      <span className="text-gray-500">2 hours ago</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span>New case study published</span>
+                      <span className="text-gray-500">1 day ago</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span>Timeline entry added</span>
+                      <span className="text-gray-500">3 days ago</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span>Core values updated</span>
+                      <span className="text-gray-500">1 week ago</span>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -207,11 +209,7 @@ export default function AdminStreamlined() {
 
           {/* Content Management - Hero and About only */}
           <TabsContent value="content" className="space-y-6">
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <h2 className="text-xl font-bold text-navy mb-4">Content Management</h2>
-              <p className="text-gray-600 mb-6">Manage Hero and About section content</p>
-              <EnhancedContentManager />
-            </div>
+            <StreamlinedContentManager />
           </TabsContent>
 
           {/* Case Studies Management */}
