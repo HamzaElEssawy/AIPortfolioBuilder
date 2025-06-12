@@ -49,13 +49,13 @@ export default function AdminStreamlined() {
   // Analytics calculations
   const analytics = {
     totalSubmissions: submissions.length,
-    thisMonth: submissions.filter((s: any) => {
+    thisMonth: submissions.filter((s: ContactSubmission) => {
       const submissionDate = new Date(s.submittedAt);
       const now = new Date();
       return submissionDate.getMonth() === now.getMonth() && 
              submissionDate.getFullYear() === now.getFullYear();
     }).length,
-    projectTypes: submissions.reduce((acc: Record<string, number>, s: any) => {
+    projectTypes: submissions.reduce((acc: Record<string, number>, s: ContactSubmission) => {
       acc[s.projectType] = (acc[s.projectType] || 0) + 1;
       return acc;
     }, {}),
@@ -255,7 +255,7 @@ export default function AdminStreamlined() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {submissions.map((submission: any) => (
+                  {submissions.map((submission: ContactSubmission) => (
                     <Card key={submission.id}>
                       <CardContent className="p-4">
                         <div className="flex justify-between items-start">
