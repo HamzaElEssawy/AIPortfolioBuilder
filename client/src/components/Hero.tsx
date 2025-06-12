@@ -34,30 +34,30 @@ export default function Hero() {
       <div className="max-w-6xl mx-auto px-6 relative z-10">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div>
-            <h1 className="font-bold text-4xl md:text-5xl lg:text-6xl mb-6 leading-tight">
+            <h1 className="text-white mb-6">
               AI Product Leader & <span className="text-emerald-300">Multi-time Founder</span>
             </h1>
-            <p className="text-xl md:text-2xl mb-8 text-blue-100 font-light">
+            <p className="text-xl mb-8 text-blue-100 font-light">
               7+ Years Scaling AI Solutions from 0→1 | Enterprise Clients Across MENA & Southeast Asia
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button
                 onClick={() => scrollToSection("case-studies")}
-                className="bg-warm-orange hover:bg-warm-orange/90 text-white px-8 py-4 text-lg h-auto"
+                className="bg-warm-orange hover:bg-warm-orange/90 text-white px-8 h-12 text-lg font-semibold"
               >
                 View My Work
               </Button>
               <Button
                 onClick={() => scrollToSection("contact")}
                 variant="outline"
-                className="border-2 border-white text-white hover:bg-white hover:text-navy px-8 py-4 text-lg h-auto"
+                className="border-2 border-white text-white hover:bg-white hover:text-navy px-8 h-12 text-lg"
               >
                 Get In Touch
               </Button>
             </div>
           </div>
           
-          <div className="relative flex justify-center">
+          <div className="relative flex justify-end">
             <div className="relative">
               <img 
                 src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&h=400" 

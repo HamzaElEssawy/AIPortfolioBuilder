@@ -44,45 +44,45 @@ export default function About() {
         <div className="grid lg:grid-cols-2 gap-16 items-start">
           <div>
             <img 
-              src="https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=600" 
-              alt="Modern office workspace showcasing AI technology development" 
+              src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=500" 
+              alt="Professional headshot of Hamza El Essawy" 
               className="rounded-2xl shadow-lg w-full mb-8"
             />
             
-            {/* Career Timeline Component - AC3.2 */}
-            <div className="bg-white rounded-2xl p-6 shadow-lg">
-              <h4 className="font-semibold text-xl text-navy mb-6">Career Timeline</h4>
-              <div className="space-y-6">
+            {/* Career Timeline Component */}
+            <div className="bg-white rounded-2xl p-8 shadow-lg">
+              <h3 className="text-navy mb-6">Career Timeline</h3>
+              <div className="space-y-8">
                 <div className="flex items-start">
-                  <div className="w-3 h-3 bg-emerald rounded-full mt-2 mr-4 flex-shrink-0"></div>
+                  <div className="w-4 h-4 bg-emerald rounded-full mt-2 mr-6 flex-shrink-0"></div>
                   <div>
-                    <div className="font-semibold text-navy">2023-Present</div>
-                    <div className="text-sm text-dark-charcoal">AI Product Leader & Entrepreneur</div>
-                    <div className="text-xs text-gray-500">Antler Malaysia, AI Tinkerers KL</div>
+                    <div className="font-semibold text-navy text-lg">2023-Present</div>
+                    <div className="text-dark-charcoal font-medium">AI Product Leader & Entrepreneur</div>
+                    <div className="caption text-gray-500 mt-1">Antler Malaysia, AI Tinkerers KL</div>
                   </div>
                 </div>
                 <div className="flex items-start">
-                  <div className="w-3 h-3 bg-warm-orange rounded-full mt-2 mr-4 flex-shrink-0"></div>
+                  <div className="w-4 h-4 bg-warm-orange rounded-full mt-2 mr-6 flex-shrink-0"></div>
                   <div>
-                    <div className="font-semibold text-navy">2020-2023</div>
-                    <div className="text-sm text-dark-charcoal">Enterprise AI Platform Lead</div>
-                    <div className="text-xs text-gray-500">Tapway - Computer Vision & No-Code AI</div>
+                    <div className="font-semibold text-navy text-lg">2020-2023</div>
+                    <div className="text-dark-charcoal font-medium">Enterprise AI Platform Lead</div>
+                    <div className="caption text-gray-500 mt-1">Tapway - Computer Vision & No-Code AI</div>
                   </div>
                 </div>
                 <div className="flex items-start">
-                  <div className="w-3 h-3 bg-navy rounded-full mt-2 mr-4 flex-shrink-0"></div>
+                  <div className="w-4 h-4 bg-navy rounded-full mt-2 mr-6 flex-shrink-0"></div>
                   <div>
-                    <div className="font-semibold text-navy">2018-2020</div>
-                    <div className="text-sm text-dark-charcoal">AI Product Manager</div>
-                    <div className="text-xs text-gray-500">Fintech & Banking Solutions</div>
+                    <div className="font-semibold text-navy text-lg">2018-2020</div>
+                    <div className="text-dark-charcoal font-medium">AI Product Manager</div>
+                    <div className="caption text-gray-500 mt-1">Fintech & Banking Solutions</div>
                   </div>
                 </div>
                 <div className="flex items-start">
-                  <div className="w-3 h-3 bg-gray-400 rounded-full mt-2 mr-4 flex-shrink-0"></div>
+                  <div className="w-4 h-4 bg-gray-400 rounded-full mt-2 mr-6 flex-shrink-0"></div>
                   <div>
-                    <div className="font-semibold text-navy">2015-2018</div>
-                    <div className="text-sm text-dark-charcoal">Technical Product Foundation</div>
-                    <div className="text-xs text-gray-500">Engineering to Product Transition</div>
+                    <div className="font-semibold text-navy text-lg">2015-2018</div>
+                    <div className="text-dark-charcoal font-medium">Technical Product Foundation</div>
+                    <div className="caption text-gray-500 mt-1">Engineering to Product Transition</div>
                   </div>
                 </div>
               </div>

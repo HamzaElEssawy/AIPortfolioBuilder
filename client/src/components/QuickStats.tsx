@@ -24,14 +24,14 @@ export default function QuickStats() {
   ];
 
   return (
-    <section className="py-16 bg-white">
+    <section className="py-16 bg-light-gray">
       <div className="max-w-6xl mx-auto px-6">
         <div className="grid md:grid-cols-3 gap-8">
           {stats.map((stat, index) => (
-            <Card key={index} className="text-center p-8 bg-light-gray shadow-sm hover:shadow-md transition-shadow">
+            <Card key={index} className="text-center p-8 bg-white shadow-sm hover:shadow-md transition-shadow border-0">
               <CardContent className="pt-6">
-                <div className={`w-16 h-16 ${stat.color} rounded-full flex items-center justify-center mx-auto mb-4`}>
-                  <stat.icon className="text-white text-2xl h-8 w-8" />
+                <div className={`w-16 h-16 ${stat.color} rounded-full flex items-center justify-center mx-auto mb-6`}>
+                  <stat.icon className="text-white h-8 w-8" />
                 </div>
                 <div className="font-bold text-3xl text-navy mb-2">{stat.value}</div>
                 <div className="text-dark-charcoal font-medium">{stat.label}</div>
