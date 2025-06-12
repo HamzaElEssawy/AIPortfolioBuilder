@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { MapPin, Globe, Download, Calendar, Building2, Award, TrendingUp } from "lucide-react";
+import { Download, Calendar, Building2, Award, TrendingUp, MapPin } from "lucide-react";
 
 export default function Experience() {
   const workExperience = [
@@ -69,22 +69,7 @@ export default function Experience() {
     }
   ];
 
-  const regionalExpertise = [
-    {
-      region: "MENA Region",
-      description: "Native Arabic speaker with deep cultural understanding and 3+ years leading fintech initiatives across Gulf and North African markets.",
-      icon: MapPin,
-      countries: ["UAE", "Saudi Arabia", "Egypt", "Jordan", "Lebanon"],
-      color: "bg-secondary-green"
-    },
-    {
-      region: "Southeast Asia",
-      description: "Malaysia-based with extensive experience in regional AI market dynamics, regulatory frameworks, and enterprise adoption patterns.",
-      icon: Globe,
-      countries: ["Malaysia", "Singapore", "Thailand", "Indonesia", "Philippines"],
-      color: "bg-accent-orange"
-    }
-  ];
+
 
   const handleDownloadResume = () => {
     // Professional resume download implementation
@@ -180,30 +165,61 @@ export default function Experience() {
             </div>
           </div>
 
-          {/* Regional Expertise */}
+          {/* Leadership Achievements */}
           <div>
-            <h3 className="text-2xl font-bold text-navy mb-8">Cross-Cultural Leadership</h3>
+            <h3 className="text-2xl font-bold text-navy mb-8">Leadership Impact</h3>
             <div className="space-y-6">
-              {regionalExpertise.map((region, index) => (
-                <Card key={index} className="bg-background-gray shadow-soft border-0">
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-4 mb-6">
-                      <div className={`w-12 h-12 ${region.color}/10 rounded-xl flex items-center justify-center`}>
-                        <region.icon className={`h-6 w-6 ${region.color === 'bg-secondary-green' ? 'text-secondary-green' : 'text-accent-orange'}`} />
-                      </div>
-                      <h4 className="font-bold text-navy text-xl">{region.region}</h4>
+              <Card className="bg-background-gray shadow-soft border-0">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-12 h-12 bg-secondary-green/10 rounded-xl flex items-center justify-center">
+                      <Award className="h-6 w-6 text-secondary-green" />
                     </div>
-                    <p className="text-text-charcoal mb-6 leading-relaxed">{region.description}</p>
-                    <div className="flex flex-wrap gap-2">
-                      {region.countries.map((country, countryIndex) => (
-                        <span key={countryIndex} className="px-3 py-1 bg-white text-text-charcoal text-sm rounded-full font-medium shadow-soft">
-                          {country}
-                        </span>
-                      ))}
+                    <h4 className="font-bold text-navy text-xl">Team Scaling Excellence</h4>
+                  </div>
+                  <p className="text-text-charcoal mb-4 leading-relaxed">Successfully scaled engineering teams from 5 to 15+ members while maintaining 99.9% platform uptime across enterprise deployments.</p>
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="text-center p-3 bg-white rounded-lg">
+                      <div className="text-2xl font-bold text-navy">3x</div>
+                      <div className="text-sm text-text-charcoal">Team Growth</div>
                     </div>
-                  </CardContent>
-                </Card>
-              ))}
+                    <div className="text-center p-3 bg-white rounded-lg">
+                      <div className="text-2xl font-bold text-navy">99.9%</div>
+                      <div className="text-sm text-text-charcoal">Uptime</div>
+                    </div>
+                    <div className="text-center p-3 bg-white rounded-lg">
+                      <div className="text-2xl font-bold text-navy">15+</div>
+                      <div className="text-sm text-text-charcoal">Mentored Founders</div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-background-gray shadow-soft border-0">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-12 h-12 bg-accent-orange/10 rounded-xl flex items-center justify-center">
+                      <TrendingUp className="h-6 w-6 text-accent-orange" />
+                    </div>
+                    <h4 className="font-bold text-navy text-xl">Business Growth Driver</h4>
+                  </div>
+                  <p className="text-text-charcoal mb-4 leading-relaxed">Drove enterprise client acquisition from zero to 10+ major accounts including Changi Airport and SimDarby Plantation.</p>
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="text-center p-3 bg-white rounded-lg">
+                      <div className="text-2xl font-bold text-navy">0→10+</div>
+                      <div className="text-sm text-text-charcoal">Enterprise Clients</div>
+                    </div>
+                    <div className="text-center p-3 bg-white rounded-lg">
+                      <div className="text-2xl font-bold text-navy">35%</div>
+                      <div className="text-sm text-text-charcoal">Cost Reduction</div>
+                    </div>
+                    <div className="text-center p-3 bg-white rounded-lg">
+                      <div className="text-2xl font-bold text-navy">15</div>
+                      <div className="text-sm text-text-charcoal">Languages Supported</div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </div>

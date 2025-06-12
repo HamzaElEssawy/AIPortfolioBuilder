@@ -1,15 +1,9 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import { MapPin, Globe, Quote, Award, Briefcase } from "lucide-react";
 
 export default function About() {
-  const skills = [
-    { name: "AI/ML Product Strategy", level: 95, category: "Technical Leadership" },
-    { name: "Cross-Cultural Team Management", level: 92, category: "Leadership" },
-    { name: "Regulatory Compliance & Risk", level: 88, category: "Domain Expertise" },
-    { name: "Enterprise Solution Architecture", level: 90, category: "Technical Leadership" }
-  ];
+
 
   const timeline = [
     {
@@ -42,23 +36,7 @@ export default function About() {
     }
   ];
 
-  const achievements = [
-    {
-      icon: Award,
-      title: "Secured $110K+ Funding",
-      description: "Early-stage funding for AI compliance platform"
-    },
-    {
-      icon: Globe,
-      title: "10+ Enterprise Clients",
-      description: "Scaled AI solutions across diverse industries"
-    },
-    {
-      icon: Briefcase,
-      title: "70% Process Automation",
-      description: "Implemented RAG AI reducing operational costs"
-    }
-  ];
+
 
   return (
     <section id="about" className="py-24 bg-background-gray">
@@ -146,47 +124,45 @@ export default function About() {
               </p>
             </div>
 
-            {/* Key Achievements */}
-            <div className="grid gap-4">
-              {achievements.map((achievement, index) => (
-                <Card key={index} className="bg-white shadow-card border-0 hover-lift">
-                  <CardContent className="p-6">
-                    <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 bg-accent-orange/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                        <achievement.icon className="h-6 w-6 text-accent-orange" />
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-navy mb-1">{achievement.title}</h4>
-                        <p className="text-text-charcoal">{achievement.description}</p>
-                      </div>
+            {/* Core Values & Approach */}
+            <Card className="bg-white shadow-card border-0">
+              <CardContent className="p-8">
+                <h4 className="text-xl font-bold text-navy mb-6">Core Values & Approach</h4>
+                <div className="grid gap-6">
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 bg-secondary-green/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <Globe className="h-6 w-6 text-secondary-green" />
                     </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                    <div>
+                      <h5 className="font-semibold text-navy mb-2">Cultural Intelligence</h5>
+                      <p className="text-text-charcoal">Building AI solutions that respect and adapt to diverse cultural contexts and regulatory environments.</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 bg-accent-orange/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <Award className="h-6 w-6 text-accent-orange" />
+                    </div>
+                    <div>
+                      <h5 className="font-semibold text-navy mb-2">Enterprise Excellence</h5>
+                      <p className="text-text-charcoal">Delivering scalable, compliant AI products that meet enterprise-grade security and performance standards.</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 bg-navy/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <Briefcase className="h-6 w-6 text-navy" />
+                    </div>
+                    <div>
+                      <h5 className="font-semibold text-navy mb-2">Innovation Leadership</h5>
+                      <p className="text-text-charcoal">Leading cross-functional teams to transform cutting-edge AI research into practical business solutions.</p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
 
-        {/* Skills & Expertise */}
-        <div className="mb-20">
-          <h3 className="text-2xl font-bold text-navy mb-8 text-center">Core Expertise</h3>
-          <div className="grid md:grid-cols-2 gap-6">
-            {skills.map((skill, index) => (
-              <Card key={index} className="bg-white shadow-card border-0">
-                <CardContent className="p-6">
-                  <div className="flex justify-between items-center mb-4">
-                    <div>
-                      <h4 className="font-semibold text-navy">{skill.name}</h4>
-                      <span className="text-sm text-gray-600">{skill.category}</span>
-                    </div>
-                    <span className="text-secondary-green font-bold text-lg">{skill.level}%</span>
-                  </div>
-                  <Progress value={skill.level} className="h-2" />
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
+
 
         {/* Geographic Expertise */}
         <div>
