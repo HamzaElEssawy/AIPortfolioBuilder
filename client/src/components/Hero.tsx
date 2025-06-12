@@ -47,11 +47,10 @@ export default function Hero() {
           <div className="space-y-8">
             <div className="space-y-6">
               <h1 className="text-4xl lg:text-5xl font-bold text-navy leading-tight">
-                {heroContent?.headline || "AI Product Leader &"}<br/>
-                <span className="text-secondary-green">{heroContent?.subheadline || "Multi-time Founder"}</span>
+                {heroContent?.headline || "AI Product Leader & Multi-time Founder"}
               </h1>
               <p className="text-lg text-text-charcoal leading-relaxed max-w-2xl">
-                Enterprise Clients Across MENA & Southeast Asia
+                {heroContent?.subheadline || "7+ Years Scaling AI Solutions from 0→1 | Enterprise Clients Across MENA & Southeast Asia"}
               </p>
             </div>
             

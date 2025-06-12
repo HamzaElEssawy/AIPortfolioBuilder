@@ -28,7 +28,9 @@ export default function SimpleTextEditor({
 
   const handleInput = () => {
     if (editorRef.current) {
-      onChange(editorRef.current.innerHTML);
+      // Extract clean text content instead of innerHTML to prevent HTML corruption
+      const cleanContent = editorRef.current.textContent || '';
+      onChange(cleanContent);
     }
   };
 
