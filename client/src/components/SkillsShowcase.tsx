@@ -165,7 +165,7 @@ export default function SkillsShowcase() {
         </div>
 
         {/* Gamification Stats Bar */}
-        <Card className="mb-12 bg-gradient-to-r from-navy/5 to-secondary-green/5 border-0 shadow-card">
+        <Card className="mb-12 glass-card border-0">
           <CardContent className="p-8">
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-6">
               <div className="text-center">
