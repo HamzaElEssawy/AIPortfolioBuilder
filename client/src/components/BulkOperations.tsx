@@ -105,11 +105,9 @@ export function BulkOperations<T>({
           <div className="flex items-center gap-2">
             <Checkbox
               checked={isAllSelected}
-              ref={(el) => {
-                if (el) el.indeterminate = isPartiallySelected;
-              }}
               onCheckedChange={handleSelectAll}
               aria-label="Select all items"
+              className={isPartiallySelected ? "data-[state=checked]:bg-gray-500" : ""}
             />
             <span className="text-sm font-medium">
               {selectedItems.size > 0 

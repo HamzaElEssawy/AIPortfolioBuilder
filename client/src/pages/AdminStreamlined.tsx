@@ -31,6 +31,43 @@ export default function AdminStreamlined() {
     queryKey: ["/api/admin/contact-submissions"],
   });
 
+  // Bulk delete mutation for contact submissions
+  const bulkDeleteMutation = useMutation({
+    mutationFn: async (ids: number[]) => {
+      const deletePromises = ids.map(id => 
+        apiRequest(`/api/admin/contact-submissions/${id}`, "DELETE")
+      );
+      await Promise.all(deletePromises);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/contact-submissions"] });
+      setSelectedSubmissions(new Set());
+      toast({ title: "Contact submissions deleted successfully" });
+    },
+    onError: () => {
+      toast({ 
+        title: "Error deleting submissions", 
+        variant: "destructive" 
+      });
+    },
+  });
+
+  const handleBulkDelete = async (ids: number[]) => {
+    await bulkDeleteMutation.mutateAsync(ids);
+  };
+
+  const handleExportSubmissions = (items: ContactSubmission[]) => {
+    const exportData = items.map(submission => ({
+      name: submission.name,
+      email: submission.email,
+      company: submission.company || '',
+      message: submission.message,
+      projectType: submission.projectType || '',
+      submittedAt: new Date(submission.submittedAt).toLocaleDateString(),
+    }));
+    exportToCSV(exportData, 'contact_submissions');
+  };
+
   // Export functionality
   const exportMutation = useMutation({
     mutationFn: async () => {
@@ -219,7 +256,9 @@ export default function AdminStreamlined() {
 
           {/* Content Management - Hero and About only */}
           <TabsContent value="content" className="space-y-6">
-            <SimpleContentManager />
+            <ErrorBoundary>
+              <SimpleContentManager />
+            </ErrorBoundary>
           </TabsContent>
 
           {/* Case Studies Management */}
@@ -227,21 +266,27 @@ export default function AdminStreamlined() {
             <div className="bg-white rounded-lg border border-gray-200 p-6">
               <h2 className="text-xl font-bold text-navy mb-4">Case Studies</h2>
               <p className="text-gray-600 mb-6">Manage portfolio case studies with AI enhancement</p>
-              <EnhancedCaseStudyEditor />
+              <ErrorBoundary>
+                <EnhancedCaseStudyEditor />
+              </ErrorBoundary>
             </div>
           </TabsContent>
 
           {/* Portfolio Images Management */}
           <TabsContent value="images" className="space-y-6">
             <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <PortfolioImageManager />
+              <ErrorBoundary>
+                <PortfolioImageManager />
+              </ErrorBoundary>
             </div>
           </TabsContent>
 
           {/* Portfolio Metrics Management */}
           <TabsContent value="metrics" className="space-y-6">
             <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <PortfolioMetricsManager />
+              <ErrorBoundary>
+                <PortfolioMetricsManager />
+              </ErrorBoundary>
             </div>
           </TabsContent>
 
@@ -250,7 +295,9 @@ export default function AdminStreamlined() {
             <div className="bg-white rounded-lg border border-gray-200 p-6">
               <h2 className="text-xl font-bold text-navy mb-4">Professional Timeline</h2>
               <p className="text-gray-600 mb-6">Manage your career timeline and experience entries</p>
-              <TimelineManager />
+              <ErrorBoundary>
+                <TimelineManager />
+              </ErrorBoundary>
             </div>
           </TabsContent>
 
@@ -259,7 +306,9 @@ export default function AdminStreamlined() {
             <div className="bg-white rounded-lg border border-gray-200 p-6">
               <h2 className="text-xl font-bold text-navy mb-4">Core Values</h2>
               <p className="text-gray-600 mb-6">Manage your professional values and approach</p>
-              <CoreValuesManager />
+              <ErrorBoundary>
+                <CoreValuesManager />
+              </ErrorBoundary>
             </div>
           </TabsContent>
 
@@ -269,6 +318,17 @@ export default function AdminStreamlined() {
               <h2 className="text-xl font-bold text-navy mb-4">Contact Submissions</h2>
               <p className="text-gray-600 mb-6">View and manage portfolio contact inquiries</p>
               
+              <BulkOperations
+                items={submissions}
+                selectedItems={selectedSubmissions}
+                onSelectionChange={setSelectedSubmissions}
+                onBulkDelete={handleBulkDelete}
+                onExport={handleExportSubmissions}
+                getItemId={(submission) => submission.id}
+                getItemName={(submission) => `${submission.name} (${submission.email})`}
+                exportFilename="contact_submissions"
+              />
+
               {submissions.length === 0 ? (
                 <div className="text-center py-12">
                   <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
@@ -281,10 +341,17 @@ export default function AdminStreamlined() {
                     <Card key={submission.id}>
                       <CardContent className="p-4">
                         <div className="flex justify-between items-start">
-                          <div>
-                            <h3 className="font-semibold text-navy">{submission.name}</h3>
-                            <p className="text-sm text-gray-600">{submission.email}</p>
-                            <p className="text-sm text-gray-500 mt-1">{submission.company}</p>
+                          <div className="flex items-center gap-3">
+                            <ItemSelection
+                              itemId={submission.id}
+                              selectedItems={selectedSubmissions}
+                              onSelectionChange={setSelectedSubmissions}
+                            />
+                            <div>
+                              <h3 className="font-semibold text-navy">{submission.name}</h3>
+                              <p className="text-sm text-gray-600">{submission.email}</p>
+                              <p className="text-sm text-gray-500 mt-1">{submission.company}</p>
+                            </div>
                           </div>
                           <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
                             {submission.projectType}
