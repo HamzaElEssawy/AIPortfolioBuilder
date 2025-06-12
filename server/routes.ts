@@ -159,7 +159,7 @@ When providing career advice, reference his actual experience and achievements. 
   });
 
   // Real Claude API integration
-  async function generateClaudeResponse(message: string, conversationHistory: any[] = []): Promise<string> {
+  async function generateRealClaudeResponse(message: string, conversationHistory: any[] = []): Promise<string> {
     try {
       const systemPrompt = `You are an expert AI Product Leadership career advisor specifically helping Hamza El Essawy, an accomplished AI Product Leader and entrepreneur based in Kuala Lumpur, Malaysia.
 
@@ -196,7 +196,7 @@ Provide specific, actionable career advice tailored to Hamza's background. Use c
 
 Be professional, insightful, and leverage his unique combination of technical expertise, proven scaling ability, and cross-cultural market experience.`;
 
-      const messages = [
+      const messages: Array<{role: "user" | "assistant", content: string}> = [
         { role: "user", content: message }
       ];
 
@@ -204,7 +204,7 @@ Be professional, insightful, and leverage his unique combination of technical ex
         model: "claude-3-5-sonnet-20241022",
         max_tokens: 1500,
         system: systemPrompt,
-        messages: messages
+        messages: [{ role: "user", content: message }]
       });
 
       return completion.content[0].type === 'text' ? completion.content[0].text : "I apologize, but I couldn't generate a response. Please try again.";
