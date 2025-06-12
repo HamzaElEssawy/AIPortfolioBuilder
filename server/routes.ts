@@ -1214,8 +1214,9 @@ What would be most helpful for your current career goals?`;
   // SEO Settings endpoints
   app.get("/api/admin/seo-settings", isAdmin, async (req, res) => {
     try {
-      const seoSettings = await db.select().from(schema.seoSettings);
-      res.json(seoSettings);
+      const { seoSettings } = await import("@shared/schema");
+      const seoData = await db.select().from(seoSettings);
+      res.json(seoData);
     } catch (error) {
       console.error("Error fetching SEO settings:", error);
       res.status(500).json({ error: "Failed to fetch SEO settings" });
@@ -1224,10 +1225,11 @@ What would be most helpful for your current career goals?`;
 
   app.post("/api/admin/seo-settings", isAdmin, async (req, res) => {
     try {
+      const { seoSettings } = await import("@shared/schema");
       const validatedData = req.body;
       
       const result = await db
-        .insert(schema.seoSettings)
+        .insert(seoSettings)
         .values({
           page: validatedData.page,
           title: validatedData.title,
@@ -1244,7 +1246,7 @@ What would be most helpful for your current career goals?`;
           structuredData: validatedData.structuredData,
         })
         .onConflictDoUpdate({
-          target: schema.seoSettings.page,
+          target: seoSettings.page,
           set: {
             title: validatedData.title,
             description: validatedData.description,
@@ -1272,11 +1274,13 @@ What would be most helpful for your current career goals?`;
 
   app.get("/api/seo/:page", async (req, res) => {
     try {
+      const { seoSettings } = await import("@shared/schema");
+      const { eq } = await import("drizzle-orm");
       const page = req.params.page;
       const seoData = await db
         .select()
-        .from(schema.seoSettings)
-        .where(eq(schema.seoSettings.page, page))
+        .from(seoSettings)
+        .where(eq(seoSettings.page, page))
         .limit(1);
 
       if (seoData.length === 0) {

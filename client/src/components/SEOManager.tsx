@@ -26,6 +26,8 @@ interface SEOSettings {
   canonicalUrl?: string;
   robotsDirective: string;
   structuredData?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 const defaultSEOSettings: Partial<SEOSettings> = {
