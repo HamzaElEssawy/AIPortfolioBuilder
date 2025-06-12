@@ -154,14 +154,15 @@ export default function Admin() {
 
       <div className="max-w-7xl mx-auto px-8 py-8">
         <Tabs defaultValue="overview" className="space-y-8">
-          <TabsList className="grid w-full grid-cols-6 lg:grid-cols-8">
+          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-9 text-xs">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="submissions">Contacts</TabsTrigger>
             <TabsTrigger value="content">Content</TabsTrigger>
             <TabsTrigger value="portfolio">Portfolio</TabsTrigger>
-            <TabsTrigger value="knowledge">Knowledge Base</TabsTrigger>
+            <TabsTrigger value="knowledge">Knowledge</TabsTrigger>
             <TabsTrigger value="ai-assistant">AI Assistant</TabsTrigger>
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
+            <TabsTrigger value="deployment">Deploy</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
 
@@ -393,6 +394,11 @@ export default function Admin() {
           {/* AI Assistant Tab */}
           <TabsContent value="ai-assistant" className="space-y-6">
             <AIAssistant />
+          </TabsContent>
+
+          {/* Deployment Tab */}
+          <TabsContent value="deployment" className="space-y-6">
+            <DeploymentRecommendations />
           </TabsContent>
 
           {/* Analytics Tab */}
