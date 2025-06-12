@@ -64,12 +64,23 @@ export default function Experience() {
                   <CardContent className="p-0">
                     <div className="flex items-center justify-between mb-3">
                       <h4 className="font-semibold text-navy">{skill.name}</h4>
-                      <span className="text-emerald font-semibold">
-                        {skill.level >= 90 ? "Expert" : "Advanced"}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-emerald font-semibold text-sm">{skill.level}%</span>
+                        <span className="text-emerald font-semibold">
+                          {skill.level >= 90 ? "Expert" : "Advanced"}
+                        </span>
+                      </div>
                     </div>
-                    <Progress value={skill.level} className="mb-2" />
-                    <p className="text-sm text-dark-charcoal mt-2">{skill.description}</p>
+                    <div className="relative">
+                      <Progress value={skill.level} className="mb-2 h-2" />
+                      <div className="flex justify-between text-xs text-gray-500 mt-1">
+                        <span>Beginner</span>
+                        <span>Intermediate</span>
+                        <span>Advanced</span>
+                        <span>Expert</span>
+                      </div>
+                    </div>
+                    <p className="text-sm text-dark-charcoal mt-3">{skill.description}</p>
                   </CardContent>
                 </Card>
               ))}

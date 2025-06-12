@@ -41,13 +41,52 @@ export default function About() {
           </p>
         </div>
         
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
+        <div className="grid lg:grid-cols-2 gap-16 items-start">
           <div>
             <img 
               src="https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=600" 
               alt="Modern office workspace showcasing AI technology development" 
-              className="rounded-2xl shadow-lg w-full"
+              className="rounded-2xl shadow-lg w-full mb-8"
             />
+            
+            {/* Career Timeline Component - AC3.2 */}
+            <div className="bg-white rounded-2xl p-6 shadow-lg">
+              <h4 className="font-semibold text-xl text-navy mb-6">Career Timeline</h4>
+              <div className="space-y-6">
+                <div className="flex items-start">
+                  <div className="w-3 h-3 bg-emerald rounded-full mt-2 mr-4 flex-shrink-0"></div>
+                  <div>
+                    <div className="font-semibold text-navy">2023-Present</div>
+                    <div className="text-sm text-dark-charcoal">AI Product Leader & Entrepreneur</div>
+                    <div className="text-xs text-gray-500">Antler Malaysia, AI Tinkerers KL</div>
+                  </div>
+                </div>
+                <div className="flex items-start">
+                  <div className="w-3 h-3 bg-warm-orange rounded-full mt-2 mr-4 flex-shrink-0"></div>
+                  <div>
+                    <div className="font-semibold text-navy">2020-2023</div>
+                    <div className="text-sm text-dark-charcoal">Enterprise AI Platform Lead</div>
+                    <div className="text-xs text-gray-500">Tapway - Computer Vision & No-Code AI</div>
+                  </div>
+                </div>
+                <div className="flex items-start">
+                  <div className="w-3 h-3 bg-navy rounded-full mt-2 mr-4 flex-shrink-0"></div>
+                  <div>
+                    <div className="font-semibold text-navy">2018-2020</div>
+                    <div className="text-sm text-dark-charcoal">AI Product Manager</div>
+                    <div className="text-xs text-gray-500">Fintech & Banking Solutions</div>
+                  </div>
+                </div>
+                <div className="flex items-start">
+                  <div className="w-3 h-3 bg-gray-400 rounded-full mt-2 mr-4 flex-shrink-0"></div>
+                  <div>
+                    <div className="font-semibold text-navy">2015-2018</div>
+                    <div className="text-sm text-dark-charcoal">Technical Product Foundation</div>
+                    <div className="text-xs text-gray-500">Engineering to Product Transition</div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
           
           <div className="space-y-8">
@@ -69,19 +108,55 @@ export default function About() {
               ))}
             </div>
             
-            <div className="flex flex-wrap gap-4">
-              {affiliations.map((affiliation, index) => (
-                <div key={index} className="flex items-center bg-white px-4 py-2 rounded-lg shadow-sm">
-                  {affiliation.logo ? (
-                    <img src={affiliation.logo} alt={`${affiliation.name} logo`} className="w-8 h-8 mr-2" />
-                  ) : (
-                    <div className="w-8 h-8 bg-emerald rounded-full mr-2 flex items-center justify-center">
-                      <span className="text-white text-xs font-bold">AI</span>
-                    </div>
-                  )}
-                  <span className="text-sm font-medium text-dark-charcoal">{affiliation.name}</span>
+            {/* Professional Network & Recognition - AC3.7 */}
+            <div className="space-y-4">
+              <div className="bg-white px-6 py-4 rounded-lg shadow-sm border-l-4 border-emerald">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-dark-charcoal">LinkedIn Network</span>
+                  <span className="font-bold text-emerald">8,741+ Followers</span>
                 </div>
-              ))}
+                <div className="text-xs text-gray-500 mt-1">AI Product Leadership Thought Leader</div>
+              </div>
+              
+              <div className="flex flex-wrap gap-4">
+                {affiliations.map((affiliation, index) => (
+                  <div key={index} className="flex items-center bg-white px-4 py-2 rounded-lg shadow-sm">
+                    {affiliation.logo ? (
+                      <img src={affiliation.logo} alt={`${affiliation.name} logo`} className="w-8 h-8 mr-2" />
+                    ) : (
+                      <div className="w-8 h-8 bg-emerald rounded-full mr-2 flex items-center justify-center">
+                        <span className="text-white text-xs font-bold">AI</span>
+                      </div>
+                    )}
+                    <span className="text-sm font-medium text-dark-charcoal">{affiliation.name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            {/* Geographic Experience Map - AC3.5 */}
+            <div className="bg-white rounded-2xl p-6 shadow-lg">
+              <h4 className="font-semibold text-xl text-navy mb-6">Cross-Cultural Leadership</h4>
+              <div className="space-y-4">
+                <div className="flex items-center p-4 bg-gradient-to-r from-emerald/10 to-emerald/5 rounded-lg">
+                  <div className="w-12 h-12 bg-emerald rounded-full flex items-center justify-center mr-4">
+                    <span className="text-white font-bold text-sm">MENA</span>
+                  </div>
+                  <div>
+                    <div className="font-semibold text-navy">Middle East & North Africa</div>
+                    <div className="text-sm text-dark-charcoal">Native Arabic • Cultural Expertise • Regional Markets</div>
+                  </div>
+                </div>
+                <div className="flex items-center p-4 bg-gradient-to-r from-warm-orange/10 to-warm-orange/5 rounded-lg">
+                  <div className="w-12 h-12 bg-warm-orange rounded-full flex items-center justify-center mr-4">
+                    <span className="text-white font-bold text-sm">SEA</span>
+                  </div>
+                  <div>
+                    <div className="font-semibold text-navy">Southeast Asia</div>
+                    <div className="text-sm text-dark-charcoal">Malaysia Base • Regional Understanding • Enterprise Clients</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

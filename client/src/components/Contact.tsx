@@ -62,7 +62,7 @@ export default function Contact() {
     {
       icon: Mail,
       title: "Email",
-      value: "Contact via form",
+      value: "hamza@example.com",
       color: "bg-emerald",
     },
     {
