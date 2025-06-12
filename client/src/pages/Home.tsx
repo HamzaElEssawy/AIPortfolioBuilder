@@ -12,7 +12,7 @@ import Footer from "@/components/Footer";
 
 export default function Home() {
   // Fetch portfolio status to control which sections display
-  const { data: portfolioStatus = {
+  const defaultStatus = {
     hero: true,
     about: true,
     skills: true,
@@ -20,7 +20,9 @@ export default function Home() {
     coreValues: true,
     caseStudies: true,
     contact: true,
-  } } = useQuery({
+  };
+
+  const { data: portfolioStatus = defaultStatus } = useQuery<typeof defaultStatus>({
     queryKey: ["/api/admin/portfolio-status"],
   });
 
