@@ -992,6 +992,61 @@ What would be most helpful for your current career goals?`;
     }
   });
 
+  // Core Values routes
+  app.get("/api/portfolio/core-values", async (req, res) => {
+    try {
+      const coreValues = await storage.getCoreValues();
+      res.json(coreValues);
+    } catch (error) {
+      console.error("Error fetching core values:", error);
+      res.status(500).json({ message: "Failed to fetch core values" });
+    }
+  });
+
+  // Core Values admin routes
+  app.get("/api/admin/core-values", isAdmin, async (req, res) => {
+    try {
+      const coreValues = await storage.getCoreValues();
+      res.json(coreValues);
+    } catch (error) {
+      console.error("Error fetching core values:", error);
+      res.status(500).json({ message: "Failed to fetch core values" });
+    }
+  });
+
+  app.post("/api/admin/core-values", isAdmin, async (req, res) => {
+    try {
+      const coreValue = await storage.createCoreValue(req.body);
+
+      res.json(coreValue);
+    } catch (error) {
+      console.error("Error creating core value:", error);
+      res.status(500).json({ message: "Failed to create core value" });
+    }
+  });
+
+  app.put("/api/admin/core-values/:id", isAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const coreValue = await storage.updateCoreValue(parseInt(id), req.body);
+      res.json(coreValue);
+    } catch (error) {
+      console.error("Error updating core value:", error);
+      res.status(500).json({ message: "Failed to update core value" });
+    }
+  });
+
+  app.delete("/api/admin/core-values/:id", isAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      await storage.deleteCoreValue(parseInt(id));
+      res.json({ message: "Core value deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting core value:", error);
+      res.status(500).json({ message: "Failed to delete core value" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

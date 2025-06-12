@@ -10,6 +10,7 @@ import {
   skillCategories,
   skills,
   portfolioMetrics,
+  coreValues,
   type User,
   type InsertUser,
   type ContactSubmission,
@@ -32,6 +33,8 @@ import {
   type InsertSkill,
   type PortfolioMetric,
   type InsertPortfolioMetric,
+  type CoreValue,
+  type InsertCoreValue,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc } from "drizzle-orm";
