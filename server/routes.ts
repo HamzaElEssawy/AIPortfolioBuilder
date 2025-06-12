@@ -719,6 +719,77 @@ What would be most helpful for your current career goals?`;
     }
   });
 
+  // Direct portfolio content update endpoint (bypasses content manager for immediate live updates)
+  app.put("/api/admin/portfolio/content/:sectionId", isAdmin, async (req, res) => {
+    try {
+      const sectionId = req.params.sectionId as any;
+      const content = req.body;
+      
+      // Create version backup before updating
+      const currentContent = await contentManager.getSection(sectionId);
+      if (currentContent) {
+        await storage.createContentVersion({
+          sectionId,
+          content: currentContent,
+          changeSummary: `Updated ${sectionId} section`,
+          createdBy: "admin",
+          publishedAt: new Date().toISOString(),
+        });
+      }
+      
+      // Update the live portfolio content directly
+      const updatedContent = await contentManager.updateSection(sectionId, content);
+      
+      res.json({ 
+        success: true, 
+        message: "Content updated and published",
+        sectionId,
+        version: updatedContent.version,
+        lastUpdated: updatedContent.lastUpdated
+      });
+    } catch (error) {
+      console.error("Error updating portfolio content:", error);
+      res.status(500).json({ message: "Failed to update portfolio content" });
+    }
+  });
+
+  // Content version rollback endpoint
+  app.post("/api/admin/content/:sectionId/rollback/:versionId", isAdmin, async (req, res) => {
+    try {
+      const { sectionId, versionId } = req.params;
+      
+      // Get the version content
+      const versions = await storage.getContentVersions(sectionId);
+      const targetVersion = versions.find(v => v.id === parseInt(versionId));
+      
+      if (!targetVersion) {
+        return res.status(404).json({ message: "Version not found" });
+      }
+      
+      // Create backup of current content
+      const currentContent = await contentManager.getSection(sectionId as any);
+      await storage.createContentVersion({
+        sectionId,
+        content: currentContent,
+        changeSummary: `Backup before rollback to version ${targetVersion.version}`,
+        createdBy: "admin",
+        publishedAt: new Date().toISOString(),
+      });
+      
+      // Restore the target version
+      await contentManager.updateSection(sectionId as any, targetVersion.content);
+      
+      res.json({ 
+        success: true, 
+        message: `Successfully rolled back to version ${targetVersion.version}`,
+        restoredVersion: targetVersion.version
+      });
+    } catch (error) {
+      console.error("Error rolling back content:", error);
+      res.status(500).json({ message: "Failed to rollback content" });
+    }
+  });
+
   app.post("/api/admin/content/sections/:sectionId/publish", isAdmin, async (req, res) => {
     try {
       const sectionId = req.params.sectionId;

@@ -59,6 +59,8 @@ export const contentVersions = pgTable("content_versions", {
   sectionId: text("section_id").notNull(),
   content: jsonb("content").notNull(),
   version: integer("version").notNull(),
+  changeSummary: text("change_summary"),
+  createdBy: text("created_by").default("admin"),
   createdAt: timestamp("created_at").defaultNow(),
   publishedAt: timestamp("published_at"),
 });
