@@ -82,9 +82,15 @@ export default function SimpleContentManager() {
       return response.json();
     },
     onSuccess: () => {
-      // Invalidate both admin and public portfolio queries to ensure live site updates
+      // Invalidate all relevant queries to ensure live site updates
       queryClient.invalidateQueries({ queryKey: ["/api/portfolio/content"] });
       queryClient.invalidateQueries({ queryKey: [`/api/portfolio/content/${activeTab}`] });
+      queryClient.invalidateQueries({ queryKey: ["/api/portfolio/content/hero"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/portfolio/content/about"] });
+      
+      // Clear cache on server side
+      fetch("/api/admin/cache/clear", { method: "POST" }).catch(() => {});
+      
       setHasUnsavedChanges(false);
       toast({
         title: "Content published successfully",
@@ -137,6 +143,30 @@ export default function SimpleContentManager() {
       content,
     });
   };
+
+  // Force refresh all content
+  const forceRefreshMutation = useMutation({
+    mutationFn: async () => {
+      // Clear all caches
+      await fetch("/api/admin/cache/clear", { method: "POST" });
+      return Promise.resolve();
+    },
+    onSuccess: () => {
+      // Invalidate all content queries
+      queryClient.invalidateQueries({ queryKey: ["/api/portfolio/content"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/portfolio/content/hero"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/portfolio/content/about"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/portfolio-status"] });
+      
+      // Force refetch
+      queryClient.refetchQueries({ queryKey: ["/api/portfolio/content"] });
+      
+      toast({
+        title: "Content refreshed",
+        description: "All content has been refreshed from the server.",
+      });
+    },
+  });
 
   const handleStatusChange = (sectionKey: string, enabled: boolean) => {
     setSectionStatus((prev: any) => ({
@@ -246,14 +276,12 @@ export default function SimpleContentManager() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Subheadline
-                  </label>
-                  <Textarea
+                  <TinyMCEEditor
+                    label="Subheadline"
                     value={heroContent.subheadline}
-                    onChange={(e) => handleHeroChange("subheadline", e.target.value)}
+                    onChange={(value) => handleHeroChange("subheadline", value)}
                     placeholder="e.g., 7+ Years Scaling 0→1 | Enterprise Clients Across MENA & Southeast Asia"
-                    rows={3}
+                    height={200}
                   />
                 </div>
 
@@ -314,26 +342,22 @@ export default function SimpleContentManager() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Summary
-                  </label>
-                  <Textarea
+                  <TinyMCEEditor
+                    label="Summary"
                     value={aboutContent.summary}
-                    onChange={(e) => handleAboutChange("summary", e.target.value)}
+                    onChange={(value) => handleAboutChange("summary", value)}
                     placeholder="Brief summary that appears below the title"
-                    rows={3}
+                    height={200}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Professional Competencies
-                  </label>
-                  <Textarea
+                  <TinyMCEEditor
+                    label="Professional Competencies"
                     value={aboutContent.competencies}
-                    onChange={(e) => handleAboutChange("competencies", e.target.value)}
+                    onChange={(value) => handleAboutChange("competencies", value)}
                     placeholder="Detailed description of your professional experience and expertise"
-                    rows={6}
+                    height={300}
                   />
                 </div>
 
