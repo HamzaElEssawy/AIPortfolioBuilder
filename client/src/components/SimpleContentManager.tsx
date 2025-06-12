@@ -6,10 +6,11 @@ import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Save, Eye, Check, AlertCircle, Monitor } from "lucide-react";
+import { Save, Eye, Check, AlertCircle, Monitor, RefreshCw } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
+import TinyMCEEditor from "@/components/TinyMCEEditor";
 import type { HeroContent, AboutContent } from "@shared/contentSchema";
 
 export default function SimpleContentManager() {
