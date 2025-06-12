@@ -44,7 +44,7 @@ export default function AboutStreamlined() {
             <div className="prose prose-lg max-w-none">
               <div className="text-lg text-text-charcoal leading-relaxed space-y-6">
                 <p>
-                  {content?.description || `With over 7 years of experience spanning the MENA region and Southeast Asia, I 
+                  {content?.competencies || `With over 7 years of experience spanning the MENA region and Southeast Asia, I 
                   specialize in transforming complex AI concepts into scalable enterprise solutions. 
                   My journey began in fintech, where I discovered the power of AI to solve real-world 
                   regulatory challenges.`}

@@ -1,7 +1,7 @@
 import Navigation from "@/components/Navigation";
 import Hero from "@/components/Hero";
 import Metrics from "@/components/Metrics";
-import About from "@/components/About";
+import AboutStreamlined from "@/components/AboutStreamlined";
 import CaseStudies from "@/components/CaseStudies";
 import Skills from "@/components/Skills";
 import Timeline from "@/components/Timeline";
@@ -13,7 +13,7 @@ export default function Home() {
     <div className="min-h-screen">
       <Navigation />
       <Hero />
-      <About />
+      <AboutStreamlined />
       <Skills />
       <Timeline />
       <CaseStudies />

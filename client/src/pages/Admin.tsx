@@ -36,6 +36,7 @@ import DeploymentRecommendations from "@/components/DeploymentRecommendations";
 import EnhancedCaseStudyEditor from "@/components/EnhancedCaseStudyEditor";
 import VisualHierarchyEnhancer from "@/components/VisualHierarchyEnhancer";
 import TimelineManager from "@/components/TimelineManager";
+import CoreValuesManager from "@/components/CoreValuesManager";
 
 export default function Admin() {
   const [searchTerm, setSearchTerm] = useState("");
