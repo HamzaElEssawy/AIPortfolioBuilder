@@ -14,6 +14,7 @@ import EnhancedCaseStudyEditor from "@/components/EnhancedCaseStudyEditor";
 import TimelineManager from "@/components/TimelineManager";
 import CoreValuesManager from "@/components/CoreValuesManager";
 import PortfolioImageManager from "@/components/PortfolioImageManager";
+import PortfolioMetricsManager from "@/components/PortfolioMetricsManager";
 import AIAssistant from "@/components/AIAssistant";
 
 export default function AdminStreamlined() {
@@ -88,11 +89,12 @@ export default function AdminStreamlined() {
 
       <div className="max-w-7xl mx-auto px-8 py-8">
         <Tabs defaultValue="dashboard" className="space-y-8">
-          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-8 gap-1">
+          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-9 gap-1">
             <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
             <TabsTrigger value="content">Content</TabsTrigger>
             <TabsTrigger value="case-studies">Case Studies</TabsTrigger>
             <TabsTrigger value="images">Images</TabsTrigger>
+            <TabsTrigger value="metrics">Metrics</TabsTrigger>
             <TabsTrigger value="timeline">Timeline</TabsTrigger>
             <TabsTrigger value="core-values">Values</TabsTrigger>
             <TabsTrigger value="contacts">Contacts</TabsTrigger>
@@ -227,6 +229,13 @@ export default function AdminStreamlined() {
           <TabsContent value="images" className="space-y-6">
             <div className="bg-white rounded-lg border border-gray-200 p-6">
               <PortfolioImageManager />
+            </div>
+          </TabsContent>
+
+          {/* Portfolio Metrics Management */}
+          <TabsContent value="metrics" className="space-y-6">
+            <div className="bg-white rounded-lg border border-gray-200 p-6">
+              <PortfolioMetricsManager />
             </div>
           </TabsContent>
 

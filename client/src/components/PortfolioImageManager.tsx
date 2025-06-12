@@ -213,7 +213,7 @@ export default function PortfolioImageManager() {
                 <div className="flex items-center space-x-2 mt-6">
                   <Switch
                     id="isActive"
-                    checked={newImage.isActive}
+                    checked={newImage.isActive || false}
                     onCheckedChange={(checked) => setNewImage({...newImage, isActive: checked})}
                   />
                   <Label htmlFor="isActive">Active</Label>
@@ -263,7 +263,7 @@ export default function PortfolioImageManager() {
           {groupedImages[section]?.length ? (
             <div className="grid gap-4">
               {groupedImages[section]
-                .sort((a, b) => a.orderIndex - b.orderIndex)
+                .sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0))
                 .map((image) => (
                 <Card key={image.id} className="overflow-hidden">
                   <CardContent className="p-0">

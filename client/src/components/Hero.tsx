@@ -96,7 +96,7 @@ export default function Hero() {
         <div className="mt-24 grid grid-cols-1 md:grid-cols-3 gap-8">
           {metrics.length > 0 ? (
             metrics
-              .sort((a, b) => a.displayOrder - b.displayOrder)
+              .sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0))
               .slice(0, 3)
               .map((metric, index) => (
                 <div key={metric.id} className="bg-white rounded-2xl p-8 text-center shadow-card hover-lift">
