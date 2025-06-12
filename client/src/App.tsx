@@ -4,7 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Home from "@/pages/Home";
-import Admin from "@/pages/Admin";
+import AdminStreamlined from "@/pages/AdminStreamlined";
 import AdminLogin from "@/pages/AdminLogin";
 import AdminAuthGuard from "@/components/AdminAuthGuard";
 import NotFound from "@/pages/not-found";
@@ -15,7 +15,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/admin">
         <AdminAuthGuard>
-          <Admin />
+          <AdminStreamlined />
         </AdminAuthGuard>
       </Route>
       <Route path="/admin/login" component={AdminLogin} />

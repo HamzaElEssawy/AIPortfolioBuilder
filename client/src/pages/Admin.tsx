@@ -160,20 +160,15 @@ export default function Admin() {
 
       <div className="max-w-7xl mx-auto px-8 py-8">
         <Tabs defaultValue="overview" className="space-y-8">
-          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-13 text-xs">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="submissions">Contacts</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-8 gap-1">
+            <TabsTrigger value="overview">Dashboard</TabsTrigger>
             <TabsTrigger value="content">Content</TabsTrigger>
             <TabsTrigger value="case-studies">Case Studies</TabsTrigger>
             <TabsTrigger value="timeline">Timeline</TabsTrigger>
-            <TabsTrigger value="core-values">Core Values</TabsTrigger>
-            <TabsTrigger value="design-system">Design</TabsTrigger>
-            <TabsTrigger value="portfolio">Portfolio</TabsTrigger>
-            <TabsTrigger value="knowledge">Knowledge</TabsTrigger>
+            <TabsTrigger value="core-values">Values</TabsTrigger>
+            <TabsTrigger value="contacts">Contacts</TabsTrigger>
+            <TabsTrigger value="preview">Live Preview</TabsTrigger>
             <TabsTrigger value="ai-assistant">AI Assistant</TabsTrigger>
-            <TabsTrigger value="analytics">Analytics</TabsTrigger>
-            <TabsTrigger value="deployment">Deploy</TabsTrigger>
-            <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
 
           {/* Overview Tab */}
