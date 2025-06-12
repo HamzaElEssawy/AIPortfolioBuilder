@@ -4,8 +4,9 @@ import QuickStats from "@/components/QuickStats";
 import About from "@/components/About";
 import CaseStudies from "@/components/CaseStudies";
 import SkillsShowcase from "@/components/SkillsShowcase";
+import ProfessionalTimeline from "@/components/ProfessionalTimeline";
 import Experience from "@/components/Experience";
-import Contact from "@/components/Contact";
+import ContactEnhanced from "@/components/ContactEnhanced";
 import Footer from "@/components/Footer";
 
 export default function Home() {
@@ -17,8 +18,9 @@ export default function Home() {
       <About />
       <CaseStudies />
       <SkillsShowcase />
+      <ProfessionalTimeline />
       <Experience />
-      <Contact />
+      <ContactEnhanced />
       <Footer />
     </div>
   );

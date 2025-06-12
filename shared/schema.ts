@@ -12,6 +12,7 @@ export const contactSubmissions = pgTable("contact_submissions", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   email: text("email").notNull(),
+  company: text("company"),
   projectType: text("project_type").notNull(),
   message: text("message").notNull(),
   submittedAt: text("submitted_at").notNull(),
@@ -25,12 +26,15 @@ export const insertUserSchema = createInsertSchema(users).pick({
 export const insertContactSubmissionSchema = createInsertSchema(contactSubmissions).pick({
   name: true,
   email: true,
+  company: true,
   projectType: true,
   message: true,
 }).extend({
   email: z.string().email("Please enter a valid email address"),
   name: z.string().min(2, "Name must be at least 2 characters"),
   message: z.string().min(10, "Message must be at least 10 characters"),
+  company: z.string().optional(),
+  projectType: z.string().default("General Inquiry"),
 });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
