@@ -42,7 +42,7 @@ export default function Hero() {
                 <span className="text-secondary-green">{heroContent?.subheadline || "Multi-time Founder"}</span>
               </h1>
               <p className="text-lg text-text-charcoal leading-relaxed max-w-2xl">
-                {heroContent?.description || "7+ Years Scaling AI Solutions from 0→1 | Enterprise Clients Across MENA & Southeast Asia"}
+                7+ Years Scaling AI Solutions from 0→1 | Enterprise Clients Across MENA & Southeast Asia
               </p>
             </div>
             
