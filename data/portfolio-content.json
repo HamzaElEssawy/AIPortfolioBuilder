@@ -1,0 +1,244 @@
+{
+  "hero": {
+    "headline": "AI Product Leader & Multi-time Founder",
+    "subheadline": "7+ Years Scaling AI Solutions from 0→1 | Enterprise Clients Across MENA & Southeast Asia",
+    "ctaText": "View My Work",
+    "ctaSecondaryText": "Download Resume"
+  },
+  "stats": {
+    "stat1Value": "$110K+",
+    "stat1Label": "Funding Secured",
+    "stat2Value": "70%",
+    "stat2Label": "Query Automation",
+    "stat3Value": "10+",
+    "stat3Label": "Enterprise Clients",
+    "stat4Value": "20",
+    "stat4Label": "Team Members"
+  },
+  "about": {
+    "title": "About Hamza",
+    "summary": "AI Product Leader with 7+ years of experience scaling enterprise AI platforms across global markets. Proven track record of building and leading cross-cultural teams, securing funding, and delivering measurable business impact through innovative AI solutions.",
+    "competencies": "AI/ML Product Strategy, Cross-Cultural Leadership, Enterprise Scaling, Regulatory Compliance, Team Building, Startup Funding, Technical Architecture",
+    "profileImage": "/images/hamza-profile.jpg"
+  },
+  "experience": {
+    "title": "Professional Experience",
+    "subtitle": "Building AI solutions that scale across cultures and markets",
+    "experiences": [
+      {
+        "id": 1,
+        "company": "AI Product Leadership & Entrepreneurship",
+        "position": "Founder & AI Product Leader",
+        "period": "2024 - Present",
+        "description": "Leading AI product strategy across multiple ventures while mentoring 15+ founders in AI implementation and go-to-market strategies.",
+        "achievements": [
+          "Mentoring 15+ founders on AI product development and scaling strategies",
+          "Built comprehensive AI compliance platform securing $110K+ in funding",
+          "Established cross-cultural product development frameworks for global markets"
+        ],
+        "technologies": [
+          "Claude API",
+          "React",
+          "Node.js",
+          "PostgreSQL",
+          "Vector Databases"
+        ],
+        "location": "Kuala Lumpur, Malaysia",
+        "current": true
+      },
+      {
+        "id": 2,
+        "company": "AI Compliance Startup",
+        "position": "Founder & Product Leader",
+        "period": "2023 - 2024",
+        "description": "Built AI-driven compliance platform from concept to funding, addressing regulatory complexity in financial services across multiple jurisdictions.",
+        "achievements": [
+          "Secured $110K+ in early-stage funding through strategic investor relations",
+          "Reduced manual compliance review processes by 50% through AI automation",
+          "Achieved 99.9% accuracy rate in regulatory assessment automation",
+          "Established product-market fit with enterprise pilot programs"
+        ],
+        "technologies": [
+          "Python ML",
+          "React",
+          "Node.js",
+          "PostgreSQL",
+          "Compliance APIs"
+        ],
+        "location": "Kuala Lumpur, Malaysia",
+        "current": false
+      },
+      {
+        "id": 3,
+        "company": "Tapway",
+        "position": "Senior Product Manager - Enterprise AI Platform",
+        "period": "2021 - 2023",
+        "description": "Scaled no-code AI vision platform from startup to enterprise solution serving 10+ major clients while growing engineering team from 8 to 20 members.",
+        "achievements": [
+          "Grew engineering team from 8 to 20 members while maintaining development velocity",
+          "Achieved 99.9% platform uptime serving 10+ enterprise clients simultaneously",
+          "Increased revenue by 150% through strategic product expansion and client acquisition",
+          "Built comprehensive API ecosystem enabling white-label deployment capabilities"
+        ],
+        "technologies": [
+          "Computer Vision",
+          "TensorFlow",
+          "Kubernetes",
+          "AWS",
+          "React Native"
+        ],
+        "location": "Kuala Lumpur, Malaysia",
+        "current": false
+      },
+      {
+        "id": 4,
+        "company": "MENA Fintech Platform",
+        "position": "AI Product Manager",
+        "period": "2020 - 2021",
+        "description": "Implemented RAG AI system achieving 70% automation in customer query handling while supporting 15 languages for cross-cultural financial services.",
+        "achievements": [
+          "Implemented RAG AI achieving 70% automation in customer query processing",
+          "Reduced operational costs by 35% through intelligent automation systems",
+          "Built multilingual AI system supporting 15 languages for diverse user base",
+          "Established AI governance framework ensuring regulatory compliance"
+        ],
+        "technologies": [
+          "RAG AI",
+          "Python",
+          "NLP",
+          "Multi-language Processing",
+          "APIs"
+        ],
+        "location": "Dubai, UAE",
+        "current": false
+      }
+    ]
+  },
+  "caseStudies": {
+    "title": "Case Studies",
+    "subtitle": "Proven track record of scaling AI solutions across global markets",
+    "caseStudies": [
+      {
+        "id": 1,
+        "title": "AI Compliance Platform - Scaling from MVP to Enterprise",
+        "status": "published",
+        "challenge": "Built AI-driven compliance platform from concept to $110K+ funding, addressing regulatory complexity in financial services across multiple jurisdictions.",
+        "approach": "Implemented lean startup methodology with rapid prototyping, customer discovery interviews, and iterative product development based on regulatory feedback.",
+        "solution": "Developed comprehensive compliance automation platform reducing manual review processes by 50% while maintaining 99.9% accuracy in regulatory assessment.",
+        "impact": "Secured $110K+ in early-stage funding, achieved product-market fit with enterprise clients, and established foundation for SEA market expansion.",
+        "metrics": [
+          "$110K+ funding secured",
+          "50% reduction in manual review",
+          "99.9% accuracy rate",
+          "10+ enterprise pilots"
+        ],
+        "technologies": [
+          "React",
+          "Node.js",
+          "PostgreSQL",
+          "Claude API",
+          "Python ML"
+        ],
+        "featured": true,
+        "createdAt": "2024-01-15T00:00:00Z",
+        "updatedAt": "2024-06-01T00:00:00Z"
+      },
+      {
+        "id": 2,
+        "title": "Enterprise AI Platform Scaling - Tapway Success Story",
+        "status": "published",
+        "challenge": "Scale no-code AI vision platform from startup to enterprise solution serving 10+ major clients while growing engineering team from 8 to 20 members.",
+        "approach": "Implemented agile product management with cross-functional team coordination, enterprise sales strategy, and platform architecture optimization.",
+        "solution": "Built scalable enterprise AI platform with 99.9% uptime, comprehensive API ecosystem, and white-label deployment capabilities for diverse industry verticals.",
+        "impact": "Successfully scaled to 10+ enterprise clients, achieved 99.9% platform uptime, and built sustainable revenue model with recurring enterprise contracts.",
+        "metrics": [
+          "10+ enterprise clients",
+          "99.9% platform uptime",
+          "8→20 team growth",
+          "150% revenue increase"
+        ],
+        "technologies": [
+          "Computer Vision",
+          "TensorFlow",
+          "Kubernetes",
+          "AWS",
+          "React Native"
+        ],
+        "featured": true,
+        "createdAt": "2023-06-01T00:00:00Z",
+        "updatedAt": "2024-03-15T00:00:00Z"
+      }
+    ]
+  },
+  "skills": {
+    "title": "Technical Expertise",
+    "subtitle": "Comprehensive skill set spanning AI product development and enterprise scaling",
+    "categories": [
+      {
+        "category": "AI/ML Technologies",
+        "skills": [
+          "Claude API",
+          "RAG Systems",
+          "Computer Vision",
+          "TensorFlow",
+          "Python ML",
+          "Vector Databases",
+          "NLP"
+        ],
+        "icon": "brain"
+      },
+      {
+        "category": "Product Management",
+        "skills": [
+          "Product Strategy",
+          "Roadmap Planning",
+          "User Research",
+          "A/B Testing",
+          "Analytics",
+          "Agile/Scrum"
+        ],
+        "icon": "target"
+      },
+      {
+        "category": "Technical Stack",
+        "skills": [
+          "React",
+          "Node.js",
+          "PostgreSQL",
+          "AWS",
+          "Kubernetes",
+          "APIs",
+          "TypeScript"
+        ],
+        "icon": "code"
+      },
+      {
+        "category": "Leadership & Business",
+        "skills": [
+          "Team Building",
+          "Cross-Cultural Management",
+          "Fundraising",
+          "Startup Strategy",
+          "Mentoring"
+        ],
+        "icon": "users"
+      }
+    ]
+  },
+  "contact": {
+    "title": "Let's Connect",
+    "subtitle": "Open to AI product leadership opportunities and strategic partnerships",
+    "email": "hamza@example.com",
+    "linkedin": "https://linkedin.com/in/hamzaelessawy",
+    "location": "Kuala Lumpur, Malaysia",
+    "availability": "Available for leadership roles and consulting opportunities"
+  },
+  "seo": {
+    "title": "Hamza El Essawy - AI Product Leader",
+    "description": "AI Product Leader and entrepreneur with expertise in scaling enterprise AI platforms, securing funding, and building cross-cultural teams across MENA and SEA markets.",
+    "keywords": "AI Product Manager, Machine Learning, Enterprise AI, Product Strategy, Startup Founder, Cross-Cultural Leadership",
+    "ogImage": "/images/hamza-og-image.jpg"
+  },
+  "lastUpdated": "2025-06-12T12:22:30.318Z",
+  "version": 3
+}

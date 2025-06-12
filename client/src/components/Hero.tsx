@@ -1,6 +1,12 @@
 import { Button } from "@/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
+import type { HeroContent } from "@shared/contentSchema";
 
 export default function Hero() {
+  const { data: heroContent } = useQuery<HeroContent>({
+    queryKey: ["/api/portfolio/content/hero"],
+  });
+
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     element?.scrollIntoView({ behavior: "smooth" });
@@ -32,11 +38,11 @@ export default function Hero() {
           <div className="space-y-8">
             <div className="space-y-6">
               <h1 className="text-4xl lg:text-5xl font-bold text-navy leading-tight">
-                AI Product Leader &<br/>
-                <span className="text-secondary-green">Multi-time Founder</span>
+                {heroContent?.headline || "AI Product Leader &"}<br/>
+                <span className="text-secondary-green">{heroContent?.subheadline || "Multi-time Founder"}</span>
               </h1>
               <p className="text-lg text-text-charcoal leading-relaxed max-w-2xl">
-                7+ Years Scaling AI Solutions from 0→1 | Enterprise Clients Across MENA & Southeast Asia
+                {heroContent?.description || "7+ Years Scaling AI Solutions from 0→1 | Enterprise Clients Across MENA & Southeast Asia"}
               </p>
             </div>
             

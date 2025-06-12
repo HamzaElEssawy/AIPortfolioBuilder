@@ -1,8 +1,12 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Globe, Quote, Award, Briefcase } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 
 export default function About() {
+  const { data: aboutContent } = useQuery({
+    queryKey: ["/api/portfolio/content/about"],
+  });
 
 
   const timeline = [
