@@ -24,12 +24,12 @@
   --ring: hsl(215, 16%, 17%);
   --radius: 0.5rem;
   
-  /* Custom Portfolio Colors */
-  --navy: hsl(213, 71%, 31%);
-  --emerald: hsl(155, 84%, 44%);
-  --warm-orange: hsl(18, 84%, 49%);
-  --light-gray: hsl(210, 40%, 98%);
-  --dark-charcoal: hsl(215, 16%, 17%);
+  /* Design System Colors - Exact Specifications */
+  --navy: hsl(207, 57%, 17%); /* #1a365d */
+  --emerald: hsl(162, 95%, 34%); /* #059669 */
+  --warm-orange: hsl(20, 88%, 49%); /* #ea580c */
+  --light-gray: hsl(210, 20%, 98%); /* #f8fafc */
+  --dark-charcoal: hsl(220, 26%, 18%); /* #1f2937 */
 }
 
 .dark {
@@ -92,44 +92,44 @@
 }
 
 @layer utilities {
+  /* Navy Blue #1a365d - Primary */
   .bg-navy {
-    background-color: hsl(var(--navy));
+    background-color: #1a365d;
   }
-  
-  .bg-emerald {
-    background-color: hsl(var(--emerald));
-  }
-  
-  .bg-warm-orange {
-    background-color: hsl(var(--warm-orange));
-  }
-  
-  .bg-light-gray {
-    background-color: hsl(var(--light-gray));
-  }
-  
-  .bg-dark-charcoal {
-    background-color: hsl(var(--dark-charcoal));
-  }
-  
   .text-navy {
-    color: hsl(var(--navy));
+    color: #1a365d;
   }
   
+  /* Emerald Green #059669 - Secondary */
+  .bg-emerald {
+    background-color: #059669;
+  }
   .text-emerald {
-    color: hsl(var(--emerald));
+    color: #059669;
   }
   
+  /* Warm Orange #ea580c - Accent */
+  .bg-warm-orange {
+    background-color: #ea580c;
+  }
   .text-warm-orange {
-    color: hsl(var(--warm-orange));
+    color: #ea580c;
   }
   
+  /* Light Gray #f8fafc - Background */
+  .bg-light-gray {
+    background-color: #f8fafc;
+  }
   .text-light-gray {
-    color: hsl(var(--light-gray));
+    color: #f8fafc;
   }
   
+  /* Dark Charcoal #1f2937 - Typography */
+  .bg-dark-charcoal {
+    background-color: #1f2937;
+  }
   .text-dark-charcoal {
-    color: hsl(var(--dark-charcoal));
+    color: #1f2937;
   }
   
   .border-navy {
