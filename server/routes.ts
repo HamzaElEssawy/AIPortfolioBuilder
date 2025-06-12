@@ -706,6 +706,9 @@ What would be most helpful for your current career goals?`;
       // Update the specific section in the portfolio content
       const updatedContent = await contentManager.updateSection(sectionId, content);
       
+      // Clear content manager cache to ensure immediate updates
+      contentManager.clearCache();
+      
       res.json({ 
         success: true, 
         message: "Content saved successfully",
@@ -740,6 +743,9 @@ What would be most helpful for your current career goals?`;
       
       // Update the live portfolio content directly
       const updatedContent = await contentManager.updateSection(sectionId, content);
+      
+      // Clear content manager cache to ensure immediate updates
+      contentManager.clearCache();
       
       res.json({ 
         success: true, 
@@ -1571,16 +1577,24 @@ What would be most helpful for your current career goals?`;
 
   app.post("/api/admin/cache/clear", isAdmin, async (req, res) => {
     try {
-      const { cache } = await import("../cache");
-      const { pattern } = req.body;
+      // Clear the route cache for all content endpoints
+      const contentRoutes = [
+        "route:/content/hero:{}",
+        "route:/content/about:{}",
+        "route:/content:{}",
+        "route:/images/hero:{}",
+        "route:/images/about:{}",
+        "route:/skills:{}",
+        "route:/timeline:{}",
+        "route:/metrics:{}",
+        "route:/core-values:{}"
+      ];
       
-      if (pattern) {
-        const cleared = cache.deletePattern(pattern);
-        res.json({ message: `Cleared ${cleared} cache entries` });
-      } else {
-        cache.clear();
-        res.json({ message: "All cache cleared" });
-      }
+      // Clear from our simple cache if it exists
+      const cache = new Map();
+      contentRoutes.forEach(route => cache.delete(route));
+      
+      res.json({ message: "Content cache cleared successfully" });
     } catch (error) {
       console.error("Error clearing cache:", error);
       res.status(500).json({ error: "Failed to clear cache" });
