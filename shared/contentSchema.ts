@@ -48,10 +48,11 @@ export const experienceContentSchema = z.object({
   experiences: z.array(experienceItemSchema),
 });
 
-// Case Study Schema
+// Enhanced Case Study Schema with Technical Depth & Visual Storytelling
 export const caseStudySchema = z.object({
   id: z.number(),
   title: z.string().min(1, "Case study title is required"),
+  slug: z.string().optional(),
   status: z.enum(["draft", "published"]),
   challenge: z.string().min(1, "Challenge description is required"),
   approach: z.string().min(1, "Approach description is required"),
@@ -61,6 +62,41 @@ export const caseStudySchema = z.object({
   technologies: z.array(z.string()).min(1, "At least one technology is required"),
   featured: z.boolean().default(false),
   imageUrl: z.string().optional(),
+  heroUrl: z.string().optional(),
+  
+  // Technical Depth Enhancement
+  technicalDetails: z.object({
+    modelArchitecture: z.string().optional(),
+    performanceMetrics: z.array(z.object({
+      metric: z.string(),
+      value: z.string(),
+      improvement: z.string().optional()
+    })).optional(),
+    deploymentStrategy: z.string().optional(),
+    complianceFramework: z.string().optional(),
+    systemArchitectureUrl: z.string().optional()
+  }).optional(),
+  
+  // Visual Storytelling Elements
+  visualElements: z.object({
+    processFlowDiagramUrl: z.string().optional(),
+    beforeAfterComparison: z.object({
+      beforeImage: z.string(),
+      afterImage: z.string(),
+      improvementMetric: z.string()
+    }).optional(),
+    interactiveDemo: z.string().optional(),
+    screenshotGallery: z.array(z.string()).optional()
+  }).optional(),
+  
+  // Cross-Cultural & Regional Adaptation
+  crossCulturalElements: z.object({
+    targetRegions: z.array(z.string()).optional(),
+    regulatoryCompliance: z.array(z.string()).optional(),
+    culturalAdaptations: z.string().optional(),
+    localMarketInsights: z.string().optional()
+  }).optional(),
+  
   createdAt: z.string(),
   updatedAt: z.string(),
 });

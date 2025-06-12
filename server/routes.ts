@@ -112,6 +112,63 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Claude-powered Case Study Generator endpoint (admin only)
+  app.post("/api/admin/generate-case-study", isAdmin, async (req, res) => {
+    try {
+      const { title, challenge, impact, metrics, technologies } = req.body;
+      
+      const prompt = `As an AI Product Leader expert, help enhance this case study with technical depth and visual storytelling elements:
+
+Title: ${title}
+Challenge: ${challenge}
+Impact: ${impact}
+Key Metrics: ${metrics?.join(', ')}
+Technologies: ${technologies?.join(', ')}
+
+Please provide a comprehensive case study enhancement that includes:
+
+1. Technical Architecture Details:
+   - Model selection rationale
+   - Performance optimization strategies
+   - Deployment considerations
+   - Compliance framework integration
+
+2. Visual Storytelling Suggestions:
+   - Process flow diagram descriptions
+   - Before/after comparison metrics
+   - Interactive demo concepts
+   - Screenshot gallery organization
+
+3. Cross-Cultural Adaptations:
+   - Regional compliance considerations
+   - Cultural adaptation strategies
+   - Local market insights
+   - Regulatory navigation approaches
+
+Format the response as structured JSON with sections for technicalDetails, visualElements, and crossCulturalElements.`;
+
+      const response = await anthropic.messages.create({
+        model: "claude-3-sonnet-20241022",
+        max_tokens: 2000,
+        messages: [{ role: "user", content: prompt }]
+      });
+
+      const enhancedContent = (response.content[0] as any).text || 'Enhancement generated successfully';
+      
+      res.json({
+        success: true,
+        enhancedContent,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error("Error generating enhanced case study:", error);
+      res.status(500).json({ 
+        success: false, 
+        message: "Failed to generate enhanced case study content" 
+      });
+    }
+  });
+
   // AI Assistant endpoint (admin only)
   app.post("/api/admin/ai-assistant", isAdmin, async (req, res) => {
     try {
