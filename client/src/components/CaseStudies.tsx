@@ -23,8 +23,8 @@ export default function CaseStudies() {
         { value: "50%", label: "Process Reduction" },
         { value: "$110K", label: "Funding Secured" },
       ],
-      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=600",
-      imageAlt: "Enterprise software interface showing compliance monitoring dashboard",
+      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1200&h=600",
+      imageAlt: "AI compliance platform dashboard showing real-time regulatory monitoring for Malaysian banking sector",
       reverse: false,
     },
     {
@@ -46,8 +46,8 @@ export default function CaseStudies() {
         { value: "10+", label: "Enterprise Clients" },
         { value: "150%", label: "Team Growth" },
       ],
-      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=600",
-      imageAlt: "Data visualization charts showing AI vision platform analytics",
+      image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=600",
+      imageAlt: "Enterprise AI vision platform dashboard with computer vision analytics and B2B client metrics",
       reverse: true,
     },
     {
@@ -69,8 +69,8 @@ export default function CaseStudies() {
         { value: "70%", label: "Query Automation" },
         { value: "35%", label: "Cost Reduction" },
       ],
-      image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=600",
-      imageAlt: "AI customer support interface showing multilingual chat capabilities",
+      image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=600",
+      imageAlt: "RAG AI system interface displaying multilingual customer support automation with cultural localization features",
       reverse: false,
     },
   ];
