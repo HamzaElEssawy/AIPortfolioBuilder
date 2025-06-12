@@ -35,10 +35,10 @@ app.use(performanceMiddleware);
 app.use('/api/portfolio', cacheMiddleware(300)); // 5 minutes
 app.use('/api/seo', cacheMiddleware(600)); // 10 minutes
 
-// Rate limiting
+// Rate limiting - More generous for portfolio browsing
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  max: 1000, // Much more generous for portfolio browsing
   message: {
     error: "Too many requests from this IP, please try again later.",
     retryAfter: "15 minutes"
@@ -49,7 +49,7 @@ const limiter = rateLimit({
 
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 50, // limit each IP to 50 API requests per windowMs
+  max: 500, // More reasonable for admin dashboard usage
   message: {
     error: "Too many API requests from this IP, please try again later.",
     retryAfter: "15 minutes"
