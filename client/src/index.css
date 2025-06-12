@@ -1,0 +1,148 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(215, 16%, 17%);
+  --muted: hsl(213, 27%, 84%);
+  --muted-foreground: hsl(215, 16%, 47%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(215, 16%, 17%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(215, 16%, 17%);
+  --border: hsl(214, 32%, 91%);
+  --input: hsl(214, 32%, 91%);
+  --primary: hsl(213, 71%, 31%);
+  --primary-foreground: hsl(210, 40%, 98%);
+  --secondary: hsl(210, 40%, 96%);
+  --secondary-foreground: hsl(222, 84%, 5%);
+  --accent: hsl(210, 40%, 96%);
+  --accent-foreground: hsl(222, 84%, 5%);
+  --destructive: hsl(0, 84%, 60%);
+  --destructive-foreground: hsl(210, 40%, 98%);
+  --ring: hsl(215, 16%, 17%);
+  --radius: 0.5rem;
+  
+  /* Custom Portfolio Colors */
+  --navy: hsl(213, 71%, 31%);
+  --emerald: hsl(155, 84%, 44%);
+  --warm-orange: hsl(18, 84%, 49%);
+  --light-gray: hsl(210, 40%, 98%);
+  --dark-charcoal: hsl(215, 16%, 17%);
+}
+
+.dark {
+  --background: hsl(224, 71%, 4%);
+  --foreground: hsl(213, 31%, 91%);
+  --muted: hsl(223, 47%, 11%);
+  --muted-foreground: hsl(215, 14%, 65%);
+  --popover: hsl(224, 71%, 4%);
+  --popover-foreground: hsl(213, 31%, 91%);
+  --card: hsl(224, 71%, 4%);
+  --card-foreground: hsl(213, 31%, 91%);
+  --border: hsl(216, 34%, 17%);
+  --input: hsl(216, 34%, 17%);
+  --primary: hsl(213, 71%, 31%);
+  --primary-foreground: hsl(210, 40%, 98%);
+  --secondary: hsl(222, 84%, 5%);
+  --secondary-foreground: hsl(210, 40%, 98%);
+  --accent: hsl(216, 34%, 17%);
+  --accent-foreground: hsl(210, 40%, 98%);
+  --destructive: hsl(0, 63%, 31%);
+  --destructive-foreground: hsl(210, 40%, 98%);
+  --ring: hsl(216, 34%, 17%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    font-family: 'Source Sans Pro', sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+@layer utilities {
+  .bg-navy {
+    background-color: hsl(var(--navy));
+  }
+  
+  .bg-emerald {
+    background-color: hsl(var(--emerald));
+  }
+  
+  .bg-warm-orange {
+    background-color: hsl(var(--warm-orange));
+  }
+  
+  .bg-light-gray {
+    background-color: hsl(var(--light-gray));
+  }
+  
+  .bg-dark-charcoal {
+    background-color: hsl(var(--dark-charcoal));
+  }
+  
+  .text-navy {
+    color: hsl(var(--navy));
+  }
+  
+  .text-emerald {
+    color: hsl(var(--emerald));
+  }
+  
+  .text-warm-orange {
+    color: hsl(var(--warm-orange));
+  }
+  
+  .text-light-gray {
+    color: hsl(var(--light-gray));
+  }
+  
+  .text-dark-charcoal {
+    color: hsl(var(--dark-charcoal));
+  }
+  
+  .border-navy {
+    border-color: hsl(var(--navy));
+  }
+  
+  .border-emerald {
+    border-color: hsl(var(--emerald));
+  }
+  
+  .border-warm-orange {
+    border-color: hsl(var(--warm-orange));
+  }
+  
+  .hover\:bg-navy:hover {
+    background-color: hsl(var(--navy));
+  }
+  
+  .hover\:bg-emerald:hover {
+    background-color: hsl(var(--emerald));
+  }
+  
+  .hover\:bg-warm-orange:hover {
+    background-color: hsl(var(--warm-orange));
+  }
+  
+  .hover\:text-navy:hover {
+    color: hsl(var(--navy));
+  }
+  
+  .hover\:text-emerald:hover {
+    color: hsl(var(--emerald));
+  }
+  
+  .hover\:text-warm-orange:hover {
+    color: hsl(var(--warm-orange));
+  }
+}
