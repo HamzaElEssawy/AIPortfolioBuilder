@@ -53,7 +53,17 @@ export default function SEOManager() {
 
   const currentPageSEO = seoSettings.find(s => s.page === selectedPage) || { 
     ...defaultSEOSettings, 
-    page: selectedPage 
+    page: selectedPage,
+    title: "",
+    description: "",
+    keywords: [],
+    ogTitle: "",
+    ogDescription: "",
+    ogImage: "",
+    twitterTitle: "",
+    twitterDescription: "",
+    twitterImage: "",
+    robotsDirective: "index,follow"
   };
 
   const [formData, setFormData] = useState<SEOSettings>({
@@ -174,7 +184,17 @@ export default function SEOManager() {
                     setSelectedPage(page.value);
                     const pageSEO = seoSettings.find(s => s.page === page.value) || {
                       ...defaultSEOSettings,
-                      page: page.value
+                      page: page.value,
+                      title: "",
+                      description: "",
+                      keywords: [],
+                      ogTitle: "",
+                      ogDescription: "",
+                      ogImage: "",
+                      twitterTitle: "",
+                      twitterDescription: "",
+                      twitterImage: "",
+                      robotsDirective: "index,follow"
                     };
                     setFormData({
                       ...pageSEO,

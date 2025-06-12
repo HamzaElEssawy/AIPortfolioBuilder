@@ -1211,6 +1211,85 @@ What would be most helpful for your current career goals?`;
     }
   });
 
+  // SEO Settings endpoints
+  app.get("/api/admin/seo-settings", isAdmin, async (req, res) => {
+    try {
+      const seoSettings = await db.select().from(schema.seoSettings);
+      res.json(seoSettings);
+    } catch (error) {
+      console.error("Error fetching SEO settings:", error);
+      res.status(500).json({ error: "Failed to fetch SEO settings" });
+    }
+  });
+
+  app.post("/api/admin/seo-settings", isAdmin, async (req, res) => {
+    try {
+      const validatedData = req.body;
+      
+      const result = await db
+        .insert(schema.seoSettings)
+        .values({
+          page: validatedData.page,
+          title: validatedData.title,
+          description: validatedData.description,
+          keywords: validatedData.keywords || [],
+          ogTitle: validatedData.ogTitle,
+          ogDescription: validatedData.ogDescription,
+          ogImage: validatedData.ogImage,
+          twitterTitle: validatedData.twitterTitle,
+          twitterDescription: validatedData.twitterDescription,
+          twitterImage: validatedData.twitterImage,
+          canonicalUrl: validatedData.canonicalUrl,
+          robotsDirective: validatedData.robotsDirective || 'index,follow',
+          structuredData: validatedData.structuredData,
+        })
+        .onConflictDoUpdate({
+          target: schema.seoSettings.page,
+          set: {
+            title: validatedData.title,
+            description: validatedData.description,
+            keywords: validatedData.keywords || [],
+            ogTitle: validatedData.ogTitle,
+            ogDescription: validatedData.ogDescription,
+            ogImage: validatedData.ogImage,
+            twitterTitle: validatedData.twitterTitle,
+            twitterDescription: validatedData.twitterDescription,
+            twitterImage: validatedData.twitterImage,
+            canonicalUrl: validatedData.canonicalUrl,
+            robotsDirective: validatedData.robotsDirective || 'index,follow',
+            structuredData: validatedData.structuredData,
+            updatedAt: new Date(),
+          },
+        })
+        .returning();
+
+      res.json(result[0]);
+    } catch (error) {
+      console.error("Error updating SEO settings:", error);
+      res.status(500).json({ error: "Failed to update SEO settings" });
+    }
+  });
+
+  app.get("/api/seo/:page", async (req, res) => {
+    try {
+      const page = req.params.page;
+      const seoData = await db
+        .select()
+        .from(schema.seoSettings)
+        .where(eq(schema.seoSettings.page, page))
+        .limit(1);
+
+      if (seoData.length === 0) {
+        return res.status(404).json({ error: "SEO settings not found for this page" });
+      }
+
+      res.json(seoData[0]);
+    } catch (error) {
+      console.error("Error fetching page SEO:", error);
+      res.status(500).json({ error: "Failed to fetch SEO data" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
