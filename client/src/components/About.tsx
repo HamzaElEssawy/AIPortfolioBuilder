@@ -1,163 +1,198 @@
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { MapPin, Globe, Users, Award, Quote } from "lucide-react";
 
 export default function About() {
-  const expertise = [
-    {
-      title: "Cross-Cultural Leadership",
-      description: "MENA & Southeast Asia expertise",
-    },
-    {
-      title: "Regulatory Compliance",
-      description: "Banking & fintech specialization",
-    },
-    {
-      title: "Startup to Scale",
-      description: "0→1 product development",
-    },
-    {
-      title: "AI/ML Innovation",
-      description: "RAG, LLMs, Computer Vision",
-    },
+  const skills = [
+    { name: "AI/ML Product Strategy", level: 95 },
+    { name: "Cross-Cultural Leadership", level: 90 },
+    { name: "Regulatory Compliance", level: 88 },
+    { name: "Enterprise Sales", level: 85 }
   ];
 
-  const affiliations = [
+  const networkAffiliations = [
+    { name: "Antler Malaysia", role: "Entrepreneur in Residence", logo: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=60&h=60" },
+    { name: "AI Tinkerers KL", role: "Community Leader", logo: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?ixlib=rb-4.0.3&auto=format&fit=crop&w=60&h=60" },
+    { name: "Malaysia AI Society", role: "Product Advisor", logo: "https://images.unsplash.com/photo-1677442136019-21780ecad995?ixlib=rb-4.0.3&auto=format&fit=crop&w=60&h=60" }
+  ];
+
+  const timeline = [
     {
-      name: "Antler Malaysia",
-      logo: "https://images.unsplash.com/photo-1611224923853-80b023f02d71?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=100&h=40",
+      year: "2023-Present",
+      title: "AI Product Leader & Entrepreneur",
+      organization: "Antler Malaysia, AI Tinkerers KL",
+      color: "bg-emerald"
     },
     {
-      name: "AI Tinkerers KL",
-      logo: null,
+      year: "2020-2023",
+      title: "Enterprise AI Platform Lead",
+      organization: "Tapway - Computer Vision & No-Code AI",
+      color: "bg-warm-orange"
     },
+    {
+      year: "2018-2020",
+      title: "AI Product Manager",
+      organization: "Regional Fintech & Banking Solutions",
+      color: "bg-navy"
+    },
+    {
+      year: "2015-2018",
+      title: "Technical Product Foundation",
+      organization: "Engineering to Product Transition",
+      color: "bg-gray-400"
+    }
   ];
 
   return (
-    <section id="about" className="py-20 bg-light-gray">
-      <div className="max-w-6xl mx-auto px-6">
-        <div className="text-center mb-16">
-          <h2 className="font-bold text-4xl text-navy mb-4">Professional Journey</h2>
-          <p className="text-xl text-dark-charcoal max-w-3xl mx-auto">
+    <section id="about" className="py-24 bg-light-gray">
+      <div className="max-w-6xl mx-auto px-8">
+        <div className="text-center mb-20">
+          <h2 className="text-navy mb-6">About Hamza</h2>
+          <p className="text-xl text-dark-charcoal max-w-3xl mx-auto leading-relaxed">
             Transforming AI concepts into enterprise solutions across diverse markets
           </p>
         </div>
         
-        <div className="grid lg:grid-cols-2 gap-16 items-start">
+        {/* Two-column layout: Photo left, narrative right */}
+        <div className="grid lg:grid-cols-2 gap-16 items-start mb-20">
+          {/* Left Column - Photo */}
           <div>
             <img 
-              src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=500" 
-              alt="Professional headshot of Hamza El Essawy" 
+              src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&h=600" 
+              alt="Hamza El Essawy - Professional Portrait" 
               className="rounded-2xl shadow-lg w-full mb-8"
             />
             
             {/* Career Timeline Component */}
-            <div className="bg-white rounded-2xl p-8 shadow-lg">
-              <h3 className="text-navy mb-6">Career Timeline</h3>
-              <div className="space-y-8">
-                <div className="flex items-start">
-                  <div className="w-4 h-4 bg-emerald rounded-full mt-2 mr-6 flex-shrink-0"></div>
-                  <div>
-                    <div className="font-semibold text-navy text-lg">2023-Present</div>
-                    <div className="text-dark-charcoal font-medium">AI Product Leader & Entrepreneur</div>
-                    <div className="caption text-gray-500 mt-1">Antler Malaysia, AI Tinkerers KL</div>
-                  </div>
+            <Card className="bg-white p-8 shadow-sm border-0">
+              <CardContent className="p-0">
+                <h3 className="text-navy mb-8">Career Timeline</h3>
+                <div className="space-y-8">
+                  {timeline.map((milestone, index) => (
+                    <div key={index} className="flex items-start gap-6">
+                      <div className={`w-4 h-4 ${milestone.color} rounded-full mt-2 flex-shrink-0`}></div>
+                      <div>
+                        <div className="font-semibold text-navy text-lg mb-1">{milestone.year}</div>
+                        <div className="text-dark-charcoal font-medium mb-1">{milestone.title}</div>
+                        <div className="text-sm text-gray-600">{milestone.organization}</div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-                <div className="flex items-start">
-                  <div className="w-4 h-4 bg-warm-orange rounded-full mt-2 mr-6 flex-shrink-0"></div>
-                  <div>
-                    <div className="font-semibold text-navy text-lg">2020-2023</div>
-                    <div className="text-dark-charcoal font-medium">Enterprise AI Platform Lead</div>
-                    <div className="caption text-gray-500 mt-1">Tapway - Computer Vision & No-Code AI</div>
-                  </div>
-                </div>
-                <div className="flex items-start">
-                  <div className="w-4 h-4 bg-navy rounded-full mt-2 mr-6 flex-shrink-0"></div>
-                  <div>
-                    <div className="font-semibold text-navy text-lg">2018-2020</div>
-                    <div className="text-dark-charcoal font-medium">AI Product Manager</div>
-                    <div className="caption text-gray-500 mt-1">Fintech & Banking Solutions</div>
-                  </div>
-                </div>
-                <div className="flex items-start">
-                  <div className="w-4 h-4 bg-gray-400 rounded-full mt-2 mr-6 flex-shrink-0"></div>
-                  <div>
-                    <div className="font-semibold text-navy text-lg">2015-2018</div>
-                    <div className="text-dark-charcoal font-medium">Technical Product Foundation</div>
-                    <div className="caption text-gray-500 mt-1">Engineering to Product Transition</div>
-                  </div>
-                </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
           </div>
-          
+
+          {/* Right Column - Narrative */}
           <div className="space-y-8">
-            <div>
-              <h3 className="font-semibold text-2xl text-navy mb-4">Leadership Philosophy</h3>
-              <p className="text-dark-charcoal leading-relaxed mb-6">
-                "Innovation thrives at the intersection of technical excellence and market understanding. My approach combines deep AI expertise with cross-cultural leadership to deliver solutions that scale globally."
+            {/* Leadership Philosophy Quote */}
+            <Card className="bg-white p-8 shadow-sm border-0 border-l-4 border-l-emerald">
+              <CardContent className="p-0">
+                <div className="flex items-start gap-4 mb-4">
+                  <Quote className="h-8 w-8 text-emerald flex-shrink-0" />
+                  <h3 className="text-navy">Leadership Philosophy</h3>
+                </div>
+                <p className="text-dark-charcoal text-lg leading-relaxed italic">
+                  "AI product success isn't just about cutting-edge technology—it's about understanding cultural nuances, regulatory landscapes, and human needs across diverse markets. True innovation happens when we bridge technical excellence with deep market empathy."
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Professional Narrative */}
+            <div className="space-y-6">
+              <p className="text-dark-charcoal text-lg leading-relaxed">
+                With over 7 years of experience spanning the MENA region and Southeast Asia, I specialize in transforming complex AI concepts into scalable enterprise solutions. My journey began in fintech, where I discovered the power of AI to solve real-world regulatory challenges.
+              </p>
+              
+              <p className="text-dark-charcoal text-lg leading-relaxed">
+                At Tapway, I led the development of enterprise AI vision platforms, scaling from startup to serving 10+ major enterprise clients. This experience taught me that successful AI products require not just technical sophistication, but deep understanding of enterprise needs and cultural contexts.
+              </p>
+              
+              <p className="text-dark-charcoal text-lg leading-relaxed">
+                Currently, as an Entrepreneur in Residence at Antler Malaysia, I'm building AI compliance solutions for the fintech sector, having secured $110K+ in early funding. My focus remains on creating AI products that are both technically robust and culturally intelligent.
               </p>
             </div>
-            
-            <div className="grid md:grid-cols-2 gap-6">
-              {expertise.map((item, index) => (
-                <Card key={index} className="p-6 bg-white shadow-sm">
-                  <CardContent className="p-0">
-                    <h4 className="font-semibold text-navy mb-2">{item.title}</h4>
-                    <p className="text-sm text-dark-charcoal">{item.description}</p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-            
-            {/* Professional Network & Recognition - AC3.7 */}
-            <div className="space-y-4">
-              <div className="bg-white px-6 py-4 rounded-lg shadow-sm border-l-4 border-emerald">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-dark-charcoal">LinkedIn Network</span>
-                  <span className="font-bold text-emerald">8,741+ Followers</span>
-                </div>
-                <div className="text-xs text-gray-500 mt-1">AI Product Leadership Thought Leader</div>
-              </div>
-              
-              <div className="flex flex-wrap gap-4">
-                {affiliations.map((affiliation, index) => (
-                  <div key={index} className="flex items-center bg-white px-4 py-2 rounded-lg shadow-sm">
-                    {affiliation.logo ? (
-                      <img src={affiliation.logo} alt={`${affiliation.name} logo`} className="w-8 h-8 mr-2" />
-                    ) : (
-                      <div className="w-8 h-8 bg-emerald rounded-full mr-2 flex items-center justify-center">
-                        <span className="text-white text-xs font-bold">AI</span>
-                      </div>
-                    )}
-                    <span className="text-sm font-medium text-dark-charcoal">{affiliation.name}</span>
+
+            {/* Skills Grid */}
+            <div>
+              <h4 className="text-navy text-xl font-semibold mb-6">Core Expertise</h4>
+              <div className="space-y-4">
+                {skills.map((skill, index) => (
+                  <div key={index}>
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="font-medium text-dark-charcoal">{skill.name}</span>
+                      <span className="text-emerald font-semibold">{skill.level}%</span>
+                    </div>
+                    <Progress value={skill.level} className="h-2" />
                   </div>
                 ))}
               </div>
             </div>
-            
-            {/* Geographic Experience Map - AC3.5 */}
-            <div className="bg-white rounded-2xl p-6 shadow-lg">
-              <h4 className="font-semibold text-xl text-navy mb-6">Cross-Cultural Leadership</h4>
-              <div className="space-y-4">
-                <div className="flex items-center p-4 bg-gradient-to-r from-emerald/10 to-emerald/5 rounded-lg">
-                  <div className="w-12 h-12 bg-emerald rounded-full flex items-center justify-center mr-4">
-                    <span className="text-white font-bold text-sm">MENA</span>
-                  </div>
-                  <div>
-                    <div className="font-semibold text-navy">Middle East & North Africa</div>
-                    <div className="text-sm text-dark-charcoal">Native Arabic • Cultural Expertise • Regional Markets</div>
-                  </div>
+          </div>
+        </div>
+
+        {/* Geographic Expertise Map */}
+        <div className="mb-16">
+          <h3 className="text-navy mb-8 text-center">Geographic Expertise</h3>
+          <div className="grid md:grid-cols-2 gap-8">
+            <Card className="bg-white p-8 shadow-sm border-0">
+              <CardContent className="p-0">
+                <div className="flex items-center gap-4 mb-4">
+                  <MapPin className="h-8 w-8 text-emerald" />
+                  <h4 className="text-navy text-xl font-semibold">MENA Region</h4>
                 </div>
-                <div className="flex items-center p-4 bg-gradient-to-r from-warm-orange/10 to-warm-orange/5 rounded-lg">
-                  <div className="w-12 h-12 bg-warm-orange rounded-full flex items-center justify-center mr-4">
-                    <span className="text-white font-bold text-sm">SEA</span>
-                  </div>
-                  <div>
-                    <div className="font-semibold text-navy">Southeast Asia</div>
-                    <div className="text-sm text-dark-charcoal">Malaysia Base • Regional Understanding • Enterprise Clients</div>
-                  </div>
+                <p className="text-dark-charcoal mb-4 leading-relaxed">
+                  Native Arabic speaker with deep cultural understanding and extensive experience in Gulf and North African fintech markets.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {["UAE", "Saudi Arabia", "Egypt", "Jordan", "Lebanon"].map((country) => (
+                    <Badge key={country} variant="secondary" className="bg-light-gray text-dark-charcoal">
+                      {country}
+                    </Badge>
+                  ))}
                 </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-white p-8 shadow-sm border-0">
+              <CardContent className="p-0">
+                <div className="flex items-center gap-4 mb-4">
+                  <Globe className="h-8 w-8 text-emerald" />
+                  <h4 className="text-navy text-xl font-semibold">Southeast Asia</h4>
+                </div>
+                <p className="text-dark-charcoal mb-4 leading-relaxed">
+                  Malaysia-based with comprehensive understanding of regional AI adoption patterns, regulatory frameworks, and enterprise dynamics.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {["Malaysia", "Singapore", "Thailand", "Indonesia", "Philippines"].map((country) => (
+                    <Badge key={country} variant="secondary" className="bg-light-gray text-dark-charcoal">
+                      {country}
+                    </Badge>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* Network Affiliations */}
+        <div>
+          <h3 className="text-navy mb-8 text-center">Network Affiliations</h3>
+          <div className="grid md:grid-cols-3 gap-8">
+            {networkAffiliations.map((affiliation, index) => (
+              <Card key={index} className="bg-white p-6 shadow-sm border-0 text-center">
+                <CardContent className="p-0">
+                  <img 
+                    src={affiliation.logo} 
+                    alt={`${affiliation.name} logo`}
+                    className="w-16 h-16 rounded-full mx-auto mb-4 object-cover"
+                  />
+                  <h4 className="font-semibold text-navy mb-2">{affiliation.name}</h4>
+                  <p className="text-dark-charcoal">{affiliation.role}</p>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       </div>
