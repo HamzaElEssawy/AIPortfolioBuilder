@@ -136,7 +136,7 @@ export default function TimelineManager() {
                 <Label>Order Index</Label>
                 <Input
                   type="number"
-                  value={newEntry.orderIndex}
+                  value={newEntry.orderIndex?.toString() || ""}
                   onChange={(e) => setNewEntry({ ...newEntry, orderIndex: parseInt(e.target.value) || 0 })}
                 />
               </div>
@@ -171,7 +171,7 @@ export default function TimelineManager() {
 
             <div className="flex items-center space-x-2">
               <Switch
-                checked={newEntry.highlight}
+                checked={newEntry.highlight || false}
                 onCheckedChange={(checked) => setNewEntry({ ...newEntry, highlight: checked })}
               />
               <Label>Highlight as current role</Label>

@@ -204,7 +204,7 @@ export default function PortfolioImageManager() {
                   <Input
                     id="orderIndex"
                     type="number"
-                    value={newImage.orderIndex}
+                    value={newImage.orderIndex?.toString() || ""}
                     onChange={(e) => setNewImage({...newImage, orderIndex: parseInt(e.target.value) || 0})}
                     min="0"
                   />
@@ -398,7 +398,7 @@ export default function PortfolioImageManager() {
                   <Input
                     id="edit-orderIndex"
                     type="number"
-                    value={editingImage.orderIndex}
+                    value={editingImage.orderIndex?.toString() || ""}
                     onChange={(e) => setEditingImage({...editingImage, orderIndex: parseInt(e.target.value) || 0})}
                     min="0"
                   />
@@ -407,7 +407,7 @@ export default function PortfolioImageManager() {
                 <div className="flex items-center space-x-2 mt-6">
                   <Switch
                     id="edit-isActive"
-                    checked={editingImage.isActive}
+                    checked={editingImage.isActive || false}
                     onCheckedChange={(checked) => setEditingImage({...editingImage, isActive: checked})}
                   />
                   <Label htmlFor="edit-isActive">Active</Label>

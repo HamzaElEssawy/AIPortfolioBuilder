@@ -195,7 +195,7 @@ export default function PortfolioMetricsManager() {
                 <Input
                   id="displayOrder"
                   type="number"
-                  value={newMetric.displayOrder}
+                  value={newMetric.displayOrder?.toString() || "0"}
                   onChange={(e) => setNewMetric({...newMetric, displayOrder: parseInt(e.target.value) || 0})}
                   min="0"
                   placeholder="0"
@@ -339,7 +339,7 @@ export default function PortfolioMetricsManager() {
                 <Input
                   id="edit-displayOrder"
                   type="number"
-                  value={editingMetric.displayOrder || 0}
+                  value={editingMetric.displayOrder?.toString() || "0"}
                   onChange={(e) => setEditingMetric({...editingMetric, displayOrder: parseInt(e.target.value) || 0})}
                   min="0"
                 />
