@@ -87,7 +87,7 @@ export default function CaseStudies() {
             const isReverse = index % 2 === 1;
             
             return (
-              <Card key={study.id} className="overflow-hidden shadow-card hover-lift border-0 bg-white">
+              <Card key={study.id} className="overflow-hidden floating-card hover-glow border-0">
                 <div className={`grid lg:grid-cols-2 gap-0 ${isReverse ? 'lg:grid-flow-col-dense' : ''}`}>
                   {/* Image Section */}
                   <div className={`relative ${isReverse ? 'lg:col-start-2' : ''}`}>

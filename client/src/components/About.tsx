@@ -65,7 +65,7 @@ export default function About() {
             </div>
             
             {/* Career Timeline */}
-            <Card className="bg-white shadow-card border-0">
+            <Card className="floating-card border-0">
               <CardContent className="p-8">
                 <h3 className="text-xl font-bold text-navy mb-8 flex items-center gap-3">
                   <div className="w-8 h-8 bg-secondary-green rounded-full flex items-center justify-center">
@@ -97,7 +97,7 @@ export default function About() {
           {/* Right Column - Narrative & Content */}
           <div className="space-y-8">
             {/* Leadership Philosophy Quote */}
-            <Card className="bg-white shadow-card border-0 border-l-4 border-l-secondary-green">
+            <Card className="glass-card border-0 border-l-4 border-l-secondary-green">
               <CardContent className="p-8">
                 <div className="flex items-start gap-4 mb-6">
                   <Quote className="h-8 w-8 text-secondary-green flex-shrink-0" />
@@ -125,7 +125,7 @@ export default function About() {
             </div>
 
             {/* Core Values & Approach */}
-            <Card className="bg-white shadow-card border-0">
+            <Card className="floating-card border-0">
               <CardContent className="p-8">
                 <h4 className="text-xl font-bold text-navy mb-6">Core Values & Approach</h4>
                 <div className="grid gap-6">
@@ -168,7 +168,7 @@ export default function About() {
         <div>
           <h3 className="text-2xl font-bold text-navy mb-8 text-center">Geographic Expertise</h3>
           <div className="grid md:grid-cols-2 gap-8">
-            <Card className="bg-white shadow-card border-0">
+            <Card className="floating-card border-0">
               <CardContent className="p-8">
                 <div className="flex items-center gap-4 mb-6">
                   <div className="w-12 h-12 bg-secondary-green/10 rounded-xl flex items-center justify-center">
@@ -189,7 +189,7 @@ export default function About() {
               </CardContent>
             </Card>
 
-            <Card className="bg-white shadow-card border-0">
+            <Card className="floating-card border-0">
               <CardContent className="p-8">
                 <div className="flex items-center gap-4 mb-6">
                   <div className="w-12 h-12 bg-accent-orange/10 rounded-xl flex items-center justify-center">

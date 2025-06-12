@@ -228,7 +228,7 @@ export default function SkillsShowcase() {
         {/* Skills Grid */}
         <div className="grid md:grid-cols-2 gap-6 mb-16">
           {skills[selectedCategory as keyof typeof skills].map((skill, index) => (
-            <Card key={skill.name} className="bg-white shadow-card hover-lift border-0 group">
+            <Card key={skill.name} className="floating-card hover-glow border-0 group">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
                   <h4 className="font-bold text-navy text-lg group-hover:text-secondary-green transition-colors">
@@ -271,7 +271,7 @@ export default function SkillsShowcase() {
           </h3>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {achievements.map((achievement, index) => (
-              <Card key={achievement.title} className="bg-white shadow-card hover-lift border-0 group overflow-hidden">
+              <Card key={achievement.title} className="floating-card hover-glow border-0 group overflow-hidden">
                 <CardContent className="p-6 relative">
                   <div className="absolute top-4 right-4">
                     <Badge className={`${getLevelColor(achievement.level)} border-0 font-semibold`}>
