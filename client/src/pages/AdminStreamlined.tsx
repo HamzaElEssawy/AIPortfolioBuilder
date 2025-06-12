@@ -16,9 +16,15 @@ import CoreValuesManager from "@/components/CoreValuesManager";
 import PortfolioImageManager from "@/components/PortfolioImageManager";
 import PortfolioMetricsManager from "@/components/PortfolioMetricsManager";
 import AIAssistant from "@/components/AIAssistant";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { BulkOperations, ItemSelection, exportToCSV } from "@/components/BulkOperations";
+import { useConfirmationDialog } from "@/components/ConfirmationDialog";
+import { apiRequest } from "@/lib/queryClient";
 
 export default function AdminStreamlined() {
   const { toast } = useToast();
+  const [selectedSubmissions, setSelectedSubmissions] = useState<Set<number>>(new Set());
+  const { dialog, openDialog } = useConfirmationDialog();
   
   // Contact submissions data for analytics
   const { data: submissions = [] } = useQuery<ContactSubmission[]>({
