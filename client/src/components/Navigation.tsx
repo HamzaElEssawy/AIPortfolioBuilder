@@ -26,6 +26,7 @@ export default function Navigation() {
     { label: "About", id: "about" },
     { label: "Case Studies", id: "case-studies" },
     { label: "Skills", id: "skills-showcase" },
+    { label: "Timeline", id: "timeline" },
     { label: "Experience", id: "experience" },
     { label: "Contact", id: "contact" }
   ];
