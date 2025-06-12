@@ -101,6 +101,149 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // AI Assistant endpoint (admin only)
+  app.post("/api/admin/ai-assistant", isAdmin, async (req, res) => {
+    try {
+      const { message, conversationHistory } = req.body;
+      
+      // Enhanced knowledge base context about Hamza's career
+      const knowledgeBaseContext = `You are an AI Career Assistant for Hamza El Essawy, an AI Product Leader and entrepreneur based in Kuala Lumpur, Malaysia. 
+
+HAMZA'S BACKGROUND:
+- AI Product Leader & Entrepreneur (2024-Present): Leading AI product strategy across multiple ventures, mentoring 15+ founders
+- Founder & Product Leader of AI Compliance Startup (2023-2024): Secured $110K+ funding, built platform reducing manual review by 50%
+- Senior Product Manager at Tapway Enterprise AI Platform (2021-2023): Scaled to 10+ enterprise clients, grew team from 8 to 20 engineers
+- AI Product Manager in MENA Fintech (2020-2021): Implemented RAG AI achieving 70% query automation, reduced costs by 35%
+- Product Manager AI/ML in Dubai Fintech (2018-2020): Built foundational expertise in fintech sector
+
+EXPERTISE AREAS:
+- AI/ML product development and strategy
+- Enterprise software scaling
+- Cross-cultural team management
+- Fundraising and startup growth
+- Compliance and risk management systems
+- Multilingual AI systems (15 languages)
+
+CAREER GOALS:
+- Strategic AI leadership roles in established tech companies
+- Continued entrepreneurship in AI compliance and automation
+- Mentoring and advisory positions for AI startups
+- Speaking engagements on AI product management
+
+When providing career advice, reference his actual experience and achievements. Help with resume optimization, interview preparation, career strategy, and portfolio enhancement. Be specific and actionable in your recommendations.`;
+
+      // Prepare conversation context
+      const messages = [
+        { role: "system", content: knowledgeBaseContext },
+        ...conversationHistory.map((msg: any) => ({
+          role: msg.role === 'user' ? 'user' : 'assistant',
+          content: msg.content
+        })),
+        { role: "user", content: message }
+      ];
+
+      // Mock Claude response for now (to be replaced with actual API)
+      const mockResponse = generateMockClaudeResponse(message);
+      
+      res.json({ response: mockResponse });
+    } catch (error) {
+      console.error("AI Assistant error:", error);
+      res.status(500).json({ message: "AI Assistant temporarily unavailable" });
+    }
+  });
+
+  function generateMockClaudeResponse(message: string): string {
+    const lowercaseMessage = message.toLowerCase();
+    
+    if (lowercaseMessage.includes('resume') || lowercaseMessage.includes('cv')) {
+      return `Based on your extensive AI product management background, I recommend emphasizing these key areas for resume optimization:
+
+**Technical Leadership**: Highlight your experience scaling AI platforms (Tapway: 8→20 engineers, 10+ enterprise clients)
+
+**Quantifiable Impact**: Lead with metrics like:
+- $110K+ funding secured for AI compliance startup
+- 70% automation rate in customer query handling
+- 50% reduction in manual review processes
+
+**AI Specialization**: Position yourself as an AI product expert with experience across:
+- Enterprise AI platforms
+- Compliance automation
+- Multilingual AI systems (15 languages)
+- RAG implementations
+
+**Geographic Advantage**: Emphasize your unique position in the Malaysian/SEA AI ecosystem and cross-cultural team management experience.
+
+Would you like me to help optimize your resume for a specific role or industry?`;
+    }
+    
+    if (lowercaseMessage.includes('interview') || lowercaseMessage.includes('preparation')) {
+      return `For interview preparation, let's focus on your strongest differentiators:
+
+**AI Product Strategy Stories**:
+1. Tapway scaling story: How you grew from 8 to 20 engineers while maintaining 99.9% uptime
+2. Compliance startup story: Building from idea to $110K funding with measurable impact
+3. MENA fintech story: Implementing RAG AI for 70% automation across 15 languages
+
+**Common AI PM Interview Topics**:
+- Product roadmap prioritization for AI features
+- Managing technical debt in ML systems
+- Cross-functional collaboration with ML engineers
+- Measuring AI product success metrics
+
+**Your Unique Angles**:
+- Cross-cultural team management (MENA, Malaysia, global)
+- Regulatory compliance expertise (crucial for enterprise AI)
+- Multi-language AI implementation experience
+
+Practice the STAR method with these specific examples. Would you like me to help you prepare for specific types of AI product management interviews?`;
+    }
+    
+    if (lowercaseMessage.includes('career') || lowercaseMessage.includes('strategy')) {
+      return `Based on your trajectory from individual contributor to AI product leader and entrepreneur, here's your strategic positioning:
+
+**Current Strengths**:
+- Proven track record in AI product scaling (technical + business)
+- Entrepreneurial experience with funding success
+- Cross-regional expertise (MENA, SEA markets)
+- Unique positioning in AI compliance (growing market)
+
+**Strategic Career Options**:
+
+1. **Senior AI Product Leader** at established tech companies
+   - Target: Regional tech hubs (Singapore, Tokyo, Seoul)
+   - Leverage: Enterprise scaling experience, cross-cultural leadership
+
+2. **AI Product Leadership** at growing unicorns
+   - Focus: Companies expanding into SEA markets
+   - Value prop: Proven ability to scale teams and products
+
+3. **Continue Entrepreneurship**
+   - Build on AI compliance expertise
+   - Leverage funding track record and mentor network
+
+**Next 6-Month Action Plan**:
+- Strengthen thought leadership (AI compliance content)
+- Expand speaking engagements in AI product management
+- Build relationships with VCs focused on AI startups
+- Consider advisory roles to build portfolio
+
+Which path interests you most for deeper strategic planning?`;
+    }
+    
+    return `I understand you'd like assistance with "${message}". 
+
+As your AI Career Assistant, I can help you with:
+
+🎯 **Resume Optimization**: Tailoring your AI product management experience for specific roles
+📋 **Interview Preparation**: Practicing with your Tapway, compliance startup, and MENA fintech stories  
+🚀 **Career Strategy**: Planning your next move from startup founder to senior AI product leadership
+💼 **Portfolio Enhancement**: Strengthening your case studies and professional positioning
+
+Your background spans AI product leadership across multiple markets with proven scaling success. Let me know which specific area you'd like to focus on, and I'll provide detailed, actionable guidance based on your experience.
+
+What would be most helpful for your current career goals?`;
+  }
+
   // Contact form submission endpoint
   app.post("/api/contact", async (req, res) => {
     try {

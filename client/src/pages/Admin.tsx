@@ -21,10 +21,13 @@ import {
   BarChart3,
   Globe,
   Clock,
-  ArrowUpRight
+  ArrowUpRight,
+  Bot
 } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import type { ContactSubmission } from "@shared/schema";
+import AIAssistant from "@/components/AIAssistant";
+import PortfolioManager from "@/components/PortfolioManager";
 
 export default function Admin() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -148,9 +151,11 @@ export default function Admin() {
 
       <div className="max-w-7xl mx-auto px-8 py-8">
         <Tabs defaultValue="overview" className="space-y-8">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="submissions">Contact Submissions</TabsTrigger>
+            <TabsTrigger value="portfolio">Portfolio Management</TabsTrigger>
+            <TabsTrigger value="ai-assistant">AI Assistant</TabsTrigger>
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
@@ -363,6 +368,11 @@ export default function Admin() {
                 ))
               )}
             </div>
+          </TabsContent>
+
+          {/* AI Assistant Tab */}
+          <TabsContent value="ai-assistant" className="space-y-6">
+            <AIAssistant />
           </TabsContent>
 
           {/* Analytics Tab */}
