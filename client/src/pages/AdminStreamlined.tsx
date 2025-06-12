@@ -9,7 +9,7 @@ import { queryClient } from "@/lib/queryClient";
 import type { ContactSubmission } from "@shared/schema";
 
 // Import the functional components
-import AdvancedContentManager from "@/components/AdvancedContentManager";
+import SimpleContentManager from "@/components/SimpleContentManager";
 import EnhancedCaseStudyEditor from "@/components/EnhancedCaseStudyEditor";
 import TimelineManager from "@/components/TimelineManager";
 import CoreValuesManager from "@/components/CoreValuesManager";
@@ -209,7 +209,7 @@ export default function AdminStreamlined() {
 
           {/* Content Management - Hero and About only */}
           <TabsContent value="content" className="space-y-6">
-            <AdvancedContentManager />
+            <SimpleContentManager />
           </TabsContent>
 
           {/* Case Studies Management */}

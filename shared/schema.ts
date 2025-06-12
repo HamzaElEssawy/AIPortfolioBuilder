@@ -169,7 +169,6 @@ export const insertContentSectionSchema = createInsertSchema(contentSections).om
 export const insertContentVersionSchema = createInsertSchema(contentVersions).omit({
   id: true,
   createdAt: true,
-  publishedAt: true,
 });
 
 export const insertKnowledgeBaseDocumentSchema = createInsertSchema(knowledgeBaseDocuments).omit({

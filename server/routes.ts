@@ -731,9 +731,10 @@ What would be most helpful for your current career goals?`;
         await storage.createContentVersion({
           sectionId,
           content: currentContent,
+          version: 1,
           changeSummary: `Updated ${sectionId} section`,
           createdBy: "admin",
-          publishedAt: new Date().toISOString(),
+          publishedAt: new Date(),
         });
       }
       
@@ -771,9 +772,10 @@ What would be most helpful for your current career goals?`;
       await storage.createContentVersion({
         sectionId,
         content: currentContent,
+        version: 1,
         changeSummary: `Backup before rollback to version ${targetVersion.version}`,
         createdBy: "admin",
-        publishedAt: new Date().toISOString(),
+        publishedAt: new Date(),
       });
       
       // Restore the target version
