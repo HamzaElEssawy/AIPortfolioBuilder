@@ -805,6 +805,193 @@ What would be most helpful for your current career goals?`;
     }
   });
 
+  // Experience/Timeline routes
+  app.get("/api/admin/experience", isAdmin, async (req, res) => {
+    try {
+      const entries = await storage.getExperienceEntries();
+      res.json(entries);
+    } catch (error) {
+      console.error("Error fetching experience entries:", error);
+      res.status(500).json({ message: "Failed to fetch experience entries" });
+    }
+  });
+
+  app.post("/api/admin/experience", isAdmin, async (req, res) => {
+    try {
+      const { insertExperienceEntrySchema } = await import("@shared/schema");
+      const validatedData = insertExperienceEntrySchema.parse(req.body);
+      const entry = await storage.createExperienceEntry(validatedData);
+      res.json(entry);
+    } catch (error) {
+      console.error("Error creating experience entry:", error);
+      res.status(500).json({ message: "Failed to create experience entry" });
+    }
+  });
+
+  app.put("/api/admin/experience/:id", isAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid entry ID" });
+      }
+      const entry = await storage.updateExperienceEntry(id, req.body);
+      res.json(entry);
+    } catch (error) {
+      console.error("Error updating experience entry:", error);
+      res.status(500).json({ message: "Failed to update experience entry" });
+    }
+  });
+
+  app.delete("/api/admin/experience/:id", isAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid entry ID" });
+      }
+      await storage.deleteExperienceEntry(id);
+      res.json({ message: "Experience entry deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting experience entry:", error);
+      res.status(500).json({ message: "Failed to delete experience entry" });
+    }
+  });
+
+  // Skills routes
+  app.get("/api/admin/skills", isAdmin, async (req, res) => {
+    try {
+      const skills = await storage.getSkills();
+      res.json(skills);
+    } catch (error) {
+      console.error("Error fetching skills:", error);
+      res.status(500).json({ message: "Failed to fetch skills" });
+    }
+  });
+
+  app.get("/api/admin/skill-categories", isAdmin, async (req, res) => {
+    try {
+      const categories = await storage.getSkillCategories();
+      res.json(categories);
+    } catch (error) {
+      console.error("Error fetching skill categories:", error);
+      res.status(500).json({ message: "Failed to fetch skill categories" });
+    }
+  });
+
+  app.post("/api/admin/skill-categories", isAdmin, async (req, res) => {
+    try {
+      const { insertSkillCategorySchema } = await import("@shared/schema");
+      const validatedData = insertSkillCategorySchema.parse(req.body);
+      const category = await storage.createSkillCategory(validatedData);
+      res.json(category);
+    } catch (error) {
+      console.error("Error creating skill category:", error);
+      res.status(500).json({ message: "Failed to create skill category" });
+    }
+  });
+
+  app.post("/api/admin/skills", isAdmin, async (req, res) => {
+    try {
+      const { insertSkillSchema } = await import("@shared/schema");
+      const validatedData = insertSkillSchema.parse(req.body);
+      const skill = await storage.createSkill(validatedData);
+      res.json(skill);
+    } catch (error) {
+      console.error("Error creating skill:", error);
+      res.status(500).json({ message: "Failed to create skill" });
+    }
+  });
+
+  // Portfolio Metrics routes
+  app.get("/api/admin/metrics", isAdmin, async (req, res) => {
+    try {
+      const metrics = await storage.getPortfolioMetrics();
+      res.json(metrics);
+    } catch (error) {
+      console.error("Error fetching portfolio metrics:", error);
+      res.status(500).json({ message: "Failed to fetch portfolio metrics" });
+    }
+  });
+
+  app.post("/api/admin/metrics", isAdmin, async (req, res) => {
+    try {
+      const { insertPortfolioMetricSchema } = await import("@shared/schema");
+      const validatedData = insertPortfolioMetricSchema.parse(req.body);
+      const metric = await storage.createPortfolioMetric(validatedData);
+      res.json(metric);
+    } catch (error) {
+      console.error("Error creating portfolio metric:", error);
+      res.status(500).json({ message: "Failed to create portfolio metric" });
+    }
+  });
+
+  app.put("/api/admin/metrics/:id", isAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid metric ID" });
+      }
+      const metric = await storage.updatePortfolioMetric(id, req.body);
+      res.json(metric);
+    } catch (error) {
+      console.error("Error updating portfolio metric:", error);
+      res.status(500).json({ message: "Failed to update portfolio metric" });
+    }
+  });
+
+  app.delete("/api/admin/metrics/:id", isAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid metric ID" });
+      }
+      await storage.deletePortfolioMetric(id);
+      res.json({ message: "Portfolio metric deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting portfolio metric:", error);
+      res.status(500).json({ message: "Failed to delete portfolio metric" });
+    }
+  });
+
+  // Public portfolio API routes for live website consumption
+  app.get("/api/portfolio/timeline", async (req, res) => {
+    try {
+      const entries = await storage.getExperienceEntries();
+      res.json(entries);
+    } catch (error) {
+      console.error("Error fetching portfolio timeline:", error);
+      res.status(500).json({ message: "Failed to fetch timeline" });
+    }
+  });
+
+  app.get("/api/portfolio/skills", async (req, res) => {
+    try {
+      const [categories, skills] = await Promise.all([
+        storage.getSkillCategories(),
+        storage.getSkills()
+      ]);
+      
+      const skillsByCategory = categories.map(category => ({
+        ...category,
+        skills: skills.filter(skill => skill.categoryId === category.id)
+      }));
+      
+      res.json(skillsByCategory);
+    } catch (error) {
+      console.error("Error fetching portfolio skills:", error);
+      res.status(500).json({ message: "Failed to fetch skills" });
+    }
+  });
+
+  app.get("/api/portfolio/metrics", async (req, res) => {
+    try {
+      const metrics = await storage.getPortfolioMetrics();
+      res.json(metrics);
+    } catch (error) {
+      console.error("Error fetching portfolio metrics:", error);
+      res.status(500).json({ message: "Failed to fetch metrics" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

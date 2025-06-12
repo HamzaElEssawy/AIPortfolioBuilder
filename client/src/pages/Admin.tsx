@@ -35,6 +35,7 @@ import EnhancedContentManager from "@/components/EnhancedContentManager";
 import DeploymentRecommendations from "@/components/DeploymentRecommendations";
 import EnhancedCaseStudyEditor from "@/components/EnhancedCaseStudyEditor";
 import VisualHierarchyEnhancer from "@/components/VisualHierarchyEnhancer";
+import TimelineManager from "@/components/TimelineManager";
 
 export default function Admin() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -158,11 +159,12 @@ export default function Admin() {
 
       <div className="max-w-7xl mx-auto px-8 py-8">
         <Tabs defaultValue="overview" className="space-y-8">
-          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-11 text-xs">
+          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-12 text-xs">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="submissions">Contacts</TabsTrigger>
             <TabsTrigger value="content">Content</TabsTrigger>
             <TabsTrigger value="case-studies">Case Studies</TabsTrigger>
+            <TabsTrigger value="timeline">Timeline</TabsTrigger>
             <TabsTrigger value="design-system">Design</TabsTrigger>
             <TabsTrigger value="portfolio">Portfolio</TabsTrigger>
             <TabsTrigger value="knowledge">Knowledge</TabsTrigger>
