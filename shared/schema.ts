@@ -158,6 +158,28 @@ export const insertKnowledgeBaseDocumentSchema = createInsertSchema(knowledgeBas
   uploadedAt: true,
 });
 
+export const insertExperienceEntrySchema = createInsertSchema(experienceEntries).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertSkillCategorySchema = createInsertSchema(skillCategories).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertSkillSchema = createInsertSchema(skills).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertPortfolioMetricSchema = createInsertSchema(portfolioMetrics).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 // Types
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -178,3 +200,15 @@ export type InsertContentVersion = z.infer<typeof insertContentVersionSchema>;
 
 export type KnowledgeBaseDocument = typeof knowledgeBaseDocuments.$inferSelect;
 export type InsertKnowledgeBaseDocument = z.infer<typeof insertKnowledgeBaseDocumentSchema>;
+
+export type ExperienceEntry = typeof experienceEntries.$inferSelect;
+export type InsertExperienceEntry = z.infer<typeof insertExperienceEntrySchema>;
+
+export type SkillCategory = typeof skillCategories.$inferSelect;
+export type InsertSkillCategory = z.infer<typeof insertSkillCategorySchema>;
+
+export type Skill = typeof skills.$inferSelect;
+export type InsertSkill = z.infer<typeof insertSkillSchema>;
+
+export type PortfolioMetric = typeof portfolioMetrics.$inferSelect;
+export type InsertPortfolioMetric = z.infer<typeof insertPortfolioMetricSchema>;

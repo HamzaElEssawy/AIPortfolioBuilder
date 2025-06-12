@@ -6,6 +6,10 @@ import {
   contentSections,
   contentVersions,
   knowledgeBaseDocuments,
+  experienceEntries,
+  skillCategories,
+  skills,
+  portfolioMetrics,
   type User,
   type InsertUser,
   type ContactSubmission,
@@ -20,6 +24,14 @@ import {
   type InsertContentVersion,
   type KnowledgeBaseDocument,
   type InsertKnowledgeBaseDocument,
+  type ExperienceEntry,
+  type InsertExperienceEntry,
+  type SkillCategory,
+  type InsertSkillCategory,
+  type Skill,
+  type InsertSkill,
+  type PortfolioMetric,
+  type InsertPortfolioMetric,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc } from "drizzle-orm";
@@ -66,6 +78,31 @@ export interface IStorage {
   createKnowledgeBaseDocument(doc: InsertKnowledgeBaseDocument): Promise<KnowledgeBaseDocument>;
   updateKnowledgeBaseDocument(id: number, doc: Partial<InsertKnowledgeBaseDocument>): Promise<KnowledgeBaseDocument>;
   deleteKnowledgeBaseDocument(id: number): Promise<void>;
+  
+  // Experience entries
+  getExperienceEntries(): Promise<ExperienceEntry[]>;
+  getExperienceEntry(id: number): Promise<ExperienceEntry | undefined>;
+  createExperienceEntry(entry: InsertExperienceEntry): Promise<ExperienceEntry>;
+  updateExperienceEntry(id: number, entry: Partial<InsertExperienceEntry>): Promise<ExperienceEntry>;
+  deleteExperienceEntry(id: number): Promise<void>;
+  
+  // Skills and categories
+  getSkillCategories(): Promise<SkillCategory[]>;
+  getSkills(): Promise<Skill[]>;
+  getSkillsByCategory(categoryId: number): Promise<Skill[]>;
+  createSkillCategory(category: InsertSkillCategory): Promise<SkillCategory>;
+  createSkill(skill: InsertSkill): Promise<Skill>;
+  updateSkillCategory(id: number, category: Partial<InsertSkillCategory>): Promise<SkillCategory>;
+  updateSkill(id: number, skill: Partial<InsertSkill>): Promise<Skill>;
+  deleteSkillCategory(id: number): Promise<void>;
+  deleteSkill(id: number): Promise<void>;
+  
+  // Portfolio metrics
+  getPortfolioMetrics(): Promise<PortfolioMetric[]>;
+  getPortfolioMetric(id: number): Promise<PortfolioMetric | undefined>;
+  createPortfolioMetric(metric: InsertPortfolioMetric): Promise<PortfolioMetric>;
+  updatePortfolioMetric(id: number, metric: Partial<InsertPortfolioMetric>): Promise<PortfolioMetric>;
+  deletePortfolioMetric(id: number): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -270,6 +307,144 @@ export class DatabaseStorage implements IStorage {
 
   async deleteKnowledgeBaseDocument(id: number): Promise<void> {
     await db.delete(knowledgeBaseDocuments).where(eq(knowledgeBaseDocuments.id, id));
+  }
+
+  // Experience entries
+  async getExperienceEntries(): Promise<ExperienceEntry[]> {
+    const entries = await db
+      .select()
+      .from(experienceEntries)
+      .orderBy(experienceEntries.orderIndex);
+    return entries;
+  }
+
+  async getExperienceEntry(id: number): Promise<ExperienceEntry | undefined> {
+    const [entry] = await db.select().from(experienceEntries).where(eq(experienceEntries.id, id));
+    return entry || undefined;
+  }
+
+  async createExperienceEntry(insertEntry: InsertExperienceEntry): Promise<ExperienceEntry> {
+    const [entry] = await db
+      .insert(experienceEntries)
+      .values(insertEntry)
+      .returning();
+    return entry;
+  }
+
+  async updateExperienceEntry(id: number, updateData: Partial<InsertExperienceEntry>): Promise<ExperienceEntry> {
+    const [entry] = await db
+      .update(experienceEntries)
+      .set({ ...updateData, updatedAt: new Date() })
+      .where(eq(experienceEntries.id, id))
+      .returning();
+    return entry;
+  }
+
+  async deleteExperienceEntry(id: number): Promise<void> {
+    await db.delete(experienceEntries).where(eq(experienceEntries.id, id));
+  }
+
+  // Skills and categories
+  async getSkillCategories(): Promise<SkillCategory[]> {
+    const categories = await db
+      .select()
+      .from(skillCategories)
+      .orderBy(skillCategories.orderIndex);
+    return categories;
+  }
+
+  async getSkills(): Promise<Skill[]> {
+    const skillList = await db
+      .select()
+      .from(skills)
+      .orderBy(skills.orderIndex);
+    return skillList;
+  }
+
+  async getSkillsByCategory(categoryId: number): Promise<Skill[]> {
+    const skillList = await db
+      .select()
+      .from(skills)
+      .where(eq(skills.categoryId, categoryId))
+      .orderBy(skills.orderIndex);
+    return skillList;
+  }
+
+  async createSkillCategory(insertCategory: InsertSkillCategory): Promise<SkillCategory> {
+    const [category] = await db
+      .insert(skillCategories)
+      .values(insertCategory)
+      .returning();
+    return category;
+  }
+
+  async createSkill(insertSkill: InsertSkill): Promise<Skill> {
+    const [skill] = await db
+      .insert(skills)
+      .values(insertSkill)
+      .returning();
+    return skill;
+  }
+
+  async updateSkillCategory(id: number, updateData: Partial<InsertSkillCategory>): Promise<SkillCategory> {
+    const [category] = await db
+      .update(skillCategories)
+      .set(updateData)
+      .where(eq(skillCategories.id, id))
+      .returning();
+    return category;
+  }
+
+  async updateSkill(id: number, updateData: Partial<InsertSkill>): Promise<Skill> {
+    const [skill] = await db
+      .update(skills)
+      .set(updateData)
+      .where(eq(skills.id, id))
+      .returning();
+    return skill;
+  }
+
+  async deleteSkillCategory(id: number): Promise<void> {
+    await db.delete(skillCategories).where(eq(skillCategories.id, id));
+  }
+
+  async deleteSkill(id: number): Promise<void> {
+    await db.delete(skills).where(eq(skills.id, id));
+  }
+
+  // Portfolio metrics
+  async getPortfolioMetrics(): Promise<PortfolioMetric[]> {
+    const metrics = await db
+      .select()
+      .from(portfolioMetrics)
+      .orderBy(portfolioMetrics.displayOrder);
+    return metrics;
+  }
+
+  async getPortfolioMetric(id: number): Promise<PortfolioMetric | undefined> {
+    const [metric] = await db.select().from(portfolioMetrics).where(eq(portfolioMetrics.id, id));
+    return metric || undefined;
+  }
+
+  async createPortfolioMetric(insertMetric: InsertPortfolioMetric): Promise<PortfolioMetric> {
+    const [metric] = await db
+      .insert(portfolioMetrics)
+      .values(insertMetric)
+      .returning();
+    return metric;
+  }
+
+  async updatePortfolioMetric(id: number, updateData: Partial<InsertPortfolioMetric>): Promise<PortfolioMetric> {
+    const [metric] = await db
+      .update(portfolioMetrics)
+      .set({ ...updateData, updatedAt: new Date() })
+      .where(eq(portfolioMetrics.id, id))
+      .returning();
+    return metric;
+  }
+
+  async deletePortfolioMetric(id: number): Promise<void> {
+    await db.delete(portfolioMetrics).where(eq(portfolioMetrics.id, id));
   }
 }
 
