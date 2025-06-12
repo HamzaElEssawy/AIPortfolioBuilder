@@ -131,6 +131,31 @@ export default function FixedTextEditor({
   }, [handleInput]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
+    // Handle Enter key for line breaks
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      
+      const selection = window.getSelection();
+      if (selection && selection.rangeCount > 0) {
+        const range = selection.getRangeAt(0);
+        range.deleteContents();
+        
+        // Insert a line break
+        const br = document.createElement('br');
+        range.insertNode(br);
+        
+        // Move cursor after the line break
+        range.setStartAfter(br);
+        range.collapse(true);
+        selection.removeAllRanges();
+        selection.addRange(range);
+        
+        // Trigger content save
+        setTimeout(() => handleInput(), 0);
+      }
+      return;
+    }
+    
     // Handle common shortcuts
     if (e.ctrlKey || e.metaKey) {
       switch (e.key) {

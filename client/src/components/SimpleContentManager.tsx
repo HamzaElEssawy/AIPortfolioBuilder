@@ -81,15 +81,23 @@ export default function SimpleContentManager() {
       if (!response.ok) throw new Error("Failed to update content");
       return response.json();
     },
-    onSuccess: () => {
-      // Invalidate all relevant queries to ensure live site updates
-      queryClient.invalidateQueries({ queryKey: ["/api/portfolio/content"] });
-      queryClient.invalidateQueries({ queryKey: [`/api/portfolio/content/${activeTab}`] });
-      queryClient.invalidateQueries({ queryKey: ["/api/portfolio/content/hero"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/portfolio/content/about"] });
+    onSuccess: async () => {
+      // Clear server-side cache first
+      try {
+        await fetch("/api/admin/cache/clear", { method: "POST" });
+      } catch (error) {
+        console.error('Cache clear failed:', error);
+      }
       
-      // Clear cache on server side
-      fetch("/api/admin/cache/clear", { method: "POST" }).catch(() => {});
+      // Invalidate all relevant queries to ensure live site updates
+      await queryClient.invalidateQueries({ queryKey: ["/api/portfolio"] });
+      await queryClient.invalidateQueries({ queryKey: ["/api/portfolio/content"] });
+      await queryClient.invalidateQueries({ queryKey: [`/api/portfolio/content/${activeTab}`] });
+      await queryClient.invalidateQueries({ queryKey: ["/api/portfolio/content/hero"] });
+      await queryClient.invalidateQueries({ queryKey: ["/api/portfolio/content/about"] });
+      
+      // Force refetch of content to ensure changes are visible
+      queryClient.refetchQueries({ queryKey: ["/api/portfolio/content"] });
       
       setHasUnsavedChanges(false);
       toast({
