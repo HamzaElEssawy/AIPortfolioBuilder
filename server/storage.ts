@@ -12,6 +12,7 @@ import {
   portfolioMetrics,
   coreValues,
   portfolioStatus,
+  portfolioImages,
   type User,
   type InsertUser,
   type ContactSubmission,
@@ -38,6 +39,8 @@ import {
   type InsertCoreValue,
   type PortfolioStatus,
   type InsertPortfolioStatus,
+  type PortfolioImage,
+  type InsertPortfolioImage,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc } from "drizzle-orm";
@@ -113,6 +116,13 @@ export interface IStorage {
   // Portfolio status
   getPortfolioStatus(): Promise<Record<string, boolean>>;
   updatePortfolioStatus(statusData: Record<string, boolean>): Promise<void>;
+  
+  // Portfolio images
+  getPortfolioImages(section?: string): Promise<PortfolioImage[]>;
+  getPortfolioImage(id: number): Promise<PortfolioImage | undefined>;
+  createPortfolioImage(image: InsertPortfolioImage): Promise<PortfolioImage>;
+  updatePortfolioImage(id: number, image: Partial<InsertPortfolioImage>): Promise<PortfolioImage>;
+  deletePortfolioImage(id: number): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {

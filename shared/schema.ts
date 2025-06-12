@@ -131,6 +131,18 @@ export const portfolioStatus = pgTable("portfolio_status", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+export const portfolioImages = pgTable("portfolio_images", {
+  id: serial("id").primaryKey(),
+  section: text("section").notNull(), // 'hero', 'about', 'profile'
+  imageUrl: text("image_url").notNull(),
+  altText: text("alt_text").notNull(),
+  caption: text("caption"),
+  orderIndex: integer("order_index").default(0),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
@@ -209,6 +221,12 @@ export const insertPortfolioStatusSchema = createInsertSchema(portfolioStatus).o
   updatedAt: true,
 });
 
+export const insertPortfolioImageSchema = createInsertSchema(portfolioImages).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 // Types
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -247,3 +265,6 @@ export type InsertCoreValue = z.infer<typeof insertCoreValueSchema>;
 
 export type PortfolioStatus = typeof portfolioStatus.$inferSelect;
 export type InsertPortfolioStatus = z.infer<typeof insertPortfolioStatusSchema>;
+
+export type PortfolioImage = typeof portfolioImages.$inferSelect;
+export type InsertPortfolioImage = z.infer<typeof insertPortfolioImageSchema>;
