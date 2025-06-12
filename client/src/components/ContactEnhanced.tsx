@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { Mail, Phone, MapPin, Linkedin, Twitter, Github, Target, Users, Briefcase, Calendar, Clock, Globe, ExternalLink } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
@@ -14,6 +15,7 @@ export default function ContactEnhanced() {
     name: "",
     email: "",
     company: "",
+    projectType: "General Inquiry",
     message: ""
   });
   
@@ -22,17 +24,14 @@ export default function ContactEnhanced() {
 
   const mutation = useMutation({
     mutationFn: async (data: InsertContactSubmission) => {
-      return apiRequest("/api/contact", {
-        method: "POST",
-        body: data,
-      });
+      return apiRequest("POST", "/api/contact", data);
     },
     onSuccess: () => {
       toast({
         title: "Message sent successfully!",
         description: "Thank you for reaching out. I'll get back to you within 24 hours.",
       });
-      setFormData({ name: "", email: "", company: "", message: "" });
+      setFormData({ name: "", email: "", company: "", projectType: "General Inquiry", message: "" });
       queryClient.invalidateQueries({ queryKey: ["/api/contact"] });
     },
     onError: (error) => {
@@ -53,6 +52,13 @@ export default function ContactEnhanced() {
     setFormData(prev => ({
       ...prev,
       [e.target.name]: e.target.value
+    }));
+  };
+
+  const handleSelectChange = (name: string) => (value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
     }));
   };
 
@@ -274,6 +280,26 @@ export default function ContactEnhanced() {
                     placeholder="Your company name"
                     className="border-light-border focus:border-secondary-green h-12"
                   />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-navy mb-2">
+                    Project Type *
+                  </label>
+                  <Select value={formData.projectType} onValueChange={handleSelectChange('projectType')}>
+                    <SelectTrigger className="border-light-border focus:border-secondary-green h-12">
+                      <SelectValue placeholder="Select project type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="General Inquiry">General Inquiry</SelectItem>
+                      <SelectItem value="AI Strategy Consultation">AI Strategy Consultation</SelectItem>
+                      <SelectItem value="Product Development">Product Development</SelectItem>
+                      <SelectItem value="Startup Advisory">Startup Advisory</SelectItem>
+                      <SelectItem value="Partnership Opportunity">Partnership Opportunity</SelectItem>
+                      <SelectItem value="Speaking Engagement">Speaking Engagement</SelectItem>
+                      <SelectItem value="Investment Discussion">Investment Discussion</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <div>
