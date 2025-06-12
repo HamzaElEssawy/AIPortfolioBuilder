@@ -28,6 +28,9 @@ import { apiRequest } from "@/lib/queryClient";
 import type { ContactSubmission } from "@shared/schema";
 import AIAssistant from "@/components/AIAssistant";
 import PortfolioManager from "@/components/PortfolioManager";
+import KnowledgeBaseManager from "@/components/KnowledgeBaseManager";
+import EnhancedContentManager from "@/components/EnhancedContentManager";
+import DeploymentRecommendations from "@/components/DeploymentRecommendations";
 
 export default function Admin() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -151,10 +154,12 @@ export default function Admin() {
 
       <div className="max-w-7xl mx-auto px-8 py-8">
         <Tabs defaultValue="overview" className="space-y-8">
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className="grid w-full grid-cols-6 lg:grid-cols-8">
             <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="submissions">Contact Submissions</TabsTrigger>
-            <TabsTrigger value="portfolio">Portfolio Management</TabsTrigger>
+            <TabsTrigger value="submissions">Contacts</TabsTrigger>
+            <TabsTrigger value="content">Content</TabsTrigger>
+            <TabsTrigger value="portfolio">Portfolio</TabsTrigger>
+            <TabsTrigger value="knowledge">Knowledge Base</TabsTrigger>
             <TabsTrigger value="ai-assistant">AI Assistant</TabsTrigger>
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
@@ -370,9 +375,19 @@ export default function Admin() {
             </div>
           </TabsContent>
 
+          {/* Enhanced Content Management Tab */}
+          <TabsContent value="content" className="space-y-6">
+            <EnhancedContentManager />
+          </TabsContent>
+
           {/* Portfolio Management Tab */}
           <TabsContent value="portfolio" className="space-y-6">
             <PortfolioManager />
+          </TabsContent>
+
+          {/* Knowledge Base Management Tab */}
+          <TabsContent value="knowledge" className="space-y-6">
+            <KnowledgeBaseManager />
           </TabsContent>
 
           {/* AI Assistant Tab */}

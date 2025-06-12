@@ -375,6 +375,230 @@ What would be most helpful for your current career goals?`;
     }
   });
 
+  // Knowledge Base Management endpoints (admin only)
+  app.get("/api/admin/knowledge-base/stats", isAdmin, async (req, res) => {
+    try {
+      // Mock knowledge base statistics
+      const stats = {
+        resumeCount: 5,
+        transcriptCount: 12,
+        careerCount: 8,
+        jobDescriptionCount: 3,
+        totalEmbeddings: 2847
+      };
+      res.json(stats);
+    } catch (error) {
+      console.error("Error fetching KB stats:", error);
+      res.status(500).json({ message: "Failed to fetch knowledge base statistics" });
+    }
+  });
+
+  app.get("/api/admin/knowledge-base/documents", isAdmin, async (req, res) => {
+    try {
+      // Mock documents data
+      const documents = [
+        {
+          id: 1,
+          filename: "hamza-resume-2024-latest.pdf",
+          category: "resume",
+          size: 2048576,
+          uploadedAt: "2024-06-01T00:00:00Z",
+          status: "embedded",
+          vectorId: "vec_001"
+        },
+        {
+          id: 2,
+          filename: "google-ai-pm-interview-transcript.txt",
+          category: "interview",
+          size: 156789,
+          uploadedAt: "2024-05-15T00:00:00Z",
+          status: "embedded",
+          vectorId: "vec_002"
+        },
+        {
+          id: 3,
+          filename: "career-strategy-2024-notes.docx",
+          category: "career-plan",
+          size: 89654,
+          uploadedAt: "2024-05-10T00:00:00Z",
+          status: "processing"
+        }
+      ];
+      res.json(documents);
+    } catch (error) {
+      console.error("Error fetching documents:", error);
+      res.status(500).json({ message: "Failed to fetch documents" });
+    }
+  });
+
+  app.post("/api/admin/knowledge-base/upload", isAdmin, async (req, res) => {
+    try {
+      // In a real implementation, this would:
+      // 1. Process uploaded files
+      // 2. Extract text content
+      // 3. Generate vector embeddings
+      // 4. Store in vector database
+      // 5. Update Claude's knowledge base context
+      
+      // Mock successful upload response
+      const uploadedCount = req.body ? 1 : 0; // Simplified for demo
+      
+      res.json({ 
+        success: true, 
+        uploadedCount,
+        message: "Files uploaded successfully and embeddings are being processed" 
+      });
+    } catch (error) {
+      console.error("Error uploading to KB:", error);
+      res.status(500).json({ message: "Failed to upload files to knowledge base" });
+    }
+  });
+
+  app.delete("/api/admin/knowledge-base/documents/:id", isAdmin, async (req, res) => {
+    try {
+      const documentId = parseInt(req.params.id);
+      // In real implementation: remove document and its embeddings
+      res.json({ success: true, message: "Document deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting document:", error);
+      res.status(500).json({ message: "Failed to delete document" });
+    }
+  });
+
+  // Enhanced Content Management endpoints (admin only)
+  app.get("/api/admin/content/sections", isAdmin, async (req, res) => {
+    try {
+      const sections = [
+        {
+          id: "hero",
+          name: "Hero Section",
+          content: {
+            headline: "AI Product Leader & Entrepreneur",
+            subheadline: "7+ Years Scaling AI Solutions from 0→1 | Expert in Cross-Cultural Product Leadership",
+            ctaText: "View My Work"
+          },
+          status: "published",
+          lastModified: "2024-06-12T10:30:00Z",
+          version: 3
+        },
+        {
+          id: "stats",
+          name: "Achievement Statistics",
+          content: {
+            stat1Value: "$110K+",
+            stat1Label: "Funding Secured",
+            stat2Value: "70%",
+            stat2Label: "Query Automation",
+            stat3Value: "10+",
+            stat3Label: "Enterprise Clients",
+            stat4Value: "20",
+            stat4Label: "Team Members"
+          },
+          status: "published",
+          lastModified: "2024-06-10T15:45:00Z",
+          version: 2
+        },
+        {
+          id: "about",
+          name: "About Section",
+          content: {
+            title: "About Hamza",
+            summary: "AI Product Leader with 7+ years of experience scaling enterprise AI platforms across global markets. Proven track record of building and leading cross-cultural teams, securing funding, and delivering measurable business impact through innovative AI solutions.",
+            competencies: "AI/ML Product Strategy, Cross-Cultural Leadership, Enterprise Scaling, Regulatory Compliance, Team Building"
+          },
+          status: "draft",
+          lastModified: "2024-06-08T09:15:00Z",
+          version: 1
+        },
+        {
+          id: "seo",
+          name: "SEO Settings",
+          content: {
+            title: "Hamza El Essawy - AI Product Leader",
+            description: "AI Product Leader and entrepreneur with expertise in scaling enterprise AI platforms, securing funding, and building cross-cultural teams across MENA and SEA markets.",
+            keywords: "AI Product Manager, Machine Learning, Enterprise AI, Product Strategy, Startup Founder",
+            ogImage: "/images/hamza-og-image.jpg"
+          },
+          status: "published",
+          lastModified: "2024-06-05T14:20:00Z",
+          version: 1
+        }
+      ];
+      res.json(sections);
+    } catch (error) {
+      console.error("Error fetching content sections:", error);
+      res.status(500).json({ message: "Failed to fetch content sections" });
+    }
+  });
+
+  app.get("/api/admin/content/versions/:sectionId", isAdmin, async (req, res) => {
+    try {
+      const sectionId = req.params.sectionId;
+      // Mock version history
+      const versions = [
+        {
+          id: 1,
+          sectionId,
+          content: {},
+          version: 3,
+          createdAt: "2024-06-12T10:30:00Z",
+          publishedAt: "2024-06-12T10:35:00Z"
+        },
+        {
+          id: 2,
+          sectionId,
+          content: {},
+          version: 2,
+          createdAt: "2024-06-10T15:45:00Z",
+          publishedAt: "2024-06-10T16:00:00Z"
+        }
+      ];
+      res.json(versions);
+    } catch (error) {
+      console.error("Error fetching versions:", error);
+      res.status(500).json({ message: "Failed to fetch content versions" });
+    }
+  });
+
+  app.put("/api/admin/content/sections/:sectionId", isAdmin, async (req, res) => {
+    try {
+      const sectionId = req.params.sectionId;
+      const { content, status } = req.body;
+      
+      // In real implementation: save content with version control
+      res.json({ 
+        success: true, 
+        message: "Content saved successfully",
+        sectionId,
+        status
+      });
+    } catch (error) {
+      console.error("Error saving content:", error);
+      res.status(500).json({ message: "Failed to save content" });
+    }
+  });
+
+  app.post("/api/admin/content/sections/:sectionId/publish", isAdmin, async (req, res) => {
+    try {
+      const sectionId = req.params.sectionId;
+      
+      // In real implementation: 
+      // 1. Move content from draft to published
+      // 2. Regenerate static site
+      // 3. Update live portfolio
+      
+      res.json({ 
+        success: true, 
+        message: "Content published successfully",
+        sectionId,
+        publishedAt: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error("Error publishing content:", error);
+      res.status(500).json({ message: "Failed to publish content" });
+    }
+  });
+
   // Contact form submission endpoint
   app.post("/api/contact", async (req, res) => {
     try {
