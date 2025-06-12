@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import type { HeroContent } from "@shared/contentSchema";
-import type { PortfolioImage } from "@shared/schema";
+import type { PortfolioImage, PortfolioMetric } from "@shared/schema";
 
 export default function Hero() {
   const { data: heroContent } = useQuery<HeroContent>({
@@ -10,6 +10,10 @@ export default function Hero() {
 
   const { data: heroImages = [] } = useQuery<PortfolioImage[]>({
     queryKey: ["/api/portfolio/images/hero"],
+  });
+
+  const { data: metrics = [] } = useQuery<PortfolioMetric[]>({
+    queryKey: ["/api/portfolio/metrics"],
   });
 
   const scrollToSection = (sectionId: string) => {
@@ -90,18 +94,33 @@ export default function Hero() {
 
         {/* Stats Section */}
         <div className="mt-24 grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="bg-white rounded-2xl p-8 text-center shadow-card hover-lift">
-            <div className="text-3xl font-bold text-accent-orange mb-2">$110K+</div>
-            <div className="text-text-charcoal font-medium">Funding Secured</div>
-          </div>
-          <div className="bg-white rounded-2xl p-8 text-center shadow-card hover-lift">
-            <div className="text-3xl font-bold text-accent-orange mb-2">70%</div>
-            <div className="text-text-charcoal font-medium">Query Automation</div>
-          </div>
-          <div className="bg-white rounded-2xl p-8 text-center shadow-card hover-lift">
-            <div className="text-3xl font-bold text-accent-orange mb-2">10+</div>
-            <div className="text-text-charcoal font-medium">Enterprise Clients</div>
-          </div>
+          {metrics.length > 0 ? (
+            metrics
+              .sort((a, b) => a.displayOrder - b.displayOrder)
+              .slice(0, 3)
+              .map((metric, index) => (
+                <div key={metric.id} className="bg-white rounded-2xl p-8 text-center shadow-card hover-lift">
+                  <div className="text-3xl font-bold text-accent-orange mb-2">{metric.metricValue}</div>
+                  <div className="text-text-charcoal font-medium">{metric.metricLabel}</div>
+                </div>
+              ))
+          ) : (
+            // Fallback placeholder cards
+            <>
+              <div className="bg-white rounded-2xl p-8 text-center shadow-card hover-lift">
+                <div className="text-3xl font-bold text-accent-orange mb-2">$110K+</div>
+                <div className="text-text-charcoal font-medium">Funding Secured</div>
+              </div>
+              <div className="bg-white rounded-2xl p-8 text-center shadow-card hover-lift">
+                <div className="text-3xl font-bold text-accent-orange mb-2">70%</div>
+                <div className="text-text-charcoal font-medium">Query Automation</div>
+              </div>
+              <div className="bg-white rounded-2xl p-8 text-center shadow-card hover-lift">
+                <div className="text-3xl font-bold text-accent-orange mb-2">10+</div>
+                <div className="text-text-charcoal font-medium">Enterprise Clients</div>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </section>
