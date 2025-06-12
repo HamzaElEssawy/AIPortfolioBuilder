@@ -394,6 +394,11 @@ export default function Admin() {
             <EnhancedCaseStudyEditor />
           </TabsContent>
 
+          {/* Timeline Management Tab */}
+          <TabsContent value="timeline" className="space-y-6">
+            <TimelineManager />
+          </TabsContent>
+
           {/* Design System & Visual Hierarchy Tab */}
           <TabsContent value="design-system" className="space-y-6">
             <VisualHierarchyEnhancer />

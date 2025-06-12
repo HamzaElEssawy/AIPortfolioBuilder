@@ -1,11 +1,10 @@
 import Navigation from "@/components/Navigation";
 import Hero from "@/components/Hero";
-import QuickStats from "@/components/QuickStats";
+import Metrics from "@/components/Metrics";
 import About from "@/components/About";
 import CaseStudies from "@/components/CaseStudies";
-import SkillsShowcase from "@/components/SkillsShowcase";
-import ProfessionalTimeline from "@/components/ProfessionalTimeline";
-import Experience from "@/components/Experience";
+import Skills from "@/components/Skills";
+import Timeline from "@/components/Timeline";
 import ContactEnhanced from "@/components/ContactEnhanced";
 import Footer from "@/components/Footer";
 
@@ -14,12 +13,11 @@ export default function Home() {
     <div className="min-h-screen">
       <Navigation />
       <Hero />
-      <QuickStats />
+      <Metrics />
       <About />
       <CaseStudies />
-      <SkillsShowcase />
-      <ProfessionalTimeline />
-      <Experience />
+      <Skills />
+      <Timeline />
       <ContactEnhanced />
       <Footer />
     </div>
