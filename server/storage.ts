@@ -446,6 +446,29 @@ export class DatabaseStorage implements IStorage {
   async deletePortfolioMetric(id: number): Promise<void> {
     await db.delete(portfolioMetrics).where(eq(portfolioMetrics.id, id));
   }
+
+  // Core Values operations
+  async getCoreValues(): Promise<CoreValue[]> {
+    return await db.select().from(coreValues).orderBy(coreValues.orderIndex);
+  }
+
+  async createCoreValue(value: InsertCoreValue): Promise<CoreValue> {
+    const [newValue] = await db.insert(coreValues).values(value).returning();
+    return newValue;
+  }
+
+  async updateCoreValue(id: number, updates: Partial<InsertCoreValue>): Promise<CoreValue> {
+    const [updatedValue] = await db
+      .update(coreValues)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(coreValues.id, id))
+      .returning();
+    return updatedValue;
+  }
+
+  async deleteCoreValue(id: number): Promise<void> {
+    await db.delete(coreValues).where(eq(coreValues.id, id));
+  }
 }
 
 export const storage = new DatabaseStorage();

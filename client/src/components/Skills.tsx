@@ -80,17 +80,36 @@ export default function Skills() {
                   {category.skills
                     .sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0))
                     .map((skill) => (
-                      <div key={skill.id} className="space-y-2">
+                      <div key={skill.id} className="space-y-3">
                         <div className="flex justify-between items-center">
-                          <span className="font-medium text-text-charcoal">{skill.name}</span>
-                          <span className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                            {skill.proficiencyLevel || 5}/10
-                          </span>
+                          <span className="font-medium text-text-charcoal text-lg">{skill.name}</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-bold text-navy">
+                              {skill.proficiencyLevel || 5}/10
+                            </span>
+                            <div className="w-8 h-8 bg-secondary-green/10 rounded-full flex items-center justify-center">
+                              <span className="text-xs font-bold text-secondary-green">
+                                {Math.round(((skill.proficiencyLevel || 5) / 10) * 100)}%
+                              </span>
+                            </div>
+                          </div>
                         </div>
-                        <Progress 
-                          value={(skill.proficiencyLevel || 5) * 10} 
-                          className="h-2"
-                        />
+                        <div className="relative">
+                          <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
+                            <div 
+                              className="h-full bg-gradient-to-r from-secondary-green to-accent-orange rounded-full transition-all duration-1000 ease-out relative"
+                              style={{ width: `${(skill.proficiencyLevel || 5) * 10}%` }}
+                            >
+                              <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
+                            </div>
+                          </div>
+                          <div className="absolute -top-1 -bottom-1 bg-white/30 w-0.5 rounded-full" 
+                               style={{ left: '70%' }}>
+                          </div>
+                          <div className="absolute -top-1 -bottom-1 bg-white/30 w-0.5 rounded-full" 
+                               style={{ left: '90%' }}>
+                          </div>
+                        </div>
                       </div>
                     ))}
                 </div>
