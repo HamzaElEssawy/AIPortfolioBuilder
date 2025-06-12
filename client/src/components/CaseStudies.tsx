@@ -1,46 +1,15 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, TrendingUp, Shield, Globe } from "lucide-react";
+import { ArrowRight, TrendingUp, Shield, Globe, Loader2 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import type { CaseStudy } from "@shared/schema";
 
 export default function CaseStudies() {
-  const caseStudies = [
-    {
-      id: "ai-compliance",
-      title: "AI Compliance SaaS for Malaysian Banking",
-      summary: "Built AI-driven compliance platform reducing manual review time by 50% while securing $110K seed funding.",
-      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
-      tags: ["AI/ML", "RegTech", "B2B SaaS"],
-      metrics: [
-        { value: "50%", label: "Time Reduction" },
-        { value: "$110K", label: "Funding Secured" }
-      ],
-      color: "blue"
-    },
-    {
-      id: "tapway-vision",
-      title: "Enterprise AI Vision Platform at Tapway",
-      summary: "Scaled no-code AI vision platform to 10+ enterprise clients including Changi Airport and SimDarby Plantation.",
-      image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
-      tags: ["Computer Vision", "Enterprise", "No-Code"],
-      metrics: [
-        { value: "10+", label: "Enterprise Clients" },
-        { value: "8→20", label: "Team Growth" }
-      ],
-      color: "green"
-    },
-    {
-      id: "rag-ai-support",
-      title: "RAG AI System for Customer Support",
-      summary: "Implemented multilingual RAG AI system automating 70% of customer queries while reducing costs by 35%.",
-      image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
-      tags: ["RAG AI", "NLP", "Multilingual"],
-      metrics: [
-        { value: "70%", label: "Automation Rate" },
-        { value: "35%", label: "Cost Reduction" }
-      ],
-      color: "orange"
-    }
-  ];
+  // Fetch case studies from admin dashboard database
+  const { data: caseStudies = [], isLoading, error } = useQuery<CaseStudy[]>({
+    queryKey: ["/api/admin/case-studies"],
+    retry: false,
+  });
 
   const getColorClasses = (color: string) => {
     switch (color) {
@@ -81,76 +50,87 @@ export default function CaseStudies() {
           </p>
         </div>
         
-        <div className="grid gap-8 lg:gap-12">
-          {caseStudies.map((study, index) => {
-            const colorClasses = getColorClasses(study.color);
-            const isReverse = index % 2 === 1;
-            
-            return (
-              <Card key={study.id} className="overflow-hidden floating-card hover-glow border-0">
-                <div className={`grid lg:grid-cols-2 gap-0 ${isReverse ? 'lg:grid-flow-col-dense' : ''}`}>
-                  {/* Image Section */}
-                  <div className={`relative ${isReverse ? 'lg:col-start-2' : ''}`}>
-                    <img 
-                      src={study.image}
-                      alt={study.title}
-                      className="w-full h-64 lg:h-full object-cover"
-                    />
-                    <div className="absolute top-6 left-6">
-                      <Badge className={`${colorClasses.bg} text-white px-4 py-2 text-sm font-semibold`}>
-                        Case Study {index + 1}
-                      </Badge>
+        {isLoading ? (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="h-8 w-8 animate-spin text-secondary-green" />
+            <span className="ml-3 text-text-charcoal">Loading case studies...</span>
+          </div>
+        ) : caseStudies.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-lg text-text-charcoal">No case studies available. Please add case studies through the admin dashboard.</p>
+          </div>
+        ) : (
+          <div className="grid gap-8 lg:gap-12">
+            {caseStudies.filter(study => study.status === 'published').map((study, index) => {
+              const colorClasses = getColorClasses(index % 3 === 0 ? "blue" : index % 3 === 1 ? "green" : "orange");
+              const isReverse = index % 2 === 1;
+              
+              return (
+                <Card key={study.id} className="overflow-hidden floating-card hover-glow border-0">
+                  <div className={`grid lg:grid-cols-2 gap-0 ${isReverse ? 'lg:grid-flow-col-dense' : ''}`}>
+                    {/* Image Section */}
+                    <div className={`relative ${isReverse ? 'lg:col-start-2' : ''}`}>
+                      <img 
+                        src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400"
+                        alt={study.title}
+                        className="w-full h-64 lg:h-full object-cover"
+                      />
+                      <div className="absolute top-6 left-6">
+                        <Badge className={`${colorClasses.bg} text-white px-4 py-2 text-sm font-semibold`}>
+                          Case Study {index + 1}
+                        </Badge>
+                      </div>
                     </div>
-                  </div>
 
-                  {/* Content Section */}
-                  <div className={`p-8 lg:p-12 flex flex-col justify-center ${isReverse ? 'lg:col-start-1' : ''}`}>
-                    <div className="space-y-6">
-                      <div>
-                        <h3 className="text-2xl font-bold text-navy mb-4 leading-tight">
-                          {study.title}
-                        </h3>
-                        <p className="text-lg text-text-charcoal leading-relaxed">
-                          {study.summary}
-                        </p>
-                      </div>
-                      
-                      {/* Tags */}
-                      <div className="flex flex-wrap gap-2">
-                        {study.tags.map((tag, tagIndex) => (
-                          <span 
-                            key={tagIndex}
-                            className={`px-3 py-1 rounded-full text-sm font-medium ${colorClasses.border} ${colorClasses.text} bg-gray-50 border`}
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                      
-                      {/* Metrics */}
-                      <div className="grid grid-cols-2 gap-4">
-                        {study.metrics.map((metric, metricIndex) => (
-                          <div key={metricIndex} className="text-center p-4 bg-background-gray rounded-xl">
-                            <div className="text-2xl font-bold text-navy mb-1">{metric.value}</div>
-                            <div className="text-sm text-text-charcoal font-medium">{metric.label}</div>
-                          </div>
-                        ))}
-                      </div>
-                      
-                      {/* CTA Link */}
-                      <div className="pt-4">
-                        <button className="group flex items-center gap-3 text-secondary-green font-semibold hover:text-secondary-green/80 transition-colors">
-                          <span>View Full Case Study</span>
-                          <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                        </button>
+                    {/* Content Section */}
+                    <div className={`p-8 lg:p-12 flex flex-col justify-center ${isReverse ? 'lg:col-start-1' : ''}`}>
+                      <div className="space-y-6">
+                        <div>
+                          <h3 className="text-2xl font-bold text-navy mb-4 leading-tight">
+                            {study.title}
+                          </h3>
+                          <p className="text-lg text-text-charcoal leading-relaxed">
+                            {study.challenge}
+                          </p>
+                        </div>
+                        
+                        {/* Technologies */}
+                        <div className="flex flex-wrap gap-2">
+                          {study.technologies && study.technologies.map((tech: string, techIndex: number) => (
+                            <span 
+                              key={techIndex}
+                              className={`px-3 py-1 rounded-full text-sm font-medium ${colorClasses.border} ${colorClasses.text} bg-gray-50 border`}
+                            >
+                              {tech}
+                            </span>
+                          ))}
+                        </div>
+                        
+                        {/* Metrics */}
+                        <div className="grid grid-cols-2 gap-4">
+                          {study.metrics && study.metrics.slice(0, 2).map((metric: string, metricIndex: number) => (
+                            <div key={metricIndex} className="text-center p-4 bg-background-gray rounded-xl">
+                              <div className="text-2xl font-bold text-navy mb-1">{metric}</div>
+                              <div className="text-sm text-text-charcoal font-medium">Key Result</div>
+                            </div>
+                          ))}
+                        </div>
+                        
+                        {/* CTA Link */}
+                        <div className="pt-4">
+                          <button className="group flex items-center gap-3 text-secondary-green font-semibold hover:text-secondary-green/80 transition-colors">
+                            <span>View Full Case Study</span>
+                            <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </Card>
-            );
-          })}
-        </div>
+                </Card>
+              );
+            })}
+          </div>
+        )}
 
         {/* Call to Action */}
         <div className="mt-20 text-center">
