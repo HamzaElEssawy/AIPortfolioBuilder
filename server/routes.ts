@@ -368,38 +368,10 @@ Your background spans AI product leadership across multiple markets with proven 
 What would be most helpful for your current career goals?`;
   }
 
-  // Portfolio management endpoints (admin only)
+  // Case Studies CRUD endpoints (admin only)
   app.get("/api/admin/case-studies", isAdmin, async (req, res) => {
     try {
-      // Mock case studies data for now
-      const caseStudies = [
-        {
-          id: 1,
-          title: "AI Compliance Platform - Scaling from MVP to Enterprise",
-          status: "published",
-          challenge: "Built AI-driven compliance platform from concept to $110K+ funding, addressing regulatory complexity in financial services across multiple jurisdictions.",
-          approach: "Implemented lean startup methodology with rapid prototyping, customer discovery interviews, and iterative product development based on regulatory feedback.",
-          solution: "Developed comprehensive compliance automation platform reducing manual review processes by 50% while maintaining 99.9% accuracy in regulatory assessment.",
-          impact: "Secured $110K+ in early-stage funding, achieved product-market fit with enterprise clients, and established foundation for SEA market expansion.",
-          metrics: ["$110K+ funding secured", "50% reduction in manual review", "99.9% accuracy rate", "10+ enterprise pilots"],
-          technologies: ["React", "Node.js", "PostgreSQL", "Claude API", "Python ML"],
-          createdAt: "2024-01-15T00:00:00Z",
-          updatedAt: "2024-06-01T00:00:00Z"
-        },
-        {
-          id: 2,
-          title: "Enterprise AI Platform Scaling - Tapway Success Story",
-          status: "published",
-          challenge: "Scale no-code AI vision platform from startup to enterprise solution serving 10+ major clients while growing engineering team from 8 to 20 members.",
-          approach: "Implemented agile product management with cross-functional team coordination, enterprise sales strategy, and platform architecture optimization.",
-          solution: "Built scalable enterprise AI platform with 99.9% uptime, comprehensive API ecosystem, and white-label deployment capabilities for diverse industry verticals.",
-          impact: "Successfully scaled to 10+ enterprise clients, achieved 99.9% platform uptime, and built sustainable revenue model with recurring enterprise contracts.",
-          metrics: ["10+ enterprise clients", "99.9% platform uptime", "8→20 team growth", "150% revenue increase"],
-          technologies: ["Computer Vision", "TensorFlow", "Kubernetes", "AWS", "React Native"],
-          createdAt: "2023-06-01T00:00:00Z",
-          updatedAt: "2024-03-15T00:00:00Z"
-        }
-      ];
+      const caseStudies = await storage.getCaseStudies();
       res.json(caseStudies);
     } catch (error) {
       console.error("Error fetching case studies:", error);
@@ -407,29 +379,56 @@ What would be most helpful for your current career goals?`;
     }
   });
 
+  app.get("/api/admin/case-studies/:id", isAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const caseStudy = await storage.getCaseStudy(parseInt(id));
+      if (!caseStudy) {
+        return res.status(404).json({ message: "Case study not found" });
+      }
+      res.json(caseStudy);
+    } catch (error) {
+      console.error("Error fetching case study:", error);
+      res.status(500).json({ message: "Failed to fetch case study" });
+    }
+  });
+
+  app.post("/api/admin/case-studies", isAdmin, async (req, res) => {
+    try {
+      const caseStudy = await storage.createCaseStudy(req.body);
+      res.status(201).json(caseStudy);
+    } catch (error) {
+      console.error("Error creating case study:", error);
+      res.status(500).json({ message: "Failed to create case study" });
+    }
+  });
+
+  app.put("/api/admin/case-studies/:id", isAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const caseStudy = await storage.updateCaseStudy(parseInt(id), req.body);
+      res.json(caseStudy);
+    } catch (error) {
+      console.error("Error updating case study:", error);
+      res.status(500).json({ message: "Failed to update case study" });
+    }
+  });
+
+  app.delete("/api/admin/case-studies/:id", isAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      await storage.deleteCaseStudy(parseInt(id));
+      res.json({ message: "Case study deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting case study:", error);
+      res.status(500).json({ message: "Failed to delete case study" });
+    }
+  });
+
+  // Media Assets CRUD endpoints (admin only)
   app.get("/api/admin/media", isAdmin, async (req, res) => {
     try {
-      // Mock media assets data
-      const mediaAssets = [
-        {
-          id: 1,
-          filename: "hamza-professional-headshot.jpg",
-          url: "/media/hamza-headshot.jpg",
-          type: "image",
-          size: 2048576,
-          uploadedAt: "2024-05-01T00:00:00Z",
-          tags: ["headshot", "professional", "portfolio"]
-        },
-        {
-          id: 2,
-          filename: "ai-compliance-platform-architecture.pdf",
-          url: "/media/platform-architecture.pdf",
-          type: "document",
-          size: 5242880,
-          uploadedAt: "2024-04-15T00:00:00Z",
-          tags: ["architecture", "compliance", "technical"]
-        }
-      ];
+      const mediaAssets = await storage.getMediaAssets();
       res.json(mediaAssets);
     } catch (error) {
       console.error("Error fetching media:", error);
@@ -437,16 +436,62 @@ What would be most helpful for your current career goals?`;
     }
   });
 
+  app.get("/api/admin/media/:id", isAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const asset = await storage.getMediaAsset(parseInt(id));
+      if (!asset) {
+        return res.status(404).json({ message: "Media asset not found" });
+      }
+      res.json(asset);
+    } catch (error) {
+      console.error("Error fetching media asset:", error);
+      res.status(500).json({ message: "Failed to fetch media asset" });
+    }
+  });
+
+  app.post("/api/admin/media", isAdmin, async (req, res) => {
+    try {
+      const asset = await storage.createMediaAsset(req.body);
+      res.status(201).json(asset);
+    } catch (error) {
+      console.error("Error creating media asset:", error);
+      res.status(500).json({ message: "Failed to create media asset" });
+    }
+  });
+
+  app.put("/api/admin/media/:id", isAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const asset = await storage.updateMediaAsset(parseInt(id), req.body);
+      res.json(asset);
+    } catch (error) {
+      console.error("Error updating media asset:", error);
+      res.status(500).json({ message: "Failed to update media asset" });
+    }
+  });
+
+  app.delete("/api/admin/media/:id", isAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      await storage.deleteMediaAsset(parseInt(id));
+      res.json({ message: "Media asset deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting media asset:", error);
+      res.status(500).json({ message: "Failed to delete media asset" });
+    }
+  });
+
   // Knowledge Base Management endpoints (admin only)
   app.get("/api/admin/knowledge-base/stats", isAdmin, async (req, res) => {
     try {
-      // Mock knowledge base statistics
+      const documents = await storage.getKnowledgeBaseDocuments();
       const stats = {
-        resumeCount: 5,
-        transcriptCount: 12,
-        careerCount: 8,
-        jobDescriptionCount: 3,
-        totalEmbeddings: 2847
+        resumeCount: documents.filter(d => d.category === 'resume').length,
+        transcriptCount: documents.filter(d => d.category === 'interview').length,
+        careerCount: documents.filter(d => d.category === 'career-plan').length,
+        jobDescriptionCount: documents.filter(d => d.category === 'job-description').length,
+        totalEmbeddings: documents.filter(d => d.status === 'embedded').length
       };
       res.json(stats);
     } catch (error) {
@@ -457,39 +502,57 @@ What would be most helpful for your current career goals?`;
 
   app.get("/api/admin/knowledge-base/documents", isAdmin, async (req, res) => {
     try {
-      // Mock documents data
-      const documents = [
-        {
-          id: 1,
-          filename: "hamza-resume-2024-latest.pdf",
-          category: "resume",
-          size: 2048576,
-          uploadedAt: "2024-06-01T00:00:00Z",
-          status: "embedded",
-          vectorId: "vec_001"
-        },
-        {
-          id: 2,
-          filename: "google-ai-pm-interview-transcript.txt",
-          category: "interview",
-          size: 156789,
-          uploadedAt: "2024-05-15T00:00:00Z",
-          status: "embedded",
-          vectorId: "vec_002"
-        },
-        {
-          id: 3,
-          filename: "career-strategy-2024-notes.docx",
-          category: "career-plan",
-          size: 89654,
-          uploadedAt: "2024-05-10T00:00:00Z",
-          status: "processing"
-        }
-      ];
+      const documents = await storage.getKnowledgeBaseDocuments();
       res.json(documents);
     } catch (error) {
       console.error("Error fetching documents:", error);
       res.status(500).json({ message: "Failed to fetch documents" });
+    }
+  });
+
+  app.get("/api/admin/knowledge-base/documents/:id", isAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const document = await storage.getKnowledgeBaseDocument(parseInt(id));
+      if (!document) {
+        return res.status(404).json({ message: "Document not found" });
+      }
+      res.json(document);
+    } catch (error) {
+      console.error("Error fetching document:", error);
+      res.status(500).json({ message: "Failed to fetch document" });
+    }
+  });
+
+  app.post("/api/admin/knowledge-base/documents", isAdmin, async (req, res) => {
+    try {
+      const document = await storage.createKnowledgeBaseDocument(req.body);
+      res.status(201).json(document);
+    } catch (error) {
+      console.error("Error creating document:", error);
+      res.status(500).json({ message: "Failed to create document" });
+    }
+  });
+
+  app.put("/api/admin/knowledge-base/documents/:id", isAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const document = await storage.updateKnowledgeBaseDocument(parseInt(id), req.body);
+      res.json(document);
+    } catch (error) {
+      console.error("Error updating document:", error);
+      res.status(500).json({ message: "Failed to update document" });
+    }
+  });
+
+  app.delete("/api/admin/knowledge-base/documents/:id", isAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      await storage.deleteKnowledgeBaseDocument(parseInt(id));
+      res.json({ message: "Document deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting document:", error);
+      res.status(500).json({ message: "Failed to delete document" });
     }
   });
 
