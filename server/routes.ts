@@ -63,6 +63,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  // Admin status endpoint
+  app.get("/api/admin/status", (req, res) => {
+    res.json({ isAdmin: req.session?.isAdmin || false });
+  });
+
   // Get all contact submissions (admin only)
   app.get("/api/admin/contact-submissions", isAdmin, async (req, res) => {
     try {
