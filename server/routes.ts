@@ -5,6 +5,12 @@ import { insertContactSubmissionSchema } from "@shared/schema";
 import bcrypt from "bcrypt";
 import session from "express-session";
 import { z } from "zod";
+import Anthropic from "@anthropic-ai/sdk";
+
+// Initialize Anthropic client
+const anthropic = new Anthropic({
+  apiKey: process.env.ANTHROPIC_API_KEY,
+});
 
 // Admin authentication middleware
 const isAdmin = (req: any, res: any, next: any) => {
@@ -142,15 +148,71 @@ When providing career advice, reference his actual experience and achievements. 
         { role: "user", content: message }
       ];
 
-      // Mock Claude response for now (to be replaced with actual API)
-      const mockResponse = generateMockClaudeResponse(message);
+      // Generate response using real Claude API
+      const response = await generateRealClaudeResponse(message, conversationHistory);
       
-      res.json({ response: mockResponse });
+      res.json({ response });
     } catch (error) {
       console.error("AI Assistant error:", error);
       res.status(500).json({ message: "AI Assistant temporarily unavailable" });
     }
   });
+
+  // Real Claude API integration
+  async function generateClaudeResponse(message: string, conversationHistory: any[] = []): Promise<string> {
+    try {
+      const systemPrompt = `You are an expert AI Product Leadership career advisor specifically helping Hamza El Essawy, an accomplished AI Product Leader and entrepreneur based in Kuala Lumpur, Malaysia.
+
+HAMZA'S BACKGROUND:
+- AI Product Leader & Entrepreneur (2024-Present): Leading AI product strategy across multiple ventures, mentoring 15+ founders
+- Founder & Product Leader of AI Compliance Startup (2023-2024): Secured $110K+ funding, built platform reducing manual review by 50%
+- Senior Product Manager at Tapway Enterprise AI Platform (2021-2023): Scaled to 10+ enterprise clients, grew team from 8 to 20 engineers
+- AI Product Manager in MENA Fintech (2020-2021): Implemented RAG AI achieving 70% query automation, reduced costs by 35%
+- Product Manager AI/ML in Dubai Fintech (2018-2020): Built foundational expertise in fintech sector
+
+EXPERTISE AREAS:
+- AI/ML product development and strategy
+- Enterprise software scaling (proven track record)
+- Cross-cultural team management (MENA, SEA, global)
+- Fundraising and startup growth ($110K+ secured)
+- Compliance and risk management systems
+- Multilingual AI systems (15 languages supported)
+- Technical architecture and system design
+
+CAREER GOALS:
+- Strategic AI leadership roles in established tech companies
+- Continued entrepreneurship in AI compliance and automation
+- Mentoring and advisory positions for AI startups
+- Speaking engagements on AI product management
+
+UNIQUE VALUE PROPOSITIONS:
+- Cross-cultural market expertise (MENA + SEA)
+- Enterprise AI scaling experience with quantifiable results
+- Regulatory compliance specialization in AI systems
+- Proven funding track record and business development skills
+- Technical depth combined with strong business acumen
+
+Provide specific, actionable career advice tailored to Hamza's background. Use concrete examples from his experience when relevant. Focus on practical strategies for advancing his AI Product Leadership career, whether it's resume optimization, interview preparation, strategic career moves, or skill development.
+
+Be professional, insightful, and leverage his unique combination of technical expertise, proven scaling ability, and cross-cultural market experience.`;
+
+      const messages = [
+        { role: "user", content: message }
+      ];
+
+      const completion = await anthropic.messages.create({
+        model: "claude-3-5-sonnet-20241022",
+        max_tokens: 1500,
+        system: systemPrompt,
+        messages: messages
+      });
+
+      return completion.content[0].type === 'text' ? completion.content[0].text : "I apologize, but I couldn't generate a response. Please try again.";
+    } catch (error) {
+      console.error("Claude API error:", error);
+      throw new Error("Failed to get response from Claude API");
+    }
+  }
 
   function generateMockClaudeResponse(message: string): string {
     const lowercaseMessage = message.toLowerCase();
