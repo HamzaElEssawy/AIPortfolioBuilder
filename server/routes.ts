@@ -10,10 +10,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const validatedData = insertContactSubmissionSchema.parse(req.body);
       
-      const submission = await storage.createContactSubmission({
-        ...validatedData,
-        submittedAt: new Date().toISOString(),
-      });
+      const submission = await storage.createContactSubmission(validatedData);
       
       res.json({ 
         success: true, 
