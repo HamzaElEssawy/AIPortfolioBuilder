@@ -1419,6 +1419,186 @@ What would be most helpful for your current career goals?`;
     }
   });
 
+  // Search API endpoints
+  app.get("/api/search", async (req, res) => {
+    try {
+      const { searchEngine } = await import("../search");
+      const { q: query, type, limit, offset, sortBy, sortOrder } = req.query;
+      
+      if (!query || typeof query !== 'string') {
+        return res.status(400).json({ error: "Query parameter 'q' is required" });
+      }
+
+      const filters = {
+        type: type as string
+      };
+
+      const options = {
+        limit: limit ? parseInt(limit as string) : 20,
+        offset: offset ? parseInt(offset as string) : 0,
+        sortBy: sortBy as string,
+        sortOrder: (sortOrder as 'asc' | 'desc') || 'desc',
+        includeContent: false
+      };
+
+      const results = await searchEngine.search(query, filters, options);
+      res.json(results);
+    } catch (error) {
+      console.error("Error performing search:", error);
+      res.status(500).json({ error: "Search failed" });
+    }
+  });
+
+  app.get("/api/admin/search", isAdmin, async (req, res) => {
+    try {
+      const { searchEngine } = await import("../search");
+      const { q: query, type, limit, offset, includeContent } = req.query;
+      
+      if (!query || typeof query !== 'string') {
+        return res.status(400).json({ error: "Query parameter 'q' is required" });
+      }
+
+      const filters = {
+        type: type as string
+      };
+
+      const options = {
+        limit: limit ? parseInt(limit as string) : 50,
+        offset: offset ? parseInt(offset as string) : 0,
+        includeContent: includeContent === 'true'
+      };
+
+      const results = await searchEngine.search(query, filters, options);
+      res.json(results);
+    } catch (error) {
+      console.error("Error performing admin search:", error);
+      res.status(500).json({ error: "Admin search failed" });
+    }
+  });
+
+  app.post("/api/admin/search/reindex", isAdmin, async (req, res) => {
+    try {
+      const { searchEngine } = await import("../search");
+      await searchEngine.rebuildSearchIndex();
+      res.json({ message: "Search index rebuilt successfully" });
+    } catch (error) {
+      console.error("Error rebuilding search index:", error);
+      res.status(500).json({ error: "Failed to rebuild search index" });
+    }
+  });
+
+  // Workflow automation endpoints
+  app.get("/api/admin/workflows", isAdmin, async (req, res) => {
+    try {
+      const { workflowManager } = await import("../workflow");
+      const workflows = workflowManager.getWorkflows();
+      res.json(workflows);
+    } catch (error) {
+      console.error("Error fetching workflows:", error);
+      res.status(500).json({ error: "Failed to fetch workflows" });
+    }
+  });
+
+  app.get("/api/admin/workflows/:id", isAdmin, async (req, res) => {
+    try {
+      const { workflowManager } = await import("../workflow");
+      const { id } = req.params;
+      const workflow = workflowManager.getWorkflow(id);
+      
+      if (!workflow) {
+        return res.status(404).json({ error: "Workflow not found" });
+      }
+      
+      res.json(workflow);
+    } catch (error) {
+      console.error("Error fetching workflow:", error);
+      res.status(500).json({ error: "Failed to fetch workflow" });
+    }
+  });
+
+  app.post("/api/admin/workflows/:id/execute", isAdmin, async (req, res) => {
+    try {
+      const { workflowManager } = await import("../workflow");
+      const { id } = req.params;
+      const execution = await workflowManager.executeWorkflow(id, true);
+      res.json(execution);
+    } catch (error) {
+      console.error("Error executing workflow:", error);
+      res.status(500).json({ error: "Failed to execute workflow" });
+    }
+  });
+
+  app.post("/api/admin/workflows/:id/toggle", isAdmin, async (req, res) => {
+    try {
+      const { workflowManager } = await import("../workflow");
+      const { id } = req.params;
+      const success = workflowManager.toggleWorkflow(id);
+      
+      if (!success) {
+        return res.status(404).json({ error: "Workflow not found" });
+      }
+      
+      res.json({ message: "Workflow toggled successfully" });
+    } catch (error) {
+      console.error("Error toggling workflow:", error);
+      res.status(500).json({ error: "Failed to toggle workflow" });
+    }
+  });
+
+  app.get("/api/admin/workflow-executions", isAdmin, async (req, res) => {
+    try {
+      const { workflowManager } = await import("../workflow");
+      const { workflowId } = req.query;
+      const executions = workflowManager.getExecutions(workflowId as string);
+      res.json(executions);
+    } catch (error) {
+      console.error("Error fetching workflow executions:", error);
+      res.status(500).json({ error: "Failed to fetch workflow executions" });
+    }
+  });
+
+  // Cache management endpoints
+  app.get("/api/admin/cache/stats", isAdmin, async (req, res) => {
+    try {
+      const { cache } = await import("../cache");
+      const stats = cache.getStats();
+      res.json(stats);
+    } catch (error) {
+      console.error("Error fetching cache stats:", error);
+      res.status(500).json({ error: "Failed to fetch cache stats" });
+    }
+  });
+
+  app.post("/api/admin/cache/clear", isAdmin, async (req, res) => {
+    try {
+      const { cache } = await import("../cache");
+      const { pattern } = req.body;
+      
+      if (pattern) {
+        const cleared = cache.deletePattern(pattern);
+        res.json({ message: `Cleared ${cleared} cache entries` });
+      } else {
+        cache.clear();
+        res.json({ message: "All cache cleared" });
+      }
+    } catch (error) {
+      console.error("Error clearing cache:", error);
+      res.status(500).json({ error: "Failed to clear cache" });
+    }
+  });
+
+  app.get("/api/admin/cache/top-entries", isAdmin, async (req, res) => {
+    try {
+      const { cache } = await import("../cache");
+      const { limit } = req.query;
+      const entries = cache.getTopEntries(limit ? parseInt(limit as string) : 10);
+      res.json(entries);
+    } catch (error) {
+      console.error("Error fetching top cache entries:", error);
+      res.status(500).json({ error: "Failed to fetch top cache entries" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

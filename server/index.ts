@@ -6,6 +6,8 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { performanceMiddleware } from "./performance";
 import { logger } from "./logger";
+import { cacheMiddleware } from "./cache";
+import { workflowManager } from "./workflow";
 
 const app = express();
 
@@ -28,6 +30,10 @@ app.use(compression());
 
 // Performance monitoring middleware
 app.use(performanceMiddleware);
+
+// Cache middleware for public routes
+app.use('/api/portfolio', cacheMiddleware(300)); // 5 minutes
+app.use('/api/seo', cacheMiddleware(600)); // 10 minutes
 
 // Rate limiting
 const limiter = rateLimit({
