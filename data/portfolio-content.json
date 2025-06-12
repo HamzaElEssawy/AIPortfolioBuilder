@@ -1,10 +1,4 @@
 {
-  "hero": {
-    "headline": "AI Product Leader & Multi-time Founder",
-    "subheadline": "7+ Years Scaling pr 0→1 | Enterprise Clients Across MENA & Southeast Asiasdadas ",
-    "ctaText": "View My Work",
-    "ctaSecondaryText": "Download Resume"
-  },
   "stats": {
     "stat1Value": "$110K+",
     "stat1Label": "Funding Secured",
@@ -239,6 +233,6 @@
     "keywords": "AI Product Manager, Machine Learning, Enterprise AI, Product Strategy, Startup Founder, Cross-Cultural Leadership",
     "ogImage": "/images/hamza-og-image.jpg"
   },
-  "lastUpdated": "2025-06-12T14:53:56.861Z",
-  "version": 55
+  "lastUpdated": "2025-06-12T15:05:15.074Z",
+  "version": 56
 }

@@ -192,19 +192,22 @@ export default function StreamlinedContentManager() {
               {(() => {
                 const heroSection = sections.find(s => s.id === "hero");
                 if (!heroSection) return <div>Hero section not found</div>;
+                
+                // Safely access content with fallback
+                const content = heroSection.content || {};
 
                 return (
                   <div className="space-y-6">
                     <EnhancedTextEditor
                       label="Professional Headline"
-                      value={heroSection.content.headline || ""}
+                      value={content.headline || ""}
                       onChange={(value) => handleContentUpdate("headline", value)}
                       placeholder="e.g., AI Product Leader & Multi-time Founder"
                     />
 
                     <EnhancedTextEditor
                       label="Subheadline"
-                      value={heroSection.content.subheadline || ""}
+                      value={content.subheadline || ""}
                       onChange={(value) => handleContentUpdate("subheadline", value)}
                       placeholder="e.g., 7+ Years Scaling 0→1 | Enterprise Clients Across MENA & Southeast Asia"
                       multiline
@@ -212,7 +215,7 @@ export default function StreamlinedContentManager() {
 
                     <EnhancedTextEditor
                       label="Call-to-Action Text"
-                      value={heroSection.content.ctaText || ""}
+                      value={content.ctaText || ""}
                       onChange={(value) => handleContentUpdate("ctaText", value)}
                       placeholder="e.g., View My Work"
                     />
@@ -233,19 +236,22 @@ export default function StreamlinedContentManager() {
               {(() => {
                 const aboutSection = sections.find(s => s.id === "about");
                 if (!aboutSection) return <div>About section not found</div>;
+                
+                // Safely access content with fallback
+                const content = aboutSection.content || {};
 
                 return (
                   <div className="space-y-6">
                     <EnhancedTextEditor
                       label="Section Title"
-                      value={aboutSection.content.title || ""}
+                      value={content.title || ""}
                       onChange={(value) => handleContentUpdate("title", value)}
                       placeholder="e.g., About Hamza"
                     />
 
                     <EnhancedTextEditor
                       label="Summary"
-                      value={aboutSection.content.summary || ""}
+                      value={content.summary || ""}
                       onChange={(value) => handleContentUpdate("summary", value)}
                       placeholder="Brief summary that appears below the title"
                       multiline
@@ -253,7 +259,7 @@ export default function StreamlinedContentManager() {
 
                     <EnhancedTextEditor
                       label="Professional Competencies"
-                      value={aboutSection.content.competencies || ""}
+                      value={content.competencies || ""}
                       onChange={(value) => handleContentUpdate("competencies", value)}
                       placeholder="Detailed description of your professional experience and expertise"
                       multiline
