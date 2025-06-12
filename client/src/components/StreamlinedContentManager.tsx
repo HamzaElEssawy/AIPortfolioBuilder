@@ -33,7 +33,6 @@ export default function StreamlinedContentManager() {
     about: true,
     skills: true,
     timeline: true,
-    coreValues: true,
     caseStudies: true,
     contact: true,
   };

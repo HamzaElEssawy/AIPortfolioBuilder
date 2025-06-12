@@ -6,7 +6,6 @@ import AboutStreamlined from "@/components/AboutStreamlined";
 import CaseStudies from "@/components/CaseStudies";
 import Skills from "@/components/Skills";
 import Timeline from "@/components/Timeline";
-import CoreValues from "@/components/CoreValues";
 import ContactEnhanced from "@/components/ContactEnhanced";
 import Footer from "@/components/Footer";
 
@@ -17,7 +16,6 @@ export default function Home() {
     about: true,
     skills: true,
     timeline: true,
-    coreValues: true,
     caseStudies: true,
     contact: true,
   };
@@ -33,7 +31,6 @@ export default function Home() {
       {portfolioStatus.about && <AboutStreamlined />}
       {portfolioStatus.skills && <Skills />}
       {portfolioStatus.timeline && <Timeline />}
-      {portfolioStatus.coreValues && <CoreValues />}
       {portfolioStatus.caseStudies && <CaseStudies />}
       {portfolioStatus.contact && <ContactEnhanced />}
       <Footer />
