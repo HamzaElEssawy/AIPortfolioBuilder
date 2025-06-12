@@ -33,6 +33,8 @@ import PortfolioManager from "@/components/PortfolioManager";
 import KnowledgeBaseManager from "@/components/KnowledgeBaseManager";
 import EnhancedContentManager from "@/components/EnhancedContentManager";
 import DeploymentRecommendations from "@/components/DeploymentRecommendations";
+import EnhancedCaseStudyEditor from "@/components/EnhancedCaseStudyEditor";
+import VisualHierarchyEnhancer from "@/components/VisualHierarchyEnhancer";
 
 export default function Admin() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -156,10 +158,12 @@ export default function Admin() {
 
       <div className="max-w-7xl mx-auto px-8 py-8">
         <Tabs defaultValue="overview" className="space-y-8">
-          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-9 text-xs">
+          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-11 text-xs">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="submissions">Contacts</TabsTrigger>
             <TabsTrigger value="content">Content</TabsTrigger>
+            <TabsTrigger value="case-studies">Case Studies</TabsTrigger>
+            <TabsTrigger value="design-system">Design</TabsTrigger>
             <TabsTrigger value="portfolio">Portfolio</TabsTrigger>
             <TabsTrigger value="knowledge">Knowledge</TabsTrigger>
             <TabsTrigger value="ai-assistant">AI Assistant</TabsTrigger>
@@ -381,6 +385,16 @@ export default function Admin() {
           {/* Enhanced Content Management Tab */}
           <TabsContent value="content" className="space-y-6">
             <EnhancedContentManager />
+          </TabsContent>
+
+          {/* Enhanced Case Study Editor Tab */}
+          <TabsContent value="case-studies" className="space-y-6">
+            <EnhancedCaseStudyEditor />
+          </TabsContent>
+
+          {/* Design System & Visual Hierarchy Tab */}
+          <TabsContent value="design-system" className="space-y-6">
+            <VisualHierarchyEnhancer />
           </TabsContent>
 
           {/* Portfolio Management Tab */}
