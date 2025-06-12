@@ -1050,17 +1050,8 @@ What would be most helpful for your current career goals?`;
   // Portfolio status management
   app.get("/api/admin/portfolio-status", isAdmin, async (req, res) => {
     try {
-      // Default portfolio status
-      const defaultStatus = {
-        hero: true,
-        about: true,
-        skills: true,
-        timeline: true,
-        coreValues: true,
-        caseStudies: true,
-        contact: true,
-      };
-      res.json(defaultStatus);
+      const portfolioStatus = await storage.getPortfolioStatus();
+      res.json(portfolioStatus);
     } catch (error) {
       console.error("Error fetching portfolio status:", error);
       res.status(500).json({ message: "Failed to fetch portfolio status" });
@@ -1069,8 +1060,7 @@ What would be most helpful for your current career goals?`;
 
   app.put("/api/admin/portfolio-status", isAdmin, async (req, res) => {
     try {
-      // In a real implementation, this would save to database
-      // For now, just return success
+      await storage.updatePortfolioStatus(req.body);
       res.json({ success: true, message: "Portfolio status updated successfully" });
     } catch (error) {
       console.error("Error updating portfolio status:", error);

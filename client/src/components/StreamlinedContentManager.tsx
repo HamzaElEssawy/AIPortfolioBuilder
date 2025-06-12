@@ -90,9 +90,10 @@ export default function StreamlinedContentManager() {
       return response.json();
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/portfolio-status"] });
       toast({
         title: "Portfolio status updated",
-        description: "Section visibility has been saved.",
+        description: "Section visibility has been saved and applied to live website.",
       });
     },
   });

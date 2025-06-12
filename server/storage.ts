@@ -11,6 +11,7 @@ import {
   skills,
   portfolioMetrics,
   coreValues,
+  portfolioStatus,
   type User,
   type InsertUser,
   type ContactSubmission,
@@ -35,6 +36,8 @@ import {
   type InsertPortfolioMetric,
   type CoreValue,
   type InsertCoreValue,
+  type PortfolioStatus,
+  type InsertPortfolioStatus,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc } from "drizzle-orm";
@@ -106,6 +109,10 @@ export interface IStorage {
   createPortfolioMetric(metric: InsertPortfolioMetric): Promise<PortfolioMetric>;
   updatePortfolioMetric(id: number, metric: Partial<InsertPortfolioMetric>): Promise<PortfolioMetric>;
   deletePortfolioMetric(id: number): Promise<void>;
+  
+  // Portfolio status
+  getPortfolioStatus(): Promise<Record<string, boolean>>;
+  updatePortfolioStatus(statusData: Record<string, boolean>): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -471,6 +478,49 @@ export class DatabaseStorage implements IStorage {
 
   async deleteCoreValue(id: number): Promise<void> {
     await db.delete(coreValues).where(eq(coreValues.id, id));
+  }
+
+  // Portfolio status operations
+  async getPortfolioStatus(): Promise<Record<string, boolean>> {
+    const statuses = await db.select().from(portfolioStatus);
+    
+    // Default status for all sections
+    const defaultStatus = {
+      hero: true,
+      about: true,
+      skills: true,
+      timeline: true,
+      coreValues: true,
+      caseStudies: true,
+      contact: true,
+    };
+
+    // Override with database values
+    statuses.forEach(status => {
+      if (status.sectionKey in defaultStatus) {
+        defaultStatus[status.sectionKey as keyof typeof defaultStatus] = status.enabled;
+      }
+    });
+
+    return defaultStatus;
+  }
+
+  async updatePortfolioStatus(statusData: Record<string, boolean>): Promise<void> {
+    for (const [sectionKey, enabled] of Object.entries(statusData)) {
+      await db
+        .insert(portfolioStatus)
+        .values({
+          sectionKey,
+          enabled,
+        })
+        .onConflictDoUpdate({
+          target: portfolioStatus.sectionKey,
+          set: {
+            enabled,
+            updatedAt: new Date(),
+          },
+        });
+    }
   }
 }
 
