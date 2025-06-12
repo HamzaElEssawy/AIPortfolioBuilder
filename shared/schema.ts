@@ -112,6 +112,16 @@ export const portfolioMetrics = pgTable("portfolio_metrics", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+export const coreValues = pgTable("core_values", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  icon: text("icon").default("target"),
+  orderIndex: integer("order_index").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
@@ -180,6 +190,12 @@ export const insertPortfolioMetricSchema = createInsertSchema(portfolioMetrics).
   updatedAt: true,
 });
 
+export const insertCoreValueSchema = createInsertSchema(coreValues).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 // Types
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -212,3 +228,6 @@ export type InsertSkill = z.infer<typeof insertSkillSchema>;
 
 export type PortfolioMetric = typeof portfolioMetrics.$inferSelect;
 export type InsertPortfolioMetric = z.infer<typeof insertPortfolioMetricSchema>;
+
+export type CoreValue = typeof coreValues.$inferSelect;
+export type InsertCoreValue = z.infer<typeof insertCoreValueSchema>;
