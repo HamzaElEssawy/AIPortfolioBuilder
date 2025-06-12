@@ -4,6 +4,8 @@ import helmet from "helmet";
 import compression from "compression";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { performanceMiddleware } from "./performance";
+import { logger } from "./logger";
 
 const app = express();
 
@@ -23,6 +25,9 @@ app.use(helmet({
 
 // Compression middleware
 app.use(compression());
+
+// Performance monitoring middleware
+app.use(performanceMiddleware);
 
 // Rate limiting
 const limiter = rateLimit({
