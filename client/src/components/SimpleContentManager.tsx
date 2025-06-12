@@ -10,7 +10,7 @@ import { Save, Eye, Check, AlertCircle, Monitor, RefreshCw } from "lucide-react"
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
-import TinyMCEEditor from "@/components/TinyMCEEditor";
+import SimpleTextEditor from "@/components/SimpleTextEditor";
 import type { HeroContent, AboutContent } from "@shared/contentSchema";
 
 export default function SimpleContentManager() {
@@ -276,10 +276,10 @@ export default function SimpleContentManager() {
                 </div>
 
                 <div>
-                  <TinyMCEEditor
+                  <SimpleTextEditor
                     label="Subheadline"
                     value={heroContent.subheadline}
-                    onChange={(value) => handleHeroChange("subheadline", value)}
+                    onChange={(value: string) => handleHeroChange("subheadline", value)}
                     placeholder="e.g., 7+ Years Scaling 0→1 | Enterprise Clients Across MENA & Southeast Asia"
                     height={200}
                   />
@@ -342,20 +342,20 @@ export default function SimpleContentManager() {
                 </div>
 
                 <div>
-                  <TinyMCEEditor
+                  <SimpleTextEditor
                     label="Summary"
                     value={aboutContent.summary}
-                    onChange={(value) => handleAboutChange("summary", value)}
+                    onChange={(value: string) => handleAboutChange("summary", value)}
                     placeholder="Brief summary that appears below the title"
                     height={200}
                   />
                 </div>
 
                 <div>
-                  <TinyMCEEditor
+                  <SimpleTextEditor
                     label="Professional Competencies"
                     value={aboutContent.competencies}
-                    onChange={(value) => handleAboutChange("competencies", value)}
+                    onChange={(value: string) => handleAboutChange("competencies", value)}
                     placeholder="Detailed description of your professional experience and expertise"
                     height={300}
                   />
