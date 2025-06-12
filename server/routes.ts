@@ -1599,6 +1599,29 @@ What would be most helpful for your current career goals?`;
     }
   });
 
+  // System optimization endpoints
+  app.post("/api/admin/optimize", isAdmin, async (req, res) => {
+    try {
+      const { systemOptimizer } = await import("../optimization");
+      const report = await systemOptimizer.runComprehensiveOptimization();
+      res.json(report);
+    } catch (error) {
+      console.error("Error running optimization:", error);
+      res.status(500).json({ error: "Failed to run system optimization" });
+    }
+  });
+
+  app.get("/api/admin/performance-report", isAdmin, async (req, res) => {
+    try {
+      const { systemOptimizer } = await import("../optimization");
+      const report = await systemOptimizer.generatePerformanceReport();
+      res.json(report);
+    } catch (error) {
+      console.error("Error generating performance report:", error);
+      res.status(500).json({ error: "Failed to generate performance report" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
