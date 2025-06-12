@@ -28,7 +28,7 @@ export default function StreamlinedContentManager() {
   });
 
   // Portfolio section status management
-  const { data: portfolioStatus = {
+  const defaultStatus = {
     hero: true,
     about: true,
     skills: true,
@@ -36,11 +36,20 @@ export default function StreamlinedContentManager() {
     coreValues: true,
     caseStudies: true,
     contact: true,
-  } } = useQuery({
+  };
+
+  const { data: portfolioStatus = defaultStatus } = useQuery({
     queryKey: ["/api/admin/portfolio-status"],
   });
 
-  const [sectionStatus, setSectionStatus] = useState(portfolioStatus);
+  const [sectionStatus, setSectionStatus] = useState(defaultStatus);
+
+  // Sync portfolio status when data loads
+  useEffect(() => {
+    if (portfolioStatus && Object.keys(portfolioStatus).length > 0) {
+      setSectionStatus(portfolioStatus as typeof defaultStatus);
+    }
+  }, [portfolioStatus]);
 
   // Update content mutation
   const updateMutation = useMutation({
@@ -108,7 +117,7 @@ export default function StreamlinedContentManager() {
   };
 
   const handleStatusChange = (sectionKey: string, enabled: boolean) => {
-    setSectionStatus(prev => ({
+    setSectionStatus((prev: any) => ({
       ...prev,
       [sectionKey]: enabled,
     }));
@@ -137,7 +146,7 @@ export default function StreamlinedContentManager() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            {Object.entries(sectionStatus).map(([key, enabled]) => (
+            {Object.entries(sectionStatus as Record<string, boolean>).map(([key, enabled]) => (
               <div key={key} className="flex items-center justify-between p-3 border rounded-lg">
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-medium capitalize">

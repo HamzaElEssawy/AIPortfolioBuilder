@@ -1,5 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
-import { Target, Globe, Shield, Users, TrendingUp, Lightbulb } from "lucide-react";
+import { 
+  FaGlobeAmericas, 
+  FaShieldAlt, 
+  FaChartLine, 
+  FaLightbulb, 
+  FaUsers, 
+  FaBullseye,
+  FaRocket,
+  FaCogs,
+  FaHeart
+} from "react-icons/fa";
 
 interface CoreValue {
   id: number;
@@ -10,12 +20,15 @@ interface CoreValue {
 }
 
 const iconMap = {
-  target: Target,
-  globe: Globe,
-  shield: Shield,
-  users: Users,
-  "trending-up": TrendingUp,
-  lightbulb: Lightbulb,
+  target: FaBullseye,
+  globe: FaGlobeAmericas,
+  shield: FaShieldAlt,
+  users: FaUsers,
+  "trending-up": FaChartLine,
+  lightbulb: FaLightbulb,
+  rocket: FaRocket,
+  cogs: FaCogs,
+  heart: FaHeart,
 };
 
 export default function CoreValues() {
@@ -88,7 +101,7 @@ export default function CoreValues() {
         {coreValues
           .sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0))
           .map((value, index) => {
-            const IconComponent = iconMap[value.icon as keyof typeof iconMap] || Target;
+            const IconComponent = iconMap[value.icon as keyof typeof iconMap] || FaBullseye;
             const colorClasses = [
               "bg-secondary-green/10 text-secondary-green",
               "bg-accent-orange/10 text-accent-orange", 
