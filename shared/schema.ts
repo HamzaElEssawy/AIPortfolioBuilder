@@ -73,6 +73,45 @@ export const knowledgeBaseDocuments = pgTable("knowledge_base_documents", {
   uploadedAt: timestamp("uploaded_at").defaultNow(),
 });
 
+export const experienceEntries = pgTable("experience_entries", {
+  id: serial("id").primaryKey(),
+  year: text("year").notNull(),
+  title: text("title").notNull(),
+  organization: text("organization").notNull(),
+  description: text("description"),
+  highlight: boolean("highlight").default(false),
+  orderIndex: integer("order_index").default(0),
+  color: text("color").default("bg-gray-400"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const skillCategories = pgTable("skill_categories", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  orderIndex: integer("order_index").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const skills = pgTable("skills", {
+  id: serial("id").primaryKey(),
+  categoryId: integer("category_id").references(() => skillCategories.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  proficiencyLevel: integer("proficiency_level").default(5),
+  orderIndex: integer("order_index").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const portfolioMetrics = pgTable("portfolio_metrics", {
+  id: serial("id").primaryKey(),
+  metricName: text("metric_name").notNull(),
+  metricValue: text("metric_value").notNull(),
+  metricLabel: text("metric_label").notNull(),
+  displayOrder: integer("display_order").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
