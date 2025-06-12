@@ -1294,6 +1294,131 @@ What would be most helpful for your current career goals?`;
     }
   });
 
+  // System monitoring endpoints
+  app.get("/api/admin/system/metrics", isAdmin, async (req, res) => {
+    try {
+      const { performanceMonitor } = await import("../performance");
+      const metrics = performanceMonitor.getMetrics();
+      res.json(metrics);
+    } catch (error) {
+      console.error("Error fetching system metrics:", error);
+      res.status(500).json({ error: "Failed to fetch system metrics" });
+    }
+  });
+
+  app.get("/api/admin/system/logs", isAdmin, async (req, res) => {
+    try {
+      const { logger } = await import("../logger");
+      const { level, limit } = req.query;
+      const logs = await logger.getRecentLogs(
+        level as string, 
+        limit ? parseInt(limit as string) : 100
+      );
+      res.json(logs);
+    } catch (error) {
+      console.error("Error fetching system logs:", error);
+      res.status(500).json({ error: "Failed to fetch system logs" });
+    }
+  });
+
+  app.get("/api/admin/system/health", isAdmin, async (req, res) => {
+    try {
+      // Check database connection
+      let dbStatus = 'online';
+      try {
+        await db.select().from(schema.users).limit(1);
+      } catch {
+        dbStatus = 'offline';
+      }
+
+      // Check storage (file system)
+      let storageStatus = 'online';
+      try {
+        const fs = await import('fs');
+        fs.accessSync(process.cwd(), fs.constants.R_OK | fs.constants.W_OK);
+      } catch {
+        storageStatus = 'offline';
+      }
+
+      const health = {
+        status: dbStatus === 'offline' ? 'critical' : 'healthy',
+        services: {
+          database: dbStatus,
+          api: 'online',
+          storage: storageStatus
+        },
+        lastChecked: new Date().toISOString()
+      };
+
+      res.json(health);
+    } catch (error) {
+      console.error("Error checking system health:", error);
+      res.status(500).json({ error: "Failed to check system health" });
+    }
+  });
+
+  app.get("/api/admin/system/slowest-endpoints", isAdmin, async (req, res) => {
+    try {
+      const { performanceMonitor } = await import("../performance");
+      const { limit } = req.query;
+      const endpoints = performanceMonitor.getSlowestEndpoints(
+        limit ? parseInt(limit as string) : 10
+      );
+      res.json(endpoints);
+    } catch (error) {
+      console.error("Error fetching slowest endpoints:", error);
+      res.status(500).json({ error: "Failed to fetch slowest endpoints" });
+    }
+  });
+
+  // Backup and restore endpoints
+  app.post("/api/admin/backup/create", isAdmin, async (req, res) => {
+    try {
+      const { backupManager } = await import("../backup");
+      const { description } = req.body;
+      const fileName = await backupManager.createBackup(description);
+      res.json({ fileName, message: "Backup created successfully" });
+    } catch (error) {
+      console.error("Error creating backup:", error);
+      res.status(500).json({ error: "Failed to create backup" });
+    }
+  });
+
+  app.get("/api/admin/backup/list", isAdmin, async (req, res) => {
+    try {
+      const { backupManager } = await import("../backup");
+      const backups = await backupManager.listBackups();
+      res.json(backups);
+    } catch (error) {
+      console.error("Error listing backups:", error);
+      res.status(500).json({ error: "Failed to list backups" });
+    }
+  });
+
+  app.post("/api/admin/backup/restore/:fileName", isAdmin, async (req, res) => {
+    try {
+      const { backupManager } = await import("../backup");
+      const { fileName } = req.params;
+      await backupManager.restoreBackup(fileName);
+      res.json({ message: "Backup restored successfully" });
+    } catch (error) {
+      console.error("Error restoring backup:", error);
+      res.status(500).json({ error: "Failed to restore backup" });
+    }
+  });
+
+  app.delete("/api/admin/backup/:fileName", isAdmin, async (req, res) => {
+    try {
+      const { backupManager } = await import("../backup");
+      const { fileName } = req.params;
+      await backupManager.deleteBackup(fileName);
+      res.json({ message: "Backup deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting backup:", error);
+      res.status(500).json({ error: "Failed to delete backup" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
