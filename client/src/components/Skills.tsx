@@ -98,16 +98,45 @@ export default function Skills() {
             ))}
         </div>
 
-        {/* Skills Summary */}
-        <div className="mt-16 text-center">
-          <div className="bg-white rounded-xl p-8 shadow-lg max-w-4xl mx-auto">
-            <h3 className="text-2xl font-bold text-navy mb-4">Core Competencies</h3>
-            <p className="text-text-charcoal leading-relaxed">
-              Combining deep technical expertise in AI/ML with proven product leadership capabilities. 
-              Experienced in scaling engineering teams, managing complex stakeholder relationships, 
-              and driving innovative AI solutions from concept to market deployment across diverse 
-              cultural and regulatory environments.
-            </p>
+        {/* Geographic Expertise Integration */}
+        <div className="mt-16">
+          <div className="bg-white rounded-xl p-8 shadow-lg max-w-6xl mx-auto">
+            <h3 className="text-2xl font-bold text-navy mb-6 text-center">Geographic Expertise</h3>
+            <div className="grid md:grid-cols-2 gap-8">
+              <div className="text-center">
+                <div className="w-12 h-12 bg-secondary-green/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-6 h-6 bg-secondary-green rounded-full"></div>
+                </div>
+                <h4 className="text-xl font-bold text-navy mb-3">MENA Region</h4>
+                <p className="text-text-charcoal mb-4">
+                  Native Arabic speaker with deep cultural understanding and extensive experience in Gulf and North African fintech markets.
+                </p>
+                <div className="flex flex-wrap gap-2 justify-center">
+                  {['UAE', 'Saudi Arabia', 'Egypt', 'Jordan', 'Lebanon'].map((country) => (
+                    <span key={country} className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">
+                      {country}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="text-center">
+                <div className="w-12 h-12 bg-accent-orange/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-6 h-6 bg-accent-orange rounded-full"></div>
+                </div>
+                <h4 className="text-xl font-bold text-navy mb-3">Southeast Asia</h4>
+                <p className="text-text-charcoal mb-4">
+                  Malaysia-based with comprehensive understanding of regional AI adoption patterns, regulatory frameworks, and enterprise dynamics.
+                </p>
+                <div className="flex flex-wrap gap-2 justify-center">
+                  {['Malaysia', 'Singapore', 'Thailand', 'Indonesia', 'Philippines'].map((country) => (
+                    <span key={country} className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">
+                      {country}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
