@@ -227,6 +227,18 @@
     "keywords": "AI Product Manager, Machine Learning, Enterprise AI, Product Strategy, Startup Founder, Cross-Cultural Leadership",
     "ogImage": "/images/hamza-og-image.jpg"
   },
-  "lastUpdated": "2025-06-12T15:29:56.875Z",
-  "version": 113
+  "lastUpdated": "2025-06-12T15:42:49.989Z",
+  "version": 115,
+  "hero": {
+    "headline": "Product builder and visionary founder ",
+    "subheadline": "find the right product ",
+    "ctaText": "",
+    "ctaSecondaryText": ""
+  },
+  "about": {
+    "title": "About Hamza",
+    "summary": "Transforming AI concepts into enterprise solutions across diverse markets",
+    "competencies": "With over 7 years of experience spanning the MENA region and Southeast Asia, I specialize in transforming complex AI concepts into scalable enterprise solutions. My journey began in fintech, where I discovered the power of AI to solve real-world regulatory challenges.\n\nAt Tapway, I led the development of enterprise AI vision platforms, scaling from startup to serving 10+ major enterprise clients. This experience taught me that successful AI products require not just technical sophistication, but deep understanding of enterprise needs and cultural contexts.\n\nCurrently, as an Entrepreneur in Residence at Antler Malaysia, I'm building AI compliance solutions for the fintech sector, having secured $110K+ in early funding. My focus remains on creating AI products that are both technically robust and culturally intelligent.",
+    "profileImage": ""
+  }
 }
