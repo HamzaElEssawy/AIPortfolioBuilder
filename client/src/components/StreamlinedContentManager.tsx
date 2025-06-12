@@ -4,11 +4,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
-import { Save, Eye, EyeOff } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Save, Eye, Check, AlertCircle } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
-import EnhancedTextEditor from "@/components/EnhancedTextEditor";
 
 interface ContentSection {
   id: string;
@@ -21,6 +22,8 @@ interface ContentSection {
 export default function StreamlinedContentManager() {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("hero");
+  const [editingContent, setEditingContent] = useState<Record<string, any>>({});
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   
   // Fetch content sections
   const { data: sections = [], isLoading } = useQuery<ContentSection[]>({
@@ -50,6 +53,17 @@ export default function StreamlinedContentManager() {
     }
   }, [portfolioStatus]);
 
+  // Initialize editing content when sections load
+  useEffect(() => {
+    const currentSection = sections.find(s => s.id === activeTab);
+    if (currentSection && !editingContent[activeTab]) {
+      setEditingContent(prev => ({
+        ...prev,
+        [activeTab]: { ...currentSection.content }
+      }));
+    }
+  }, [sections, activeTab, editingContent]);
+
   // Update content mutation
   const updateMutation = useMutation({
     mutationFn: async ({ sectionId, content }: { sectionId: string; content: any }) => {
@@ -63,14 +77,15 @@ export default function StreamlinedContentManager() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/content/sections"] });
+      setHasUnsavedChanges(false);
       toast({
-        title: "Content updated",
-        description: "Your changes have been saved successfully.",
+        title: "Content saved successfully",
+        description: "Your changes have been published to the live website.",
       });
     },
     onError: () => {
       toast({
-        title: "Update failed",
+        title: "Save failed",
         description: "There was an error saving your changes.",
         variant: "destructive",
       });
@@ -97,23 +112,24 @@ export default function StreamlinedContentManager() {
     },
   });
 
-  const getCurrentSection = () => {
-    return sections.find(section => section.id === activeTab);
+  const handleContentChange = (field: string, value: string) => {
+    setEditingContent(prev => ({
+      ...prev,
+      [activeTab]: {
+        ...prev[activeTab],
+        [field]: value
+      }
+    }));
+    setHasUnsavedChanges(true);
   };
 
-  const handleContentUpdate = (field: string, value: string) => {
-    const section = getCurrentSection();
-    if (!section) return;
-
-    const updatedContent = {
-      ...section.content,
-      [field]: value,
-    };
-
-    updateMutation.mutate({
-      sectionId: section.id,
-      content: updatedContent,
-    });
+  const handleSaveContent = () => {
+    if (editingContent[activeTab]) {
+      updateMutation.mutate({
+        sectionId: activeTab,
+        content: editingContent[activeTab],
+      });
+    }
   };
 
   const handleStatusChange = (sectionKey: string, enabled: boolean) => {
@@ -121,6 +137,14 @@ export default function StreamlinedContentManager() {
       ...prev,
       [sectionKey]: enabled,
     }));
+  };
+
+  const getCurrentSection = () => {
+    return sections.find(section => section.id === activeTab);
+  };
+
+  const getCurrentContent = () => {
+    return editingContent[activeTab] || {};
   };
 
   if (isLoading) {
@@ -145,13 +169,12 @@ export default function StreamlinedContentManager() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
             {Object.entries(sectionStatus as Record<string, boolean>).map(([key, enabled]) => (
               <div key={key} className="flex items-center justify-between p-3 border rounded-lg">
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-medium capitalize">
-                    {key === "coreValues" ? "Core Values" : 
-                     key === "caseStudies" ? "Case Studies" : key}
+                    {key === "caseStudies" ? "Case Studies" : key}
                   </span>
                   <Badge variant={enabled ? "default" : "secondary"}>
                     {enabled ? "Live" : "Hidden"}
@@ -178,7 +201,15 @@ export default function StreamlinedContentManager() {
       {/* Content Editing */}
       <Card>
         <CardHeader>
-          <CardTitle>Content Editor</CardTitle>
+          <CardTitle className="flex items-center justify-between">
+            <span>Content Editor</span>
+            {hasUnsavedChanges && (
+              <div className="flex items-center gap-2 text-amber-600">
+                <AlertCircle className="h-4 w-4" />
+                <span className="text-sm">Unsaved changes</span>
+              </div>
+            )}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -190,39 +221,64 @@ export default function StreamlinedContentManager() {
             {/* Hero Section */}
             <TabsContent value="hero" className="space-y-6 mt-6">
               {(() => {
-                const heroSection = sections.find(s => s.id === "hero");
-                if (!heroSection) return <div>Hero section not found</div>;
+                const heroSection = getCurrentSection();
+                const content = getCurrentContent();
                 
-                // Safely access content with fallback
-                const content = heroSection.content || {};
+                if (!heroSection) return <div>Hero section not found</div>;
 
                 return (
                   <div className="space-y-6">
-                    <EnhancedTextEditor
-                      label="Professional Headline"
-                      value={content.headline || ""}
-                      onChange={(value) => handleContentUpdate("headline", value)}
-                      placeholder="e.g., AI Product Leader & Multi-time Founder"
-                    />
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Professional Headline
+                      </label>
+                      <Input
+                        value={content.headline || ""}
+                        onChange={(e) => handleContentChange("headline", e.target.value)}
+                        placeholder="e.g., AI Product Leader & Multi-time Founder"
+                        className="text-lg"
+                      />
+                    </div>
 
-                    <EnhancedTextEditor
-                      label="Subheadline"
-                      value={content.subheadline || ""}
-                      onChange={(value) => handleContentUpdate("subheadline", value)}
-                      placeholder="e.g., 7+ Years Scaling 0→1 | Enterprise Clients Across MENA & Southeast Asia"
-                      multiline
-                    />
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Subheadline
+                      </label>
+                      <Textarea
+                        value={content.subheadline || ""}
+                        onChange={(e) => handleContentChange("subheadline", e.target.value)}
+                        placeholder="e.g., 7+ Years Scaling 0→1 | Enterprise Clients Across MENA & Southeast Asia"
+                        rows={3}
+                      />
+                    </div>
 
-                    <EnhancedTextEditor
-                      label="Call-to-Action Text"
-                      value={content.ctaText || ""}
-                      onChange={(value) => handleContentUpdate("ctaText", value)}
-                      placeholder="e.g., View My Work"
-                    />
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Call-to-Action Text
+                      </label>
+                      <Input
+                        value={content.ctaText || ""}
+                        onChange={(e) => handleContentChange("ctaText", e.target.value)}
+                        placeholder="e.g., View My Work"
+                      />
+                    </div>
 
-                    <div className="pt-4 border-t">
-                      <p className="text-sm text-gray-600 mb-2">Last updated: {new Date(heroSection.lastModified).toLocaleString()}</p>
+                    <div className="flex items-center gap-4 pt-4 border-t">
+                      <Button
+                        onClick={handleSaveContent}
+                        disabled={updateMutation.isPending || !hasUnsavedChanges}
+                        className="bg-blue-600 hover:bg-blue-700"
+                      >
+                        <Save className="h-4 w-4 mr-2" />
+                        {updateMutation.isPending ? "Saving..." : "Save & Publish"}
+                      </Button>
+                      
+                      <div className="text-sm text-gray-600">
+                        Last updated: {new Date(heroSection.lastModified).toLocaleString()}
+                      </div>
+                      
                       <Badge variant="outline" className="text-green-700 border-green-300">
+                        <Check className="h-3 w-3 mr-1" />
                         Published
                       </Badge>
                     </div>
@@ -234,40 +290,64 @@ export default function StreamlinedContentManager() {
             {/* About Section */}
             <TabsContent value="about" className="space-y-6 mt-6">
               {(() => {
-                const aboutSection = sections.find(s => s.id === "about");
-                if (!aboutSection) return <div>About section not found</div>;
+                const aboutSection = getCurrentSection();
+                const content = getCurrentContent();
                 
-                // Safely access content with fallback
-                const content = aboutSection.content || {};
+                if (!aboutSection) return <div>About section not found</div>;
 
                 return (
                   <div className="space-y-6">
-                    <EnhancedTextEditor
-                      label="Section Title"
-                      value={content.title || ""}
-                      onChange={(value) => handleContentUpdate("title", value)}
-                      placeholder="e.g., About Hamza"
-                    />
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Section Title
+                      </label>
+                      <Input
+                        value={content.title || ""}
+                        onChange={(e) => handleContentChange("title", e.target.value)}
+                        placeholder="e.g., About Hamza"
+                      />
+                    </div>
 
-                    <EnhancedTextEditor
-                      label="Summary"
-                      value={content.summary || ""}
-                      onChange={(value) => handleContentUpdate("summary", value)}
-                      placeholder="Brief summary that appears below the title"
-                      multiline
-                    />
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Summary
+                      </label>
+                      <Textarea
+                        value={content.summary || ""}
+                        onChange={(e) => handleContentChange("summary", e.target.value)}
+                        placeholder="Brief summary that appears below the title"
+                        rows={3}
+                      />
+                    </div>
 
-                    <EnhancedTextEditor
-                      label="Professional Competencies"
-                      value={content.competencies || ""}
-                      onChange={(value) => handleContentUpdate("competencies", value)}
-                      placeholder="Detailed description of your professional experience and expertise"
-                      multiline
-                    />
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Professional Competencies
+                      </label>
+                      <Textarea
+                        value={content.competencies || ""}
+                        onChange={(e) => handleContentChange("competencies", e.target.value)}
+                        placeholder="Detailed description of your professional experience and expertise"
+                        rows={6}
+                      />
+                    </div>
 
-                    <div className="pt-4 border-t">
-                      <p className="text-sm text-gray-600 mb-2">Last updated: {new Date(aboutSection.lastModified).toLocaleString()}</p>
+                    <div className="flex items-center gap-4 pt-4 border-t">
+                      <Button
+                        onClick={handleSaveContent}
+                        disabled={updateMutation.isPending || !hasUnsavedChanges}
+                        className="bg-blue-600 hover:bg-blue-700"
+                      >
+                        <Save className="h-4 w-4 mr-2" />
+                        {updateMutation.isPending ? "Saving..." : "Save & Publish"}
+                      </Button>
+                      
+                      <div className="text-sm text-gray-600">
+                        Last updated: {new Date(aboutSection.lastModified).toLocaleString()}
+                      </div>
+                      
                       <Badge variant="outline" className="text-green-700 border-green-300">
+                        <Check className="h-3 w-3 mr-1" />
                         Published
                       </Badge>
                     </div>

@@ -9,12 +9,6 @@
     "stat4Value": "20",
     "stat4Label": "Team Members"
   },
-  "about": {
-    "title": "About Hamza",
-    "summary": "AI Product Leader with 7+ years of experience scaling enterprise AI platforms across global markets. Proven track record of building and leading cross-cultsural teams, securing funding, and delivering measurable business impact through innovative AI solutions. jas",
-    "competencies": "AI/ML Product Strategy, Cross-Cultural Leadership, Enterprise Scaling, Regulatory Compliance, Team Building, Startup Funding, Technical Architecture",
-    "profileImage": "/images/hamza-profile.jpg"
-  },
   "experience": {
     "title": "Professional Experience",
     "subtitle": "Building AI solutions that scale across cultures and markets",
@@ -233,6 +227,6 @@
     "keywords": "AI Product Manager, Machine Learning, Enterprise AI, Product Strategy, Startup Founder, Cross-Cultural Leadership",
     "ogImage": "/images/hamza-og-image.jpg"
   },
-  "lastUpdated": "2025-06-12T15:05:15.074Z",
-  "version": 56
+  "lastUpdated": "2025-06-12T15:22:45.007Z",
+  "version": 111
 }

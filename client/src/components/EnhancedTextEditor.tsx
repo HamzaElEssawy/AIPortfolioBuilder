@@ -1,4 +1,4 @@
-import { useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 
@@ -19,30 +19,39 @@ export default function EnhancedTextEditor({
   className = "",
   label
 }: EnhancedTextEditorProps) {
+  const [localValue, setLocalValue] = useState(value);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const cursorPositionRef = useRef<number>(0);
+  const debounceTimerRef = useRef<NodeJS.Timeout>();
+
+  // Update local value when prop value changes
+  useEffect(() => {
+    setLocalValue(value);
+  }, [value]);
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     const newValue = e.target.value;
-    cursorPositionRef.current = e.target.selectionStart || 0;
-    onChange(newValue);
+    setLocalValue(newValue);
+    
+    // Clear existing timer
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+    
+    // Set new timer to save after 1.5 seconds of no typing
+    debounceTimerRef.current = setTimeout(() => {
+      onChange(newValue);
+    }, 1500);
   }, [onChange]);
 
-  // Restore cursor position after value changes
+  // Cleanup timer on unmount
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if (multiline && textAreaRef.current) {
-        textAreaRef.current.setSelectionRange(cursorPositionRef.current, cursorPositionRef.current);
-        textAreaRef.current.focus();
-      } else if (!multiline && inputRef.current) {
-        inputRef.current.setSelectionRange(cursorPositionRef.current, cursorPositionRef.current);
-        inputRef.current.focus();
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
       }
-    }, 0);
-
-    return () => clearTimeout(timer);
-  }, [value, multiline]);
+    };
+  }, []);
 
   if (multiline) {
     return (
@@ -50,7 +59,7 @@ export default function EnhancedTextEditor({
         {label && <label className="text-sm font-medium text-gray-700">{label}</label>}
         <Textarea
           ref={textAreaRef}
-          value={value}
+          value={localValue}
           onChange={handleChange}
           placeholder={placeholder}
           className={`min-h-[120px] resize-y focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${className}`}
@@ -65,7 +74,7 @@ export default function EnhancedTextEditor({
       {label && <label className="text-sm font-medium text-gray-700">{label}</label>}
       <Input
         ref={inputRef}
-        value={value}
+        value={localValue}
         onChange={handleChange}
         placeholder={placeholder}
         className={`focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${className}`}
