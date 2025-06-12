@@ -24,14 +24,19 @@ export default function FixedTextEditor({
   // Save and restore cursor position
   const saveCursorPosition = useCallback(() => {
     const selection = window.getSelection();
-    if (!selection || !editorRef.current) return null;
+    if (!selection || !editorRef.current || selection.rangeCount === 0) return null;
     
-    const range = selection.getRangeAt(0);
-    const preCaretRange = range.cloneRange();
-    preCaretRange.selectNodeContents(editorRef.current);
-    preCaretRange.setEnd(range.endContainer, range.endOffset);
-    
-    return preCaretRange.toString().length;
+    try {
+      const range = selection.getRangeAt(0);
+      const preCaretRange = range.cloneRange();
+      preCaretRange.selectNodeContents(editorRef.current);
+      preCaretRange.setEnd(range.endContainer, range.endOffset);
+      
+      return preCaretRange.toString().length;
+    } catch (error) {
+      console.warn('Error saving cursor position:', error);
+      return null;
+    }
   }, []);
 
   const restoreCursorPosition = useCallback((position: number) => {
@@ -40,36 +45,40 @@ export default function FixedTextEditor({
     const selection = window.getSelection();
     if (!selection) return;
     
-    const createRange = (node: Node, chars: { count: number }): Range | null => {
-      if (chars.count === 0) {
-        const range = document.createRange();
-        range.setStart(node, 0);
-        range.collapse(true);
-        return range;
-      }
-      
-      if (node.nodeType === Node.TEXT_NODE) {
-        const textLength = node.textContent?.length || 0;
-        if (chars.count <= textLength) {
+    try {
+      const createRange = (node: Node, chars: { count: number }): Range | null => {
+        if (chars.count === 0) {
           const range = document.createRange();
-          range.setStart(node, chars.count);
+          range.setStart(node, 0);
           range.collapse(true);
           return range;
         }
-        chars.count -= textLength;
-      } else {
-        for (let i = 0; i < node.childNodes.length; i++) {
-          const range = createRange(node.childNodes[i], chars);
-          if (range) return range;
+        
+        if (node.nodeType === Node.TEXT_NODE) {
+          const textLength = node.textContent?.length || 0;
+          if (chars.count <= textLength) {
+            const range = document.createRange();
+            range.setStart(node, chars.count);
+            range.collapse(true);
+            return range;
+          }
+          chars.count -= textLength;
+        } else {
+          for (let i = 0; i < node.childNodes.length; i++) {
+            const range = createRange(node.childNodes[i], chars);
+            if (range) return range;
+          }
         }
+        return null;
+      };
+      
+      const range = createRange(editorRef.current, { count: position });
+      if (range) {
+        selection.removeAllRanges();
+        selection.addRange(range);
       }
-      return null;
-    };
-    
-    const range = createRange(editorRef.current, { count: position });
-    if (range) {
-      selection.removeAllRanges();
-      selection.addRange(range);
+    } catch (error) {
+      console.warn('Error restoring cursor position:', error);
     }
   }, []);
 
@@ -78,9 +87,12 @@ export default function FixedTextEditor({
     if (editorRef.current && value !== lastContentRef.current) {
       const cursorPosition = saveCursorPosition();
       
+      // Convert plain text with line breaks to HTML for display
+      const displayContent = value ? value.replace(/\n/g, '<br>') : '';
+      
       // Only update if content actually changed
-      if (editorRef.current.innerHTML !== value) {
-        editorRef.current.innerHTML = value || '';
+      if (editorRef.current.innerHTML !== displayContent) {
+        editorRef.current.innerHTML = displayContent;
         lastContentRef.current = value;
         
         // Restore cursor if we had one
@@ -96,7 +108,18 @@ export default function FixedTextEditor({
       const content = editorRef.current.innerHTML;
       if (content !== lastContentRef.current) {
         lastContentRef.current = content;
-        onChange(content);
+        // Clean HTML: convert <div> and <br> tags to proper line breaks
+        const cleanContent = content
+          .replace(/<div><br><\/div>/g, '\n')
+          .replace(/<div>/g, '\n')
+          .replace(/<\/div>/g, '')
+          .replace(/<br\s*\/?>/g, '\n')
+          .replace(/&nbsp;/g, ' ')
+          .replace(/&amp;/g, '&')
+          .replace(/&lt;/g, '<')
+          .replace(/&gt;/g, '>')
+          .trim();
+        onChange(cleanContent);
       }
     }
   }, [onChange]);
