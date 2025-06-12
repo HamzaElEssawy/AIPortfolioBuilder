@@ -370,6 +370,11 @@ export default function Admin() {
             </div>
           </TabsContent>
 
+          {/* Portfolio Management Tab */}
+          <TabsContent value="portfolio" className="space-y-6">
+            <PortfolioManager />
+          </TabsContent>
+
           {/* AI Assistant Tab */}
           <TabsContent value="ai-assistant" className="space-y-6">
             <AIAssistant />

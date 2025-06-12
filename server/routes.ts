@@ -244,6 +244,75 @@ Your background spans AI product leadership across multiple markets with proven 
 What would be most helpful for your current career goals?`;
   }
 
+  // Portfolio management endpoints (admin only)
+  app.get("/api/admin/case-studies", isAdmin, async (req, res) => {
+    try {
+      // Mock case studies data for now
+      const caseStudies = [
+        {
+          id: 1,
+          title: "AI Compliance Platform - Scaling from MVP to Enterprise",
+          status: "published",
+          challenge: "Built AI-driven compliance platform from concept to $110K+ funding, addressing regulatory complexity in financial services across multiple jurisdictions.",
+          approach: "Implemented lean startup methodology with rapid prototyping, customer discovery interviews, and iterative product development based on regulatory feedback.",
+          solution: "Developed comprehensive compliance automation platform reducing manual review processes by 50% while maintaining 99.9% accuracy in regulatory assessment.",
+          impact: "Secured $110K+ in early-stage funding, achieved product-market fit with enterprise clients, and established foundation for SEA market expansion.",
+          metrics: ["$110K+ funding secured", "50% reduction in manual review", "99.9% accuracy rate", "10+ enterprise pilots"],
+          technologies: ["React", "Node.js", "PostgreSQL", "Claude API", "Python ML"],
+          createdAt: "2024-01-15T00:00:00Z",
+          updatedAt: "2024-06-01T00:00:00Z"
+        },
+        {
+          id: 2,
+          title: "Enterprise AI Platform Scaling - Tapway Success Story",
+          status: "published",
+          challenge: "Scale no-code AI vision platform from startup to enterprise solution serving 10+ major clients while growing engineering team from 8 to 20 members.",
+          approach: "Implemented agile product management with cross-functional team coordination, enterprise sales strategy, and platform architecture optimization.",
+          solution: "Built scalable enterprise AI platform with 99.9% uptime, comprehensive API ecosystem, and white-label deployment capabilities for diverse industry verticals.",
+          impact: "Successfully scaled to 10+ enterprise clients, achieved 99.9% platform uptime, and built sustainable revenue model with recurring enterprise contracts.",
+          metrics: ["10+ enterprise clients", "99.9% platform uptime", "8→20 team growth", "150% revenue increase"],
+          technologies: ["Computer Vision", "TensorFlow", "Kubernetes", "AWS", "React Native"],
+          createdAt: "2023-06-01T00:00:00Z",
+          updatedAt: "2024-03-15T00:00:00Z"
+        }
+      ];
+      res.json(caseStudies);
+    } catch (error) {
+      console.error("Error fetching case studies:", error);
+      res.status(500).json({ message: "Failed to fetch case studies" });
+    }
+  });
+
+  app.get("/api/admin/media", isAdmin, async (req, res) => {
+    try {
+      // Mock media assets data
+      const mediaAssets = [
+        {
+          id: 1,
+          filename: "hamza-professional-headshot.jpg",
+          url: "/media/hamza-headshot.jpg",
+          type: "image",
+          size: 2048576,
+          uploadedAt: "2024-05-01T00:00:00Z",
+          tags: ["headshot", "professional", "portfolio"]
+        },
+        {
+          id: 2,
+          filename: "ai-compliance-platform-architecture.pdf",
+          url: "/media/platform-architecture.pdf",
+          type: "document",
+          size: 5242880,
+          uploadedAt: "2024-04-15T00:00:00Z",
+          tags: ["architecture", "compliance", "technical"]
+        }
+      ];
+      res.json(mediaAssets);
+    } catch (error) {
+      console.error("Error fetching media:", error);
+      res.status(500).json({ message: "Failed to fetch media assets" });
+    }
+  });
+
   // Contact form submission endpoint
   app.post("/api/contact", async (req, res) => {
     try {
