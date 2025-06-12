@@ -6,6 +6,7 @@ import bcrypt from "bcrypt";
 import session from "express-session";
 import { z } from "zod";
 import Anthropic from "@anthropic-ai/sdk";
+import { contentManager } from "./contentManager";
 
 // Initialize Anthropic client
 const anthropic = new Anthropic({
@@ -468,62 +469,75 @@ What would be most helpful for your current career goals?`;
   // Enhanced Content Management endpoints (admin only)
   app.get("/api/admin/content/sections", isAdmin, async (req, res) => {
     try {
+      const portfolioContent = await contentManager.getAllSections();
+      
       const sections = [
         {
           id: "hero",
           name: "Hero Section",
-          content: {
-            headline: "AI Product Leader & Entrepreneur",
-            subheadline: "7+ Years Scaling AI Solutions from 0→1 | Expert in Cross-Cultural Product Leadership",
-            ctaText: "View My Work"
-          },
+          content: portfolioContent.hero,
           status: "published",
-          lastModified: "2024-06-12T10:30:00Z",
-          version: 3
+          lastModified: portfolioContent.lastUpdated,
+          version: portfolioContent.version
         },
         {
           id: "stats",
-          name: "Achievement Statistics",
-          content: {
-            stat1Value: "$110K+",
-            stat1Label: "Funding Secured",
-            stat2Value: "70%",
-            stat2Label: "Query Automation",
-            stat3Value: "10+",
-            stat3Label: "Enterprise Clients",
-            stat4Value: "20",
-            stat4Label: "Team Members"
-          },
+          name: "Achievement Statistics", 
+          content: portfolioContent.stats,
           status: "published",
-          lastModified: "2024-06-10T15:45:00Z",
-          version: 2
+          lastModified: portfolioContent.lastUpdated,
+          version: portfolioContent.version
         },
         {
           id: "about",
           name: "About Section",
-          content: {
-            title: "About Hamza",
-            summary: "AI Product Leader with 7+ years of experience scaling enterprise AI platforms across global markets. Proven track record of building and leading cross-cultural teams, securing funding, and delivering measurable business impact through innovative AI solutions.",
-            competencies: "AI/ML Product Strategy, Cross-Cultural Leadership, Enterprise Scaling, Regulatory Compliance, Team Building"
-          },
-          status: "draft",
-          lastModified: "2024-06-08T09:15:00Z",
-          version: 1
+          content: portfolioContent.about,
+          status: "published",
+          lastModified: portfolioContent.lastUpdated,
+          version: portfolioContent.version
+        },
+        {
+          id: "experience",
+          name: "Professional Experience",
+          content: portfolioContent.experience,
+          status: "published",
+          lastModified: portfolioContent.lastUpdated,
+          version: portfolioContent.version
+        },
+        {
+          id: "caseStudies",
+          name: "Case Studies",
+          content: portfolioContent.caseStudies,
+          status: "published",
+          lastModified: portfolioContent.lastUpdated,
+          version: portfolioContent.version
+        },
+        {
+          id: "skills",
+          name: "Skills & Expertise",
+          content: portfolioContent.skills,
+          status: "published",
+          lastModified: portfolioContent.lastUpdated,
+          version: portfolioContent.version
+        },
+        {
+          id: "contact",
+          name: "Contact Information",
+          content: portfolioContent.contact,
+          status: "published",
+          lastModified: portfolioContent.lastUpdated,
+          version: portfolioContent.version
         },
         {
           id: "seo",
           name: "SEO Settings",
-          content: {
-            title: "Hamza El Essawy - AI Product Leader",
-            description: "AI Product Leader and entrepreneur with expertise in scaling enterprise AI platforms, securing funding, and building cross-cultural teams across MENA and SEA markets.",
-            keywords: "AI Product Manager, Machine Learning, Enterprise AI, Product Strategy, Startup Founder",
-            ogImage: "/images/hamza-og-image.jpg"
-          },
+          content: portfolioContent.seo,
           status: "published",
-          lastModified: "2024-06-05T14:20:00Z",
-          version: 1
+          lastModified: portfolioContent.lastUpdated,
+          version: portfolioContent.version
         }
       ];
+      
       res.json(sections);
     } catch (error) {
       console.error("Error fetching content sections:", error);
@@ -562,15 +576,18 @@ What would be most helpful for your current career goals?`;
 
   app.put("/api/admin/content/sections/:sectionId", isAdmin, async (req, res) => {
     try {
-      const sectionId = req.params.sectionId;
-      const { content, status } = req.body;
+      const sectionId = req.params.sectionId as any;
+      const { content } = req.body;
       
-      // In real implementation: save content with version control
+      // Update the specific section in the portfolio content
+      const updatedContent = await contentManager.updateSection(sectionId, content);
+      
       res.json({ 
         success: true, 
         message: "Content saved successfully",
         sectionId,
-        status
+        version: updatedContent.version,
+        lastUpdated: updatedContent.lastUpdated
       });
     } catch (error) {
       console.error("Error saving content:", error);

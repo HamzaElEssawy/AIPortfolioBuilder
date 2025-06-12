@@ -224,6 +224,195 @@ export default function EnhancedContentManager() {
     </div>
   );
 
+  const renderExperienceEditor = () => (
+    <div className="space-y-6">
+      <div>
+        <label className="block text-sm font-medium mb-2">Section Title</label>
+        <Input
+          value={currentSection?.content.title || ""}
+          onChange={(e) => handleContentChange("title", e.target.value)}
+          placeholder="Professional Experience"
+        />
+      </div>
+      
+      <div>
+        <label className="block text-sm font-medium mb-2">Section Subtitle</label>
+        <Input
+          value={currentSection?.content.subtitle || ""}
+          onChange={(e) => handleContentChange("subtitle", e.target.value)}
+          placeholder="Building AI solutions that scale across cultures and markets"
+        />
+      </div>
+
+      <div className="border rounded-lg p-4 bg-gray-50">
+        <h4 className="font-medium mb-4">Experience Entries</h4>
+        <p className="text-sm text-gray-600 mb-4">
+          Current experience entries: {currentSection?.content.experiences?.length || 0}
+        </p>
+        <div className="space-y-2">
+          {currentSection?.content.experiences?.slice(0, 3).map((exp: any, index: number) => (
+            <div key={index} className="p-3 bg-white border rounded">
+              <h5 className="font-medium">{exp.position}</h5>
+              <p className="text-sm text-gray-600">{exp.company} • {exp.period}</p>
+            </div>
+          ))}
+        </div>
+        <Button variant="outline" className="mt-4">
+          <Edit3 className="h-4 w-4 mr-2" />
+          Manage Experience Entries
+        </Button>
+      </div>
+    </div>
+  );
+
+  const renderCaseStudiesEditor = () => (
+    <div className="space-y-6">
+      <div>
+        <label className="block text-sm font-medium mb-2">Section Title</label>
+        <Input
+          value={currentSection?.content.title || ""}
+          onChange={(e) => handleContentChange("title", e.target.value)}
+          placeholder="Case Studies"
+        />
+      </div>
+      
+      <div>
+        <label className="block text-sm font-medium mb-2">Section Subtitle</label>
+        <Input
+          value={currentSection?.content.subtitle || ""}
+          onChange={(e) => handleContentChange("subtitle", e.target.value)}
+          placeholder="Proven track record of scaling AI solutions across global markets"
+        />
+      </div>
+
+      <div className="border rounded-lg p-4 bg-gray-50">
+        <h4 className="font-medium mb-4">Case Studies</h4>
+        <p className="text-sm text-gray-600 mb-4">
+          Published case studies: {currentSection?.content.caseStudies?.filter((cs: any) => cs.status === 'published').length || 0}
+        </p>
+        <div className="space-y-2">
+          {currentSection?.content.caseStudies?.slice(0, 2).map((study: any, index: number) => (
+            <div key={index} className="p-3 bg-white border rounded">
+              <h5 className="font-medium">{study.title}</h5>
+              <p className="text-sm text-gray-600">{study.challenge.substring(0, 100)}...</p>
+              <span className={`inline-block px-2 py-1 text-xs rounded ${
+                study.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+              }`}>
+                {study.status}
+              </span>
+            </div>
+          ))}
+        </div>
+        <Button variant="outline" className="mt-4">
+          <Edit3 className="h-4 w-4 mr-2" />
+          Manage Case Studies
+        </Button>
+      </div>
+    </div>
+  );
+
+  const renderSkillsEditor = () => (
+    <div className="space-y-6">
+      <div>
+        <label className="block text-sm font-medium mb-2">Section Title</label>
+        <Input
+          value={currentSection?.content.title || ""}
+          onChange={(e) => handleContentChange("title", e.target.value)}
+          placeholder="Technical Expertise"
+        />
+      </div>
+      
+      <div>
+        <label className="block text-sm font-medium mb-2">Section Subtitle</label>
+        <Input
+          value={currentSection?.content.subtitle || ""}
+          onChange={(e) => handleContentChange("subtitle", e.target.value)}
+          placeholder="Comprehensive skill set spanning AI product development and enterprise scaling"
+        />
+      </div>
+
+      <div className="border rounded-lg p-4 bg-gray-50">
+        <h4 className="font-medium mb-4">Skills Categories</h4>
+        <p className="text-sm text-gray-600 mb-4">
+          Skill categories: {currentSection?.content.categories?.length || 0}
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {currentSection?.content.categories?.map((category: any, index: number) => (
+            <div key={index} className="p-3 bg-white border rounded">
+              <h5 className="font-medium">{category.category}</h5>
+              <p className="text-sm text-gray-600">{category.skills?.join(", ").substring(0, 60)}...</p>
+            </div>
+          ))}
+        </div>
+        <Button variant="outline" className="mt-4">
+          <Edit3 className="h-4 w-4 mr-2" />
+          Manage Skills Categories
+        </Button>
+      </div>
+    </div>
+  );
+
+  const renderContactEditor = () => (
+    <div className="space-y-6">
+      <div>
+        <label className="block text-sm font-medium mb-2">Section Title</label>
+        <Input
+          value={currentSection?.content.title || ""}
+          onChange={(e) => handleContentChange("title", e.target.value)}
+          placeholder="Let's Connect"
+        />
+      </div>
+      
+      <div>
+        <label className="block text-sm font-medium mb-2">Section Subtitle</label>
+        <Input
+          value={currentSection?.content.subtitle || ""}
+          onChange={(e) => handleContentChange("subtitle", e.target.value)}
+          placeholder="Open to AI product leadership opportunities and strategic partnerships"
+        />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium mb-2">Email Address</label>
+          <Input
+            type="email"
+            value={currentSection?.content.email || ""}
+            onChange={(e) => handleContentChange("email", e.target.value)}
+            placeholder="hamza@example.com"
+          />
+        </div>
+        
+        <div>
+          <label className="block text-sm font-medium mb-2">LinkedIn URL</label>
+          <Input
+            value={currentSection?.content.linkedin || ""}
+            onChange={(e) => handleContentChange("linkedin", e.target.value)}
+            placeholder="https://linkedin.com/in/hamzaelessawy"
+          />
+        </div>
+        
+        <div>
+          <label className="block text-sm font-medium mb-2">Location</label>
+          <Input
+            value={currentSection?.content.location || ""}
+            onChange={(e) => handleContentChange("location", e.target.value)}
+            placeholder="Kuala Lumpur, Malaysia"
+          />
+        </div>
+        
+        <div>
+          <label className="block text-sm font-medium mb-2">Availability Status</label>
+          <Input
+            value={currentSection?.content.availability || ""}
+            onChange={(e) => handleContentChange("availability", e.target.value)}
+            placeholder="Available for leadership roles and consulting opportunities"
+          />
+        </div>
+      </div>
+    </div>
+  );
+
   const renderSEOEditor = () => (
     <div className="space-y-6">
       <div>
@@ -328,11 +517,15 @@ export default function EnhancedContentManager() {
             </CardHeader>
             <CardContent>
               <Tabs value={activeSection} onValueChange={setActiveSection}>
-                <TabsList className="grid w-full grid-cols-4">
-                  <TabsTrigger value="hero">Hero Section</TabsTrigger>
-                  <TabsTrigger value="stats">Statistics</TabsTrigger>
+                <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8 text-xs">
+                  <TabsTrigger value="hero">Hero</TabsTrigger>
+                  <TabsTrigger value="stats">Stats</TabsTrigger>
                   <TabsTrigger value="about">About</TabsTrigger>
-                  <TabsTrigger value="seo">SEO Settings</TabsTrigger>
+                  <TabsTrigger value="experience">Experience</TabsTrigger>
+                  <TabsTrigger value="caseStudies">Case Studies</TabsTrigger>
+                  <TabsTrigger value="skills">Skills</TabsTrigger>
+                  <TabsTrigger value="contact">Contact</TabsTrigger>
+                  <TabsTrigger value="seo">SEO</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="hero" className="mt-6">
@@ -345,6 +538,195 @@ export default function EnhancedContentManager() {
 
                 <TabsContent value="about" className="mt-6">
                   {renderAboutEditor()}
+                </TabsContent>
+
+                <TabsContent value="experience" className="mt-6">
+                  <div className="space-y-6">
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Section Title</label>
+                      <Input
+                        value={currentSection?.content.title || ""}
+                        onChange={(e) => handleContentChange("title", e.target.value)}
+                        placeholder="Professional Experience"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Section Subtitle</label>
+                      <Input
+                        value={currentSection?.content.subtitle || ""}
+                        onChange={(e) => handleContentChange("subtitle", e.target.value)}
+                        placeholder="Building AI solutions that scale across cultures and markets"
+                      />
+                    </div>
+
+                    <div className="border rounded-lg p-4 bg-gray-50">
+                      <h4 className="font-medium mb-4">Experience Entries</h4>
+                      <p className="text-sm text-gray-600 mb-4">
+                        Current experience entries: {currentSection?.content.experiences?.length || 0}
+                      </p>
+                      <div className="space-y-2">
+                        {currentSection?.content.experiences?.slice(0, 3).map((exp: any, index: number) => (
+                          <div key={index} className="p-3 bg-white border rounded">
+                            <h5 className="font-medium">{exp.position}</h5>
+                            <p className="text-sm text-gray-600">{exp.company} • {exp.period}</p>
+                          </div>
+                        ))}
+                      </div>
+                      <Button variant="outline" className="mt-4">
+                        <Edit3 className="h-4 w-4 mr-2" />
+                        Manage Experience Entries
+                      </Button>
+                    </div>
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="caseStudies" className="mt-6">
+                  <div className="space-y-6">
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Section Title</label>
+                      <Input
+                        value={currentSection?.content.title || ""}
+                        onChange={(e) => handleContentChange("title", e.target.value)}
+                        placeholder="Case Studies"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Section Subtitle</label>
+                      <Input
+                        value={currentSection?.content.subtitle || ""}
+                        onChange={(e) => handleContentChange("subtitle", e.target.value)}
+                        placeholder="Proven track record of scaling AI solutions across global markets"
+                      />
+                    </div>
+
+                    <div className="border rounded-lg p-4 bg-gray-50">
+                      <h4 className="font-medium mb-4">Case Studies</h4>
+                      <p className="text-sm text-gray-600 mb-4">
+                        Published case studies: {currentSection?.content.caseStudies?.filter((cs: any) => cs.status === 'published').length || 0}
+                      </p>
+                      <div className="space-y-2">
+                        {currentSection?.content.caseStudies?.slice(0, 2).map((study: any, index: number) => (
+                          <div key={index} className="p-3 bg-white border rounded">
+                            <h5 className="font-medium">{study.title}</h5>
+                            <p className="text-sm text-gray-600">{study.challenge.substring(0, 100)}...</p>
+                            <span className={`inline-block px-2 py-1 text-xs rounded ${
+                              study.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                            }`}>
+                              {study.status}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                      <Button variant="outline" className="mt-4">
+                        <Edit3 className="h-4 w-4 mr-2" />
+                        Manage Case Studies
+                      </Button>
+                    </div>
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="skills" className="mt-6">
+                  <div className="space-y-6">
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Section Title</label>
+                      <Input
+                        value={currentSection?.content.title || ""}
+                        onChange={(e) => handleContentChange("title", e.target.value)}
+                        placeholder="Technical Expertise"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Section Subtitle</label>
+                      <Input
+                        value={currentSection?.content.subtitle || ""}
+                        onChange={(e) => handleContentChange("subtitle", e.target.value)}
+                        placeholder="Comprehensive skill set spanning AI product development and enterprise scaling"
+                      />
+                    </div>
+
+                    <div className="border rounded-lg p-4 bg-gray-50">
+                      <h4 className="font-medium mb-4">Skills Categories</h4>
+                      <p className="text-sm text-gray-600 mb-4">
+                        Skill categories: {currentSection?.content.categories?.length || 0}
+                      </p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {currentSection?.content.categories?.map((category: any, index: number) => (
+                          <div key={index} className="p-3 bg-white border rounded">
+                            <h5 className="font-medium">{category.category}</h5>
+                            <p className="text-sm text-gray-600">{category.skills?.join(", ").substring(0, 60)}...</p>
+                          </div>
+                        ))}
+                      </div>
+                      <Button variant="outline" className="mt-4">
+                        <Edit3 className="h-4 w-4 mr-2" />
+                        Manage Skills Categories
+                      </Button>
+                    </div>
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="contact" className="mt-6">
+                  <div className="space-y-6">
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Section Title</label>
+                      <Input
+                        value={currentSection?.content.title || ""}
+                        onChange={(e) => handleContentChange("title", e.target.value)}
+                        placeholder="Let's Connect"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Section Subtitle</label>
+                      <Input
+                        value={currentSection?.content.subtitle || ""}
+                        onChange={(e) => handleContentChange("subtitle", e.target.value)}
+                        placeholder="Open to AI product leadership opportunities and strategic partnerships"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-2">Email Address</label>
+                        <Input
+                          type="email"
+                          value={currentSection?.content.email || ""}
+                          onChange={(e) => handleContentChange("email", e.target.value)}
+                          placeholder="hamza@example.com"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium mb-2">LinkedIn URL</label>
+                        <Input
+                          value={currentSection?.content.linkedin || ""}
+                          onChange={(e) => handleContentChange("linkedin", e.target.value)}
+                          placeholder="https://linkedin.com/in/hamzaelessawy"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium mb-2">Location</label>
+                        <Input
+                          value={currentSection?.content.location || ""}
+                          onChange={(e) => handleContentChange("location", e.target.value)}
+                          placeholder="Kuala Lumpur, Malaysia"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium mb-2">Availability Status</label>
+                        <Input
+                          value={currentSection?.content.availability || ""}
+                          onChange={(e) => handleContentChange("availability", e.target.value)}
+                          placeholder="Available for leadership roles and consulting opportunities"
+                        />
+                      </div>
+                    </div>
+                  </div>
                 </TabsContent>
 
                 <TabsContent value="seo" className="mt-6">
