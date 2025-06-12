@@ -1,183 +1,170 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Lightbulb, Cog, Rocket, BarChart3 } from "lucide-react";
+import { ArrowRight, TrendingUp, Shield, Globe } from "lucide-react";
 
 export default function CaseStudies() {
   const caseStudies = [
     {
-      badge: "Featured Project",
-      badgeColor: "bg-warm-orange",
+      id: "ai-compliance",
       title: "AI Compliance SaaS for Malaysian Banking",
-      heroImage: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=600",
-      challenge: "Central Bank of Malaysia introduced stringent regulatory requirements for fintech companies, demanding real-time compliance monitoring across multiple financial products and services with zero tolerance for regulatory breaches.",
-      approach: [
-        "Conducted comprehensive regulatory framework analysis and compliance gap assessment",
-        "Designed AI-driven automated review system with machine learning capabilities",
-        "Implemented real-time monitoring dashboards with predictive analytics",
-        "Developed intelligent compliance alerts with risk scoring algorithms"
+      summary: "Built AI-driven compliance platform reducing manual review time by 50% while securing $110K seed funding.",
+      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
+      tags: ["AI/ML", "RegTech", "B2B SaaS"],
+      metrics: [
+        { value: "50%", label: "Time Reduction" },
+        { value: "$110K", label: "Funding Secured" }
       ],
-      solution: "Built comprehensive AI compliance platform featuring automated regulatory review capabilities, real-time risk assessment engine, and predictive compliance scoring specifically designed for Malaysian fintech regulatory environment.",
-      impact: [
-        { value: "50%", label: "Manual Process Reduction" },
-        { value: "$110K", label: "Seed Funding Secured" },
-        { value: "95%", label: "Compliance Accuracy" },
-        { value: "24/7", label: "Real-time Monitoring" }
-      ],
-      learnings: "Regulatory AI requires deep domain expertise combined with continuous model training. Success depends on close collaboration with compliance teams and iterative feedback loops from regulatory bodies.",
-      reverse: false,
+      color: "blue"
     },
     {
-      badge: "Enterprise Scale",
-      badgeColor: "bg-emerald",
+      id: "tapway-vision",
       title: "Enterprise AI Vision Platform at Tapway",
-      heroImage: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=600",
-      challenge: "Enterprise clients required sophisticated computer vision solutions with hybrid cloud-on-premise deployment, enterprise security standards, and no-code accessibility for non-technical teams across diverse industries.",
-      approach: [
-        "Conducted enterprise needs assessment and comprehensive security audits",
-        "Architected scalable hybrid deployment infrastructure with failover systems",
-        "Developed intuitive drag-and-drop AI model builder interface",
-        "Implemented enterprise-grade security protocols and compliance frameworks"
-      ],
-      solution: "Launched comprehensive no-code AI vision platform enabling enterprises to deploy computer vision models with hybrid infrastructure, advanced security protocols, and intuitive visual interface requiring zero technical expertise.",
-      impact: [
+      summary: "Scaled no-code AI vision platform to 10+ enterprise clients including Changi Airport and SimDarby Plantation.",
+      image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
+      tags: ["Computer Vision", "Enterprise", "No-Code"],
+      metrics: [
         { value: "10+", label: "Enterprise Clients" },
-        { value: "150%", label: "Team Growth" },
-        { value: "99.9%", label: "Platform Uptime" },
-        { value: "60%", label: "Deployment Speed" }
+        { value: "8→20", label: "Team Growth" }
       ],
-      learnings: "Enterprise AI adoption requires balancing technical sophistication with user accessibility. Security and compliance are non-negotiable, but user experience determines adoption success across organizations.",
-      reverse: true,
+      color: "green"
     },
     {
-      badge: "AI Innovation",
-      badgeColor: "bg-navy",
-      title: "RAG AI System for Multilingual Customer Support",
-      heroImage: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=600",
-      challenge: "Global customer base spanning multiple languages and cultural contexts required intelligent query resolution with cultural sensitivity and context awareness at massive scale across diverse market segments.",
-      approach: [
-        "Analyzed customer query patterns and cultural nuances across regional markets",
-        "Implemented RAG architecture with multilingual embeddings and context preservation",
-        "Developed cultural context adaptation layers with regional customization",
-        "Created continuous learning feedback loops with human-in-the-loop validation"
+      id: "rag-ai-support",
+      title: "RAG AI System for Customer Support",
+      summary: "Implemented multilingual RAG AI system automating 70% of customer queries while reducing costs by 35%.",
+      image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
+      tags: ["RAG AI", "NLP", "Multilingual"],
+      metrics: [
+        { value: "70%", label: "Automation Rate" },
+        { value: "35%", label: "Cost Reduction" }
       ],
-      solution: "Deployed Retrieval-Augmented Generation AI system with advanced cultural localization, enabling intelligent multilingual customer support with context-aware responses and cultural sensitivity across 15+ languages.",
-      impact: [
-        { value: "70%", label: "Query Automation" },
-        { value: "35%", label: "Cost Reduction" },
-        { value: "92%", label: "Customer Satisfaction" },
-        { value: "15", label: "Languages Supported" }
-      ],
-      learnings: "RAG systems excel when combined with cultural context understanding. Success requires continuous model refinement based on regional customer feedback and deep cultural market insights.",
-      reverse: false,
-    },
+      color: "orange"
+    }
   ];
+
+  const getColorClasses = (color: string) => {
+    switch (color) {
+      case "blue":
+        return {
+          bg: "bg-blue-600",
+          border: "border-blue-200",
+          text: "text-blue-700"
+        };
+      case "green":
+        return {
+          bg: "bg-secondary-green",
+          border: "border-green-200", 
+          text: "text-green-700"
+        };
+      case "orange":
+        return {
+          bg: "bg-accent-orange",
+          border: "border-orange-200",
+          text: "text-orange-700"
+        };
+      default:
+        return {
+          bg: "bg-navy",
+          border: "border-gray-200",
+          text: "text-gray-700"
+        };
+    }
+  };
 
   return (
     <section id="case-studies" className="py-24 bg-white">
       <div className="max-w-6xl mx-auto px-8">
         <div className="text-center mb-20">
-          <h2 className="text-navy mb-6">Featured Case Studies</h2>
-          <p className="text-xl text-dark-charcoal max-w-3xl mx-auto leading-relaxed">
+          <h2 className="text-3xl lg:text-4xl font-bold text-navy mb-6">Featured Case Studies</h2>
+          <p className="text-lg text-text-charcoal max-w-3xl mx-auto leading-relaxed">
             Real-world AI solutions that drove measurable business impact across diverse markets
           </p>
         </div>
         
-        <div className="space-y-32">
-          {caseStudies.map((study, index) => (
-            <div key={index} className="space-y-12">
-              {/* Hero Image */}
-              <div className="relative">
-                <img 
-                  src={study.heroImage} 
-                  alt={`${study.title} project overview`}
-                  className="w-full h-[600px] object-cover rounded-2xl shadow-lg"
-                />
-                <div className="absolute top-8 left-8">
-                  <Badge className={`${study.badgeColor} text-white px-6 py-3 text-lg font-semibold`}>
-                    {study.badge}
-                  </Badge>
-                </div>
-              </div>
-
-              {/* Content Grid */}
-              <div className={`grid lg:grid-cols-2 gap-16 ${study.reverse ? "lg:grid-flow-col-dense" : ""}`}>
-                <div className={`space-y-12 ${study.reverse ? "lg:col-start-2" : ""}`}>
-                  <div>
-                    <h3 className="text-navy mb-8 leading-tight">{study.title}</h3>
+        <div className="grid gap-8 lg:gap-12">
+          {caseStudies.map((study, index) => {
+            const colorClasses = getColorClasses(study.color);
+            const isReverse = index % 2 === 1;
+            
+            return (
+              <Card key={study.id} className="overflow-hidden shadow-card hover-lift border-0 bg-white">
+                <div className={`grid lg:grid-cols-2 gap-0 ${isReverse ? 'lg:grid-flow-col-dense' : ''}`}>
+                  {/* Image Section */}
+                  <div className={`relative ${isReverse ? 'lg:col-start-2' : ''}`}>
+                    <img 
+                      src={study.image}
+                      alt={study.title}
+                      className="w-full h-64 lg:h-full object-cover"
+                    />
+                    <div className="absolute top-6 left-6">
+                      <Badge className={`${colorClasses.bg} text-white px-4 py-2 text-sm font-semibold`}>
+                        Case Study {index + 1}
+                      </Badge>
+                    </div>
                   </div>
 
-                  {/* Challenge */}
-                  <div className="space-y-6">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-emerald rounded-full flex items-center justify-center">
-                        <Lightbulb className="text-white h-6 w-6" />
+                  {/* Content Section */}
+                  <div className={`p-8 lg:p-12 flex flex-col justify-center ${isReverse ? 'lg:col-start-1' : ''}`}>
+                    <div className="space-y-6">
+                      <div>
+                        <h3 className="text-2xl font-bold text-navy mb-4 leading-tight">
+                          {study.title}
+                        </h3>
+                        <p className="text-lg text-text-charcoal leading-relaxed">
+                          {study.summary}
+                        </p>
                       </div>
-                      <h4 className="text-navy text-xl font-semibold">Challenge</h4>
-                    </div>
-                    <p className="text-dark-charcoal leading-relaxed text-lg pl-16">{study.challenge}</p>
-                  </div>
-
-                  {/* Approach */}
-                  <div className="space-y-6">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-navy rounded-full flex items-center justify-center">
-                        <Cog className="text-white h-6 w-6" />
+                      
+                      {/* Tags */}
+                      <div className="flex flex-wrap gap-2">
+                        {study.tags.map((tag, tagIndex) => (
+                          <span 
+                            key={tagIndex}
+                            className={`px-3 py-1 rounded-full text-sm font-medium ${colorClasses.border} ${colorClasses.text} bg-gray-50 border`}
+                          >
+                            {tag}
+                          </span>
+                        ))}
                       </div>
-                      <h4 className="text-navy text-xl font-semibold">Approach</h4>
-                    </div>
-                    <ul className="space-y-4 pl-16">
-                      {study.approach.map((item, itemIndex) => (
-                        <li key={itemIndex} className="text-dark-charcoal text-lg flex items-start gap-3">
-                          <span className="w-2 h-2 bg-emerald rounded-full mt-3 flex-shrink-0"></span>
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  {/* Solution */}
-                  <div className="space-y-6">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-warm-orange rounded-full flex items-center justify-center">
-                        <Rocket className="text-white h-6 w-6" />
+                      
+                      {/* Metrics */}
+                      <div className="grid grid-cols-2 gap-4">
+                        {study.metrics.map((metric, metricIndex) => (
+                          <div key={metricIndex} className="text-center p-4 bg-background-gray rounded-xl">
+                            <div className="text-2xl font-bold text-navy mb-1">{metric.value}</div>
+                            <div className="text-sm text-text-charcoal font-medium">{metric.label}</div>
+                          </div>
+                        ))}
                       </div>
-                      <h4 className="text-navy text-xl font-semibold">Solution</h4>
-                    </div>
-                    <p className="text-dark-charcoal leading-relaxed text-lg pl-16">{study.solution}</p>
-                  </div>
-                </div>
-
-                {/* Impact & Learnings */}
-                <div className={`space-y-12 ${study.reverse ? "lg:col-start-1" : ""}`}>
-                  {/* Impact Metrics */}
-                  <div className="space-y-6">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-emerald rounded-full flex items-center justify-center">
-                        <BarChart3 className="text-white h-6 w-6" />
+                      
+                      {/* CTA Link */}
+                      <div className="pt-4">
+                        <button className="group flex items-center gap-3 text-secondary-green font-semibold hover:text-secondary-green/80 transition-colors">
+                          <span>View Full Case Study</span>
+                          <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                        </button>
                       </div>
-                      <h4 className="text-navy text-xl font-semibold">Impact</h4>
                     </div>
-                    <div className="grid grid-cols-2 gap-6 pl-16">
-                      {study.impact.map((metric, metricIndex) => (
-                        <Card key={metricIndex} className="p-6 bg-light-gray text-center border-0 shadow-sm">
-                          <CardContent className="p-0">
-                            <div className="font-bold text-3xl text-navy mb-2">{metric.value}</div>
-                            <div className="text-dark-charcoal font-medium">{metric.label}</div>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Key Learnings */}
-                  <div className="bg-light-gray p-8 rounded-xl">
-                    <h4 className="text-navy text-xl font-semibold mb-4">Key Learnings</h4>
-                    <p className="text-dark-charcoal leading-relaxed text-lg italic">{study.learnings}</p>
                   </div>
                 </div>
-              </div>
-            </div>
-          ))}
+              </Card>
+            );
+          })}
+        </div>
+
+        {/* Call to Action */}
+        <div className="mt-20 text-center">
+          <div className="bg-background-gray rounded-2xl p-12">
+            <h3 className="text-2xl font-bold text-navy mb-4">
+              Ready to Transform Your AI Product Strategy?
+            </h3>
+            <p className="text-lg text-text-charcoal mb-8 max-w-2xl mx-auto">
+              Let's discuss how these proven methodologies can accelerate your AI initiatives and drive measurable business outcomes.
+            </p>
+            <button className="bg-accent-orange hover:bg-accent-orange/90 text-white px-8 py-4 rounded-xl font-semibold hover-lift shadow-cta transition-all duration-300">
+              Schedule a Consultation
+            </button>
+          </div>
         </div>
       </div>
     </section>

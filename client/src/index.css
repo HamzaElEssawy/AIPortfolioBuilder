@@ -24,12 +24,38 @@
   --ring: hsl(215, 16%, 17%);
   --radius: 0.5rem;
   
-  /* Design System Colors - Exact Specifications */
-  --navy: hsl(207, 57%, 17%); /* #1a365d */
-  --emerald: hsl(162, 95%, 34%); /* #059669 */
-  --warm-orange: hsl(20, 88%, 49%); /* #ea580c */
-  --light-gray: hsl(210, 20%, 98%); /* #f8fafc */
-  --dark-charcoal: hsl(220, 26%, 18%); /* #1f2937 */
+  /* Enhanced Design System - Hybrid Implementation */
+  --primary-navy: #1a365d;
+  --secondary-green: #059669;
+  --accent-orange: #ea580c;
+  --background-gray: #f8fafc;
+  --text-charcoal: #1f2937;
+  --white: #ffffff;
+  --light-border: #e5e7eb;
+  
+  /* Typography Scale */
+  --text-xs: 0.75rem;    /* 12px */
+  --text-sm: 0.875rem;   /* 14px */
+  --text-base: 1rem;     /* 16px */
+  --text-lg: 1.125rem;   /* 18px */
+  --text-xl: 1.25rem;    /* 20px */
+  --text-2xl: 1.5rem;    /* 24px */
+  --text-3xl: 2.25rem;   /* 36px */
+  --text-4xl: 3rem;      /* 48px */
+  
+  /* Spacing Scale (8px base) */
+  --space-1: 0.25rem;   /* 4px */
+  --space-2: 0.5rem;    /* 8px */
+  --space-3: 0.75rem;   /* 12px */
+  --space-4: 1rem;      /* 16px */
+  --space-6: 1.5rem;    /* 24px */
+  --space-8: 2rem;      /* 32px */
+  --space-12: 3rem;     /* 48px */
+  --space-16: 4rem;     /* 64px */
+  --space-24: 6rem;     /* 96px */
+  
+  /* Container System */
+  --container-xl: 1200px;
 }
 
 .dark {
@@ -92,44 +118,57 @@
 }
 
 @layer utilities {
-  /* Navy Blue #1a365d - Primary */
-  .bg-navy {
-    background-color: #1a365d;
-  }
-  .text-navy {
-    color: #1a365d;
+  /* Enhanced Color System */
+  .bg-primary-navy { background-color: var(--primary-navy); }
+  .text-primary-navy { color: var(--primary-navy); }
+  .border-primary-navy { border-color: var(--primary-navy); }
+  
+  .bg-secondary-green { background-color: var(--secondary-green); }
+  .text-secondary-green { color: var(--secondary-green); }
+  .border-secondary-green { border-color: var(--secondary-green); }
+  
+  .bg-accent-orange { background-color: var(--accent-orange); }
+  .text-accent-orange { color: var(--accent-orange); }
+  .border-accent-orange { border-color: var(--accent-orange); }
+  
+  .bg-background-gray { background-color: var(--background-gray); }
+  .text-background-gray { color: var(--background-gray); }
+  
+  .bg-text-charcoal { background-color: var(--text-charcoal); }
+  .text-text-charcoal { color: var(--text-charcoal); }
+  
+  .bg-light-border { background-color: var(--light-border); }
+  .border-light-border { border-color: var(--light-border); }
+  
+  /* Legacy Support */
+  .bg-navy { background-color: var(--primary-navy); }
+  .text-navy { color: var(--primary-navy); }
+  .bg-emerald { background-color: var(--secondary-green); }
+  .text-emerald { color: var(--secondary-green); }
+  .bg-warm-orange { background-color: var(--accent-orange); }
+  .text-warm-orange { color: var(--accent-orange); }
+  .bg-light-gray { background-color: var(--background-gray); }
+  .text-light-gray { color: var(--background-gray); }
+  .bg-dark-charcoal { background-color: var(--text-charcoal); }
+  .text-dark-charcoal { color: var(--text-charcoal); }
+  
+  /* Enhanced Shadows */
+  .shadow-soft { box-shadow: 0 2px 20px rgba(26, 54, 93, 0.08); }
+  .shadow-card { box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); }
+  .shadow-elevated { box-shadow: 0 10px 40px rgba(26, 54, 93, 0.2); }
+  .shadow-cta { box-shadow: 0 4px 20px rgba(234, 88, 12, 0.3); }
+  
+  /* Gradient Backgrounds */
+  .bg-hero-gradient {
+    background: linear-gradient(135deg, var(--background-gray) 0%, var(--white) 100%);
   }
   
-  /* Emerald Green #059669 - Secondary */
-  .bg-emerald {
-    background-color: #059669;
+  /* Interactive States */
+  .hover-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
-  .text-emerald {
-    color: #059669;
-  }
-  
-  /* Warm Orange #ea580c - Accent */
-  .bg-warm-orange {
-    background-color: #ea580c;
-  }
-  .text-warm-orange {
-    color: #ea580c;
-  }
-  
-  /* Light Gray #f8fafc - Background */
-  .bg-light-gray {
-    background-color: #f8fafc;
-  }
-  .text-light-gray {
-    color: #f8fafc;
-  }
-  
-  /* Dark Charcoal #1f2937 - Typography */
-  .bg-dark-charcoal {
-    background-color: #1f2937;
-  }
-  .text-dark-charcoal {
-    color: #1f2937;
+  .hover-lift:hover {
+    transform: translateY(-2px);
   }
   
   .border-navy {
