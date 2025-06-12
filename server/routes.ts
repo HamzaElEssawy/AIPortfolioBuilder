@@ -728,6 +728,8 @@ What would be most helpful for your current career goals?`;
       const sectionId = req.params.sectionId as any;
       const content = req.body;
       
+      console.log(`Updating ${sectionId} with content:`, content);
+      
       // Create version backup before updating
       const currentContent = await contentManager.getSection(sectionId);
       if (currentContent) {
@@ -746,13 +748,19 @@ What would be most helpful for your current career goals?`;
       
       // Clear content manager cache to ensure immediate updates
       contentManager.clearCache();
+      console.log(`Content manager cache cleared for ${sectionId}`);
+      
+      // Force reload content to verify update
+      const verifyContent = await contentManager.getSection(sectionId);
+      console.log(`Verified content for ${sectionId}:`, verifyContent);
       
       res.json({ 
         success: true, 
         message: "Content updated and published",
         sectionId,
+        content: verifyContent,
         version: updatedContent.version,
-        lastUpdated: updatedContent.lastUpdated
+        lastUpdated: new Date().toISOString()
       });
     } catch (error) {
       console.error("Error updating portfolio content:", error);
