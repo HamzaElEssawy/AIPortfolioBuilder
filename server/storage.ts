@@ -532,6 +532,37 @@ export class DatabaseStorage implements IStorage {
         });
     }
   }
+
+  // Portfolio images operations
+  async getPortfolioImages(section?: string): Promise<PortfolioImage[]> {
+    const query = db.select().from(portfolioImages);
+    if (section) {
+      return await query.where(eq(portfolioImages.section, section)).orderBy(portfolioImages.orderIndex);
+    }
+    return await query.orderBy(portfolioImages.section, portfolioImages.orderIndex);
+  }
+
+  async getPortfolioImage(id: number): Promise<PortfolioImage | undefined> {
+    const result = await db.select().from(portfolioImages).where(eq(portfolioImages.id, id));
+    return result[0];
+  }
+
+  async createPortfolioImage(insertImage: InsertPortfolioImage): Promise<PortfolioImage> {
+    const result = await db.insert(portfolioImages).values(insertImage).returning();
+    return result[0];
+  }
+
+  async updatePortfolioImage(id: number, updateData: Partial<InsertPortfolioImage>): Promise<PortfolioImage> {
+    const result = await db.update(portfolioImages)
+      .set({ ...updateData, updatedAt: new Date() })
+      .where(eq(portfolioImages.id, id))
+      .returning();
+    return result[0];
+  }
+
+  async deletePortfolioImage(id: number): Promise<void> {
+    await db.delete(portfolioImages).where(eq(portfolioImages.id, id));
+  }
 }
 
 export const storage = new DatabaseStorage();

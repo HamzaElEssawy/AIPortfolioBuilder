@@ -3,10 +3,15 @@ import { ArrowRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import CoreValues from "@/components/CoreValues";
 import type { AboutContent } from "@shared/contentSchema";
+import type { PortfolioImage } from "@shared/schema";
 
 export default function AboutStreamlined() {
   const { data: content } = useQuery<AboutContent>({
     queryKey: ["/api/portfolio/content/about"],
+  });
+
+  const { data: aboutImages = [] } = useQuery<PortfolioImage[]>({
+    queryKey: ["/api/portfolio/images/about"],
   });
 
   return (
@@ -26,11 +31,17 @@ export default function AboutStreamlined() {
           {/* Left Column - Professional Photo */}
           <div className="space-y-8">
             <div className="relative">
-              <img 
-                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=500" 
-                alt="Hamza El Essawy - Professional Portrait" 
-                className="rounded-2xl shadow-elevated w-full"
-              />
+              {aboutImages.length > 0 ? (
+                <img 
+                  src={aboutImages[0].imageUrl} 
+                  alt={aboutImages[0].altText} 
+                  className="rounded-2xl shadow-elevated w-full"
+                />
+              ) : (
+                <div className="w-full h-96 bg-gray-200 rounded-2xl shadow-elevated flex items-center justify-center text-gray-500">
+                  Add about image in admin dashboard
+                </div>
+              )}
               <div className="absolute -bottom-4 -right-4 bg-white rounded-xl p-4 shadow-card">
                 <div className="text-2xl font-bold text-navy">AI</div>
                 <div className="text-sm text-text-charcoal font-medium">Product Leader</div>

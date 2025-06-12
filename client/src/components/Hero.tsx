@@ -1,10 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import type { HeroContent } from "@shared/contentSchema";
+import type { PortfolioImage } from "@shared/schema";
 
 export default function Hero() {
   const { data: heroContent } = useQuery<HeroContent>({
     queryKey: ["/api/portfolio/content/hero"],
+  });
+
+  const { data: heroImages = [] } = useQuery<PortfolioImage[]>({
+    queryKey: ["/api/portfolio/images/hero"],
   });
 
   const scrollToSection = (sectionId: string) => {
@@ -67,13 +72,18 @@ export default function Hero() {
           <div className="flex justify-center lg:justify-end">
             <div className="relative">
               <div className="w-[400px] h-[400px] rounded-full bg-gradient-to-br from-secondary-green/20 to-accent-orange/20 p-1 shadow-elevated">
-                <img 
-                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400" 
-                  alt="Hamza El Essawy - AI Product Leader" 
-                  className="w-full h-full rounded-full object-cover"
-                />
+                {heroImages.length > 0 ? (
+                  <img 
+                    src={heroImages[0].imageUrl} 
+                    alt={heroImages[0].altText} 
+                    className="w-full h-full rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full rounded-full bg-gray-200 flex items-center justify-center text-gray-500">
+                    Add hero image in admin dashboard
+                  </div>
+                )}
               </div>
-
             </div>
           </div>
         </div>

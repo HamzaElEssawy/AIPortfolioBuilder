@@ -1120,6 +1120,76 @@ What would be most helpful for your current career goals?`;
     }
   });
 
+  // Portfolio Images CRUD endpoints (admin only)
+  app.get("/api/admin/portfolio-images", isAdmin, async (req, res) => {
+    try {
+      const { section } = req.query;
+      const images = await storage.getPortfolioImages(section as string);
+      res.json(images);
+    } catch (error) {
+      console.error("Error fetching portfolio images:", error);
+      res.status(500).json({ message: "Failed to fetch portfolio images" });
+    }
+  });
+
+  app.get("/api/admin/portfolio-images/:id", isAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const image = await storage.getPortfolioImage(parseInt(id));
+      if (!image) {
+        return res.status(404).json({ message: "Portfolio image not found" });
+      }
+      res.json(image);
+    } catch (error) {
+      console.error("Error fetching portfolio image:", error);
+      res.status(500).json({ message: "Failed to fetch portfolio image" });
+    }
+  });
+
+  app.post("/api/admin/portfolio-images", isAdmin, async (req, res) => {
+    try {
+      const image = await storage.createPortfolioImage(req.body);
+      res.status(201).json(image);
+    } catch (error) {
+      console.error("Error creating portfolio image:", error);
+      res.status(500).json({ message: "Failed to create portfolio image" });
+    }
+  });
+
+  app.put("/api/admin/portfolio-images/:id", isAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const image = await storage.updatePortfolioImage(parseInt(id), req.body);
+      res.json(image);
+    } catch (error) {
+      console.error("Error updating portfolio image:", error);
+      res.status(500).json({ message: "Failed to update portfolio image" });
+    }
+  });
+
+  app.delete("/api/admin/portfolio-images/:id", isAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      await storage.deletePortfolioImage(parseInt(id));
+      res.json({ message: "Portfolio image deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting portfolio image:", error);
+      res.status(500).json({ message: "Failed to delete portfolio image" });
+    }
+  });
+
+  // Public endpoint for portfolio images
+  app.get("/api/portfolio/images/:section", async (req, res) => {
+    try {
+      const { section } = req.params;
+      const images = await storage.getPortfolioImages(section);
+      res.json(images.filter(img => img.isActive));
+    } catch (error) {
+      console.error("Error fetching portfolio images:", error);
+      res.status(500).json({ message: "Failed to fetch portfolio images" });
+    }
+  });
+
   // Portfolio status management
   app.get("/api/admin/portfolio-status", isAdmin, async (req, res) => {
     try {
