@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { apiRequest } from "@/lib/queryClient";
 import type { PortfolioImage, InsertPortfolioImage } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
+import ImageDebugger from "./ImageDebugger";
 
 export default function PortfolioImageManager() {
   const { toast } = useToast();
@@ -288,6 +289,8 @@ export default function PortfolioImageManager() {
 
   return (
     <div className="space-y-6">
+      <ImageDebugger />
+      
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-navy">Portfolio Images</h2>
