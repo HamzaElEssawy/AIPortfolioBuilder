@@ -724,8 +724,8 @@ What would be most helpful for your current career goals?`;
     }
   });
 
-  // Direct portfolio content update endpoint (bypasses content manager for immediate live updates)
-  app.put("/api/admin/portfolio/content/:sectionId", isAdmin, async (req, res) => {
+  // Enhanced portfolio content update endpoint with real-time synchronization
+  app.put("/api/portfolio/content/:sectionId", cacheSyncMiddleware(), async (req, res) => {
     try {
       const sectionId = req.params.sectionId as any;
       const content = req.body;
@@ -748,9 +748,11 @@ What would be most helpful for your current career goals?`;
       // Update the live portfolio content directly
       const updatedContent = await contentManager.updateSection(sectionId, content);
       
-      // Clear content manager cache to ensure immediate updates
+      // Clear content manager cache and invalidate section cache
       contentManager.clearCache();
-      console.log(`Content manager cache cleared for ${sectionId}`);
+      await cacheSync.invalidateSection(sectionId);
+      
+      console.log(`Content manager cache cleared and section cache invalidated for ${sectionId}`);
       
       // Force reload content to verify update
       const verifyContent = await contentManager.getSection(sectionId);
@@ -758,7 +760,7 @@ What would be most helpful for your current career goals?`;
       
       res.json({ 
         success: true, 
-        message: "Content updated and published",
+        message: "Content updated and published with real-time sync",
         sectionId,
         content: verifyContent,
         version: updatedContent.version,
