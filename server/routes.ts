@@ -726,32 +726,24 @@ What would be most helpful for your current career goals?`;
     }
   });
 
-  // Enhanced portfolio content update endpoint with real-time synchronization
+  // Clean portfolio content update endpoint with database storage
   app.put("/api/portfolio/content/:sectionId", cacheSyncMiddleware(), async (req, res) => {
     try {
-      const sectionId = req.params.sectionId as any;
+      const sectionId = req.params.sectionId;
       const content = req.body;
       
-      console.log(`Updating ${sectionId} with content:`, content);
+      console.log(`Updating ${sectionId} with clean content:`, content);
       
-      // Create version backup before updating
-      const currentContent = await contentManager.getSection(sectionId);
-      if (currentContent) {
-        await storage.createContentVersion({
-          sectionId,
-          content: currentContent,
-          version: 1,
-          changeSummary: `Updated ${sectionId} section`,
-          createdBy: "admin",
-          publishedAt: new Date(),
-        });
+      // Save content using the new database storage system (automatically sanitizes)
+      await dbContentManager.saveContent(sectionId, content);
+      
+      // Also update the file-based system for backwards compatibility
+      try {
+        await contentManager.updateSection(sectionId as any, content);
+        contentManager.clearCache();
+      } catch (error) {
+        console.warn("File-based content update failed, continuing with database:", error);
       }
-      
-      // Update the live portfolio content directly
-      const updatedContent = await contentManager.updateSection(sectionId, content);
-      
-      // Clear content manager cache BEFORE invalidating section cache
-      contentManager.clearCache();
       
       // Comprehensive cache invalidation
       await cacheSync.invalidateContentCache({
@@ -766,18 +758,17 @@ What would be most helpful for your current career goals?`;
         broadcastUpdate: true
       });
       
-      console.log(`Content manager cache cleared and comprehensive cache invalidated for ${sectionId}`);
+      console.log(`Clean content saved and cache invalidated for ${sectionId}`);
       
-      // Force reload content to verify update
-      const verifyContent = await contentManager.getSection(sectionId);
-      console.log(`Verified content for ${sectionId}:`, verifyContent);
+      // Return the sanitized content from database
+      const verifyContent = await dbContentManager.getContent(sectionId);
+      console.log(`Verified clean content for ${sectionId}:`, verifyContent);
       
       res.json({ 
         success: true, 
-        message: "Content updated and published with comprehensive cache invalidation",
+        message: "Content updated with clean storage system",
         sectionId,
         content: verifyContent,
-        version: updatedContent.version,
         lastUpdated: new Date().toISOString()
       });
     } catch (error) {

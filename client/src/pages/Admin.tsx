@@ -31,7 +31,7 @@ import type { ContactSubmission } from "@shared/schema";
 import AIAssistant from "@/components/AIAssistant";
 import PortfolioManager from "@/components/PortfolioManager";
 import KnowledgeBaseManager from "@/components/KnowledgeBaseManager";
-import EnhancedContentManager from "@/components/EnhancedContentManager";
+import RevampedContentManager from "@/components/RevampedContentManager";
 import DeploymentRecommendations from "@/components/DeploymentRecommendations";
 import EnhancedCaseStudyEditor from "@/components/EnhancedCaseStudyEditor";
 import VisualHierarchyEnhancer from "@/components/VisualHierarchyEnhancer";
@@ -383,7 +383,7 @@ export default function Admin() {
 
           {/* Enhanced Content Management Tab */}
           <TabsContent value="content" className="space-y-6">
-            <EnhancedContentManager />
+            <RevampedContentManager />
           </TabsContent>
 
           {/* Enhanced Case Study Editor Tab */}
