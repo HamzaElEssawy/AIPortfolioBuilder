@@ -40,11 +40,19 @@ export default function Timeline() {
   const sortedEntries = entries.sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
 
   return (
-    <section id="timeline" className="relative py-20 bg-white">
-      <div className="container mx-auto px-6">
+    <section id="timeline" className="relative py-20 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-blue-900 dark:to-indigo-900 overflow-hidden">
+      {/* Background Elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-10 -right-10 w-72 h-72 bg-purple-200 dark:bg-purple-800 rounded-full mix-blend-multiply filter blur-xl opacity-30"></div>
+        <div className="absolute -bottom-10 -left-10 w-72 h-72 bg-blue-200 dark:bg-blue-800 rounded-full mix-blend-multiply filter blur-xl opacity-30"></div>
+      </div>
+
+      <div className="container mx-auto px-6 relative z-10">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-navy mb-4">Career Timeline</h2>
-          <p className="text-xl text-text-charcoal max-w-3xl mx-auto">
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
+            Career <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">Timeline</span>
+          </h2>
+          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
             A journey through innovation, leadership, and transformative AI product development
           </p>
         </div>
