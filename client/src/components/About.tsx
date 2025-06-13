@@ -3,8 +3,16 @@ import { Badge } from "@/components/ui/badge";
 import { MapPin, Globe, Quote, Award, Briefcase } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
+interface AboutContent {
+  title?: string;
+  summary?: string;
+  competencies?: string;
+  philosophyTitle?: string;
+  philosophyQuote?: string;
+}
+
 export default function About() {
-  const { data: aboutContent } = useQuery({
+  const { data: aboutContent } = useQuery<AboutContent>({
     queryKey: ["/api/portfolio/content/about"],
   });
 
@@ -46,10 +54,12 @@ export default function About() {
     <section id="about" className="py-24 bg-background-gray">
       <div className="max-w-6xl mx-auto px-8">
         <div className="text-center mb-20">
-          <h2 className="text-3xl lg:text-4xl font-bold text-navy mb-6">About Hamza</h2>
-          <p className="text-lg text-text-charcoal max-w-3xl mx-auto leading-relaxed">
-            Transforming AI concepts into enterprise solutions across diverse markets
-          </p>
+          <h2 className="text-3xl lg:text-4xl font-bold text-navy mb-6">
+            {aboutContent?.title || "About Hamza"}
+          </h2>
+          <div className="text-lg text-text-charcoal max-w-3xl mx-auto leading-relaxed"
+               dangerouslySetInnerHTML={{ __html: aboutContent?.summary || "Professional AI Product Leader with expertise in scaling enterprise solutions." }}
+          />
         </div>
         
         {/* Two-column layout: Photo left, narrative right */}
@@ -105,11 +115,15 @@ export default function About() {
               <CardContent className="p-8">
                 <div className="flex items-start gap-4 mb-6">
                   <Quote className="h-8 w-8 text-secondary-green flex-shrink-0" />
-                  <h3 className="text-xl font-bold text-navy">Leadership Philosophy</h3>
+                  <h3 className="text-xl font-bold text-navy">
+                    {aboutContent?.philosophyTitle || "Leadership Philosophy"}
+                  </h3>
                 </div>
-                <blockquote className="text-lg text-text-charcoal leading-relaxed italic">
-                  "AI product success isn't just about cutting-edge technology—it's about understanding cultural nuances, regulatory landscapes, and human needs across diverse markets. True innovation happens when we bridge technical excellence with deep market empathy."
-                </blockquote>
+                <blockquote className="text-lg text-text-charcoal leading-relaxed italic"
+                           dangerouslySetInnerHTML={{ 
+                             __html: aboutContent?.philosophyQuote || "AI product success isn't just about cutting-edge technology—it's about understanding cultural nuances, regulatory landscapes, and human needs across diverse markets. True innovation happens when we bridge technical excellence with deep market empathy."
+                           }}
+                />
               </CardContent>
             </Card>
 
