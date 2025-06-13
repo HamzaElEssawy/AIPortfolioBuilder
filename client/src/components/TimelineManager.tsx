@@ -47,12 +47,12 @@ export default function TimelineManager() {
   const { toast } = useToast();
 
   const { data: timeline = [], isLoading } = useQuery<TimelineEntry[]>({
-    queryKey: ["/api/admin/timeline"],
+    queryKey: ["/api/admin/experience"],
   });
 
   const createEntryMutation = useMutation({
     mutationFn: async (entryData: typeof newEntry) => {
-      const response = await fetch("/api/admin/timeline", {
+      const response = await fetch("/api/admin/experience", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(entryData),
@@ -61,7 +61,7 @@ export default function TimelineManager() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/timeline"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/experience"] });
       queryClient.invalidateQueries({ queryKey: ["/api/portfolio/timeline"] });
       setNewEntry({
         year: "",
@@ -81,7 +81,7 @@ export default function TimelineManager() {
 
   const updateEntryMutation = useMutation({
     mutationFn: async ({ id, ...entryData }: TimelineEntry) => {
-      const response = await fetch(`/api/admin/timeline/${id}`, {
+      const response = await fetch(`/api/admin/experience/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(entryData),
@@ -90,7 +90,7 @@ export default function TimelineManager() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/timeline"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/experience"] });
       queryClient.invalidateQueries({ queryKey: ["/api/portfolio/timeline"] });
       setEditingEntry(null);
       toast({ title: "Success", description: "Timeline entry updated successfully" });
@@ -102,14 +102,14 @@ export default function TimelineManager() {
 
   const deleteEntryMutation = useMutation({
     mutationFn: async (id: number) => {
-      const response = await fetch(`/api/admin/timeline/${id}`, {
+      const response = await fetch(`/api/admin/experience/${id}`, {
         method: "DELETE",
       });
       if (!response.ok) throw new Error("Failed to delete timeline entry");
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/timeline"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/experience"] });
       queryClient.invalidateQueries({ queryKey: ["/api/portfolio/timeline"] });
       toast({ title: "Success", description: "Timeline entry deleted successfully" });
     },
