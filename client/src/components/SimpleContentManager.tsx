@@ -10,7 +10,7 @@ import { Save, Eye, Check, AlertCircle, Monitor, RefreshCw } from "lucide-react"
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
-import FixedTextEditor from "@/components/FixedTextEditor";
+import UltimateTextEditor from "@/components/UltimateTextEditor";
 import type { HeroContent, AboutContent } from "@shared/contentSchema";
 
 export default function SimpleContentManager() {
@@ -284,7 +284,7 @@ export default function SimpleContentManager() {
                 </div>
 
                 <div>
-                  <FixedTextEditor
+                  <UltimateTextEditor
                     label="Subheadline"
                     value={heroContent.subheadline}
                     onChange={(value: string) => handleHeroChange("subheadline", value)}
@@ -350,7 +350,7 @@ export default function SimpleContentManager() {
                 </div>
 
                 <div>
-                  <FixedTextEditor
+                  <UltimateTextEditor
                     label="Summary"
                     value={aboutContent.summary}
                     onChange={(value: string) => handleAboutChange("summary", value)}
@@ -360,7 +360,7 @@ export default function SimpleContentManager() {
                 </div>
 
                 <div>
-                  <FixedTextEditor
+                  <UltimateTextEditor
                     label="Professional Competencies"
                     value={aboutContent.competencies}
                     onChange={(value: string) => handleAboutChange("competencies", value)}
