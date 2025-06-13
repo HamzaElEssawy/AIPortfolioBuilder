@@ -143,6 +143,19 @@ export const portfolioImages = pgTable("portfolio_images", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+export const seoSettings = pgTable("seo_settings", {
+  id: serial("id").primaryKey(),
+  page: text("page").notNull().unique(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  keywords: text("keywords").array().notNull().default([]),
+  ogTitle: text("og_title"),
+  ogDescription: text("og_description"),
+  ogImage: text("og_image"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
@@ -227,6 +240,12 @@ export const insertPortfolioImageSchema = createInsertSchema(portfolioImages).om
   updatedAt: true,
 });
 
+export const insertSeoSettingsSchema = createInsertSchema(seoSettings).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 // Types
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -268,3 +287,6 @@ export type InsertPortfolioStatus = z.infer<typeof insertPortfolioStatusSchema>;
 
 export type PortfolioImage = typeof portfolioImages.$inferSelect;
 export type InsertPortfolioImage = z.infer<typeof insertPortfolioImageSchema>;
+
+export type SeoSettings = typeof seoSettings.$inferSelect;
+export type InsertSeoSettings = z.infer<typeof insertSeoSettingsSchema>;

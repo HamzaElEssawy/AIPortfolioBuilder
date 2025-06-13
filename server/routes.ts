@@ -9,6 +9,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { contentManager } from "./contentManager";
 import { cacheSync, cacheSyncMiddleware } from "./cacheSync";
 import { cache, cacheMiddleware } from "./cache";
+import { db } from "./db";
 
 // Initialize Anthropic client
 const anthropic = new Anthropic({
@@ -1393,7 +1394,7 @@ What would be most helpful for your current career goals?`;
   // Backup and restore endpoints
   app.post("/api/admin/backup/create", isAdmin, async (req, res) => {
     try {
-      const { backupManager } = await import("../backup");
+      const { backupManager } = await import("./backup");
       const { description } = req.body;
       const fileName = await backupManager.createBackup(description);
       res.json({ fileName, message: "Backup created successfully" });
@@ -1405,7 +1406,7 @@ What would be most helpful for your current career goals?`;
 
   app.get("/api/admin/backup/list", isAdmin, async (req, res) => {
     try {
-      const { backupManager } = await import("../backup");
+      const { backupManager } = await import("./backup");
       const backups = await backupManager.listBackups();
       res.json(backups);
     } catch (error) {
@@ -1416,7 +1417,7 @@ What would be most helpful for your current career goals?`;
 
   app.post("/api/admin/backup/restore/:fileName", isAdmin, async (req, res) => {
     try {
-      const { backupManager } = await import("../backup");
+      const { backupManager } = await import("./backup");
       const { fileName } = req.params;
       await backupManager.restoreBackup(fileName);
       res.json({ message: "Backup restored successfully" });
@@ -1428,7 +1429,7 @@ What would be most helpful for your current career goals?`;
 
   app.delete("/api/admin/backup/:fileName", isAdmin, async (req, res) => {
     try {
-      const { backupManager } = await import("../backup");
+      const { backupManager } = await import("./backup");
       const { fileName } = req.params;
       await backupManager.deleteBackup(fileName);
       res.json({ message: "Backup deleted successfully" });
@@ -1441,7 +1442,7 @@ What would be most helpful for your current career goals?`;
   // Search API endpoints
   app.get("/api/search", async (req, res) => {
     try {
-      const { searchEngine } = await import("../search");
+      const { searchEngine } = await import("./search");
       const { q: query, type, limit, offset, sortBy, sortOrder } = req.query;
       
       if (!query || typeof query !== 'string') {
@@ -1470,7 +1471,7 @@ What would be most helpful for your current career goals?`;
 
   app.get("/api/admin/search", isAdmin, async (req, res) => {
     try {
-      const { searchEngine } = await import("../search");
+      const { searchEngine } = await import("./search");
       const { q: query, type, limit, offset, includeContent } = req.query;
       
       if (!query || typeof query !== 'string') {
@@ -1497,7 +1498,7 @@ What would be most helpful for your current career goals?`;
 
   app.post("/api/admin/search/reindex", isAdmin, async (req, res) => {
     try {
-      const { searchEngine } = await import("../search");
+      const { searchEngine } = await import("./search");
       await searchEngine.rebuildSearchIndex();
       res.json({ message: "Search index rebuilt successfully" });
     } catch (error) {
@@ -1509,7 +1510,7 @@ What would be most helpful for your current career goals?`;
   // Workflow automation endpoints
   app.get("/api/admin/workflows", isAdmin, async (req, res) => {
     try {
-      const { workflowManager } = await import("../workflow");
+      const { workflowManager } = await import("./workflow");
       const workflows = workflowManager.getWorkflows();
       res.json(workflows);
     } catch (error) {
@@ -1520,7 +1521,7 @@ What would be most helpful for your current career goals?`;
 
   app.get("/api/admin/workflows/:id", isAdmin, async (req, res) => {
     try {
-      const { workflowManager } = await import("../workflow");
+      const { workflowManager } = await import("./workflow");
       const { id } = req.params;
       const workflow = workflowManager.getWorkflow(id);
       
@@ -1537,7 +1538,7 @@ What would be most helpful for your current career goals?`;
 
   app.post("/api/admin/workflows/:id/execute", isAdmin, async (req, res) => {
     try {
-      const { workflowManager } = await import("../workflow");
+      const { workflowManager } = await import("./workflow");
       const { id } = req.params;
       const execution = await workflowManager.executeWorkflow(id, true);
       res.json(execution);
@@ -1549,7 +1550,7 @@ What would be most helpful for your current career goals?`;
 
   app.post("/api/admin/workflows/:id/toggle", isAdmin, async (req, res) => {
     try {
-      const { workflowManager } = await import("../workflow");
+      const { workflowManager } = await import("./workflow");
       const { id } = req.params;
       const success = workflowManager.toggleWorkflow(id);
       
@@ -1566,7 +1567,7 @@ What would be most helpful for your current career goals?`;
 
   app.get("/api/admin/workflow-executions", isAdmin, async (req, res) => {
     try {
-      const { workflowManager } = await import("../workflow");
+      const { workflowManager } = await import("./workflow");
       const { workflowId } = req.query;
       const executions = workflowManager.getExecutions(workflowId as string);
       res.json(executions);
@@ -1579,7 +1580,7 @@ What would be most helpful for your current career goals?`;
   // Cache management endpoints
   app.get("/api/admin/cache/stats", isAdmin, async (req, res) => {
     try {
-      const { cache } = await import("../cache");
+      const { cache } = await import("./cache");
       const stats = cache.getStats();
       res.json(stats);
     } catch (error) {
@@ -1616,7 +1617,7 @@ What would be most helpful for your current career goals?`;
 
   app.get("/api/admin/cache/top-entries", isAdmin, async (req, res) => {
     try {
-      const { cache } = await import("../cache");
+      const { cache } = await import("./cache");
       const { limit } = req.query;
       const entries = cache.getTopEntries(limit ? parseInt(limit as string) : 10);
       res.json(entries);
@@ -1629,7 +1630,7 @@ What would be most helpful for your current career goals?`;
   // System optimization endpoints
   app.post("/api/admin/optimize", isAdmin, async (req, res) => {
     try {
-      const { systemOptimizer } = await import("../optimization");
+      const { systemOptimizer } = await import("./optimization");
       const report = await systemOptimizer.runComprehensiveOptimization();
       res.json(report);
     } catch (error) {
@@ -1640,7 +1641,7 @@ What would be most helpful for your current career goals?`;
 
   app.get("/api/admin/performance-report", isAdmin, async (req, res) => {
     try {
-      const { systemOptimizer } = await import("../optimization");
+      const { systemOptimizer } = await import("./optimization");
       const report = await systemOptimizer.generatePerformanceReport();
       res.json(report);
     } catch (error) {
