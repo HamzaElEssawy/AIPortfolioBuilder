@@ -111,11 +111,14 @@ export default function AboutStreamlined() {
           <div className="flex items-start gap-6">
             <div className="text-4xl text-secondary-green font-serif">"</div>
             <div>
-              <blockquote className="text-xl text-text-charcoal italic leading-relaxed mb-4">
-                {content?.philosophyQuote || `AI product success isn't just about cutting-edge technology—it's about understanding 
-                cultural nuances, regulatory landscapes, and human needs across diverse markets. 
-                True innovation happens when we bridge technical excellence with deep market empathy.`}
-              </blockquote>
+              <blockquote 
+                className="text-xl text-text-charcoal italic leading-relaxed mb-4"
+                dangerouslySetInnerHTML={{
+                  __html: content?.philosophyQuote || `AI product success isn't just about cutting-edge technology—it's about understanding 
+                  cultural nuances, regulatory landscapes, and human needs across diverse markets. 
+                  True innovation happens when we bridge technical excellence with deep market empathy.`
+                }}
+              />
               <cite className="text-navy font-semibold">— Hamza El Essawy, {content?.philosophyTitle || "Leadership Philosophy"}</cite>
             </div>
           </div>

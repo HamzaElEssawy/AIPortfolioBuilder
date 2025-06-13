@@ -24,10 +24,9 @@ export default function Navigation() {
 
   const navigationItems = [
     { label: "About", id: "about" },
-    { label: "Case Studies", id: "case-studies" },
-    { label: "Skills", id: "skills-showcase" },
+    { label: "Skills", id: "skills" },
     { label: "Timeline", id: "timeline" },
-    { label: "Experience", id: "experience" },
+    { label: "Case Studies", id: "case-studies" },
     { label: "Contact", id: "contact" }
   ];
 

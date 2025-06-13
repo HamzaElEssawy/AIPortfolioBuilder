@@ -40,7 +40,7 @@ export default function Timeline() {
   const sortedEntries = entries.sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
 
   return (
-    <section className="relative py-20 bg-white">
+    <section id="timeline" className="relative py-20 bg-white">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-navy mb-4">Career Timeline</h2>
