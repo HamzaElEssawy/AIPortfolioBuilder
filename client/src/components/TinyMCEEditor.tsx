@@ -1,8 +1,7 @@
-import { useRef, useState, useEffect } from 'react';
-import { Editor } from '@tinymce/tinymce-react';
+import { useState, useEffect } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { Edit3, Save } from 'lucide-react';
+import { Edit3, Save, Bold, Italic, List, AlignLeft } from 'lucide-react';
 
 interface TinyMCEEditorProps {
   value: string;
@@ -19,16 +18,15 @@ export default function TinyMCEEditor({
   placeholder = "Start typing...",
   disabled = false
 }: TinyMCEEditorProps) {
-  const editorRef = useRef<any>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [tempValue, setTempValue] = useState(value);
+  const [tempValue, setTempValue] = useState(value || '');
 
   useEffect(() => {
-    setTempValue(value);
+    setTempValue(value || '');
   }, [value]);
 
-  const handleEditorChange = (content: string) => {
-    setTempValue(content);
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setTempValue(e.target.value);
   };
 
   const handleSave = () => {
@@ -37,19 +35,58 @@ export default function TinyMCEEditor({
   };
 
   const handleCancel = () => {
-    setTempValue(value);
+    setTempValue(value || '');
     setIsEditing(false);
+  };
+
+  const handleStartEdit = () => {
+    setTempValue(value || '');
+    setIsEditing(true);
+  };
+
+  const applyFormatting = (format: string) => {
+    const textarea = document.querySelector('textarea[data-editor="true"]') as HTMLTextAreaElement;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selectedText = tempValue.substring(start, end);
+    let newText = '';
+
+    switch (format) {
+      case 'bold':
+        newText = tempValue.substring(0, start) + `**${selectedText}**` + tempValue.substring(end);
+        break;
+      case 'italic':
+        newText = tempValue.substring(0, start) + `*${selectedText}*` + tempValue.substring(end);
+        break;
+      case 'list':
+        const lines = selectedText.split('\n');
+        const listItems = lines.map(line => line.trim() ? `• ${line.trim()}` : line).join('\n');
+        newText = tempValue.substring(0, start) + listItems + tempValue.substring(end);
+        break;
+      default:
+        return;
+    }
+
+    setTempValue(newText);
   };
 
   if (!isEditing) {
     return (
       <div className="relative group">
         <div 
-          className="min-h-[100px] p-3 border border-gray-300 rounded-md cursor-pointer hover:border-gray-400 transition-colors"
-          onClick={() => setIsEditing(true)}
+          className="min-h-[100px] p-3 border border-gray-300 rounded-md cursor-pointer hover:border-gray-400 transition-colors bg-white"
+          onClick={handleStartEdit}
         >
           {value ? (
-            <div dangerouslySetInnerHTML={{ __html: value }} />
+            <div className="whitespace-pre-wrap break-words">
+              {value.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                    .split('\n').map((line, i) => (
+                <div key={i} dangerouslySetInnerHTML={{ __html: line || '<br>' }} />
+              ))}
+            </div>
           ) : (
             <div className="text-gray-400 italic">{placeholder}</div>
           )}
@@ -58,7 +95,7 @@ export default function TinyMCEEditor({
           size="sm"
           variant="outline"
           className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-          onClick={() => setIsEditing(true)}
+          onClick={handleStartEdit}
         >
           <Edit3 className="h-4 w-4" />
         </Button>
@@ -68,62 +105,42 @@ export default function TinyMCEEditor({
 
   return (
     <div className="space-y-2">
-      <div className="tinymce-wrapper">
-        <Editor
-          apiKey="no-api-key"
-          onInit={(evt, editor) => {
-            editorRef.current = editor;
-          }}
+      <div className="border border-gray-300 rounded-md overflow-hidden">
+        <div className="bg-gray-50 border-b border-gray-300 px-3 py-2 flex gap-1">
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => applyFormatting('bold')}
+            className="h-8 w-8 p-0"
+          >
+            <Bold className="h-4 w-4" />
+          </Button>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => applyFormatting('italic')}
+            className="h-8 w-8 p-0"
+          >
+            <Italic className="h-4 w-4" />
+          </Button>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => applyFormatting('list')}
+            className="h-8 w-8 p-0"
+          >
+            <List className="h-4 w-4" />
+          </Button>
+        </div>
+        <Textarea
+          data-editor="true"
           value={tempValue}
-          onEditorChange={handleEditorChange}
+          onChange={handleInputChange}
+          placeholder={placeholder}
           disabled={disabled}
-          init={{
-            height,
-            menubar: false,
-            plugins: [
-              'advlist', 'autolink', 'lists', 'link', 'charmap', 
-              'searchreplace', 'visualblocks', 'code', 'fullscreen',
-              'insertdatetime', 'table', 'help', 'wordcount', 'paste'
-            ],
-            toolbar: 'undo redo | formatselect | ' +
-              'bold italic underline strikethrough | alignleft aligncenter ' +
-              'alignright alignjustify | bullist numlist outdent indent | ' +
-              'removeformat | help',
-            content_style: `
-              body { 
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; 
-                font-size: 14px;
-                line-height: 1.6;
-                color: #374151;
-                padding: 12px;
-              }
-              p { margin: 0 0 8px 0; }
-              ul, ol { margin: 0 0 8px 0; padding-left: 24px; }
-              h1, h2, h3, h4, h5, h6 { margin: 0 0 12px 0; color: #1f2937; }
-            `,
-            placeholder,
-            branding: false,
-            promotion: false,
-            resize: true,
-            statusbar: false,
-            elementpath: false,
-            skin: 'oxide',
-            theme: 'silver',
-            paste_as_text: true,
-            paste_word_valid_elements: 'b,strong,i,em,u,s,a,p,br,ul,ol,li',
-            valid_elements: 'p,br,strong,b,em,i,u,s,a[href],ul,ol,li,h1,h2,h3,h4,h5,h6',
-            forced_root_block: 'p',
-            force_br_newlines: false,
-            force_p_newlines: true,
-            convert_newlines_to_brs: false,
-            setup: (editor) => {
-              editor.on('init', () => {
-                if (tempValue && editor.getContent() !== tempValue) {
-                  editor.setContent(tempValue);
-                }
-              });
-            }
-          }}
+          className="border-0 resize-none focus:ring-0 rounded-none"
+          style={{ height: `${height}px` }}
+          autoFocus
         />
       </div>
       <div className="flex gap-2">
