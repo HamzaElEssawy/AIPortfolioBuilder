@@ -32,6 +32,28 @@ const gradientMap = {
   minimal: "bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800",
 };
 
+function HeroImageDisplay() {
+  const { data: heroImages = [] } = useQuery<PortfolioImage[]>({
+    queryKey: ["/api/portfolio/images/hero"],
+  });
+
+  const heroImage = heroImages.find(img => img.section === "hero") || heroImages[0];
+
+  return (
+    <div className="w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 mx-auto rounded-full bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 border-4 border-white dark:border-gray-800 shadow-2xl flex items-center justify-center overflow-hidden">
+      {heroImage ? (
+        <img 
+          src={heroImage.imageUrl} 
+          alt={heroImage.altText || "Profile"} 
+          className="w-full h-full object-cover rounded-full"
+        />
+      ) : (
+        <div className="text-4xl sm:text-6xl font-bold text-blue-600 dark:text-blue-400">HE</div>
+      )}
+    </div>
+  );
+}
+
 export default function EnhancedHero() {
   const { data: heroContent, isLoading } = useQuery<HeroContent>({
     queryKey: ["/api/portfolio/content/hero"],
@@ -230,7 +252,9 @@ export default function EnhancedHero() {
           <div className="relative order-1 lg:order-2 flex justify-center lg:justify-end">
             {/* Main Profile Image */}
             <div className="relative z-10">
-              <HeroImageDisplay />
+              <div className="w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 mx-auto rounded-full bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 border-4 border-white dark:border-gray-800 shadow-2xl flex items-center justify-center overflow-hidden">
+                <div className="text-4xl sm:text-6xl font-bold text-blue-600 dark:text-blue-400">HE</div>
+              </div>
             </div>
 
             {/* Floating Achievement Badges - Better positioned to avoid overlap */}
