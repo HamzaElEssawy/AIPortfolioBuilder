@@ -255,8 +255,8 @@ export default function EnhancedHero() {
               <HeroImageDisplay />
             </div>
 
-            {/* Floating Achievement Badges - Positioned to avoid overlap */}
-            {heroContent?.floatingMetrics?.map((metric, index) => {
+            {/* Floating Achievement Badges - Only show admin-configured metrics */}
+            {heroContent?.floatingMetrics && heroContent.floatingMetrics.length > 0 && heroContent.floatingMetrics.map((metric, index) => {
               const IconComponent = iconMap[metric.icon] || TrendingUp;
               const positionClasses = {
                 top_left: "top-4 left-4 lg:top-8 lg:left-4",
@@ -278,34 +278,7 @@ export default function EnhancedHero() {
                   </div>
                 </div>
               );
-            }) || (
-              // Fallback floating metrics
-              <>
-                <div className="absolute top-4 left-4 lg:top-8 lg:left-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3 hover:scale-105 transition-transform duration-300 hidden lg:block">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
-                      <TrendingUp className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                    </div>
-                    <div>
-                      <div className="font-semibold text-sm text-gray-900 dark:text-white">$110K+</div>
-                      <div className="text-xs text-gray-600 dark:text-gray-300">Funding Secured</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="absolute bottom-4 right-4 lg:bottom-20 lg:right-8 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3 hover:scale-105 transition-transform duration-300 hidden lg:block">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
-                      <Users className="w-4 h-4 text-green-600 dark:text-green-400" />
-                    </div>
-                    <div>
-                      <div className="font-semibold text-sm text-gray-900 dark:text-white">15+</div>
-                      <div className="text-xs text-gray-600 dark:text-gray-300">Founders Mentored</div>
-                    </div>
-                  </div>
-                </div>
-              </>
-            )}
+            })}
           </div>
         </div>
       </div>

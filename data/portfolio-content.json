@@ -2,12 +2,12 @@
   "hero": {
     "headline": "Product Visionary",
     "subheadline": "Strategic AI Leader and Product Visionary",
-    "description": "Architecting next-generation AI products that capture markets and generate exponential value across MENA & Southeast Asia regions",
-    "primaryTitle": "AI Product Leader",
-    "secondaryTitle": "& Strategic AI Leader",
+    "description": "Architecting next-generation AI products that capture markets and generate exponential value across MENA & Southeast Asia regions hero here",
+    "primaryTitle": "AI Product Leader find",
+    "secondaryTitle": "& Strategic AI Leader more",
     "statusBadge": {
-      "text": "Available for C-Level Roles",
-      "type": "available",
+      "text": "Available for C-Level Roles and founding opportunity ",
+      "type": "busy",
       "showIndicator": true
     },
     "primaryCTA": {
@@ -20,42 +20,42 @@
     },
     "achievementCards": [
       {
-        "value": "Built 3",
-        "label": "unicorn-potential products",
         "icon": "sparkles",
-        "color": "blue"
+        "color": "blue",
+        "label": "unicorn-potential products",
+        "value": "Built 3 hr"
       },
       {
-        "value": "40%",
-        "label": "market share captured",
-        "icon": "trending",
-        "color": "green"
-      },
-      {
-        "value": "300%",
-        "label": "YoY growth achieved",
         "icon": "award",
-        "color": "purple"
+        "color": "blue",
+        "label": "market share captured",
+        "value": "40%"
+      },
+      {
+        "icon": "trending",
+        "color": "purple",
+        "label": "YoY growth achieved",
+        "value": "300%"
       }
     ],
     "floatingMetrics": [
       {
-        "value": "$110K+",
+        "icon": "target",
         "label": "Funding Secured",
-        "icon": "trending",
+        "value": "$110K+",
         "position": "top_left"
       },
       {
-        "value": "15+",
+        "icon": "trending",
         "label": "Founders Mentored",
-        "icon": "users",
-        "position": "bottom_right"
+        "value": "15+",
+        "position": "top_right"
       }
     ],
     "founderBadge": {
+      "icon": "crown",
       "show": true,
-      "text": "AI Founder",
-      "icon": "award"
+      "text": "AI Founder"
     },
     "backgroundSettings": {
       "gradientStyle": "blue_purple",
@@ -298,6 +298,6 @@
     "keywords": "AI Product Manager, Machine Learning, Enterprise AI, Product Strategy, Startup Founder, Cross-Cultural Leadership",
     "ogImage": "/images/hamza-og-image.jpg"
   },
-  "lastUpdated": "2025-06-13T06:15:49.013Z",
-  "version": 15
+  "lastUpdated": "2025-06-13T06:26:14.183Z",
+  "version": 20
 }
