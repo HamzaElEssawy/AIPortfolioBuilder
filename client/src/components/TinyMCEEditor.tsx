@@ -73,11 +73,11 @@ export default function TinyMCEEditor({
   };
 
   useEffect(() => {
-    if (isEditing && editorRef.current) {
+    if (isEditing && editorRef.current && editorRef.current.innerHTML !== tempValue) {
       editorRef.current.innerHTML = tempValue;
       editorRef.current.focus();
     }
-  }, [isEditing, tempValue]);
+  }, [isEditing]);
 
   if (!isEditing) {
     return (
