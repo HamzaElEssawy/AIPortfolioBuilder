@@ -10,7 +10,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
 import { Save, RefreshCw, AlertCircle, CheckCircle, Quote, User, Briefcase } from "lucide-react";
-import TinyMCEEditor from "./TinyMCEEditor";
+import ConsolidatedTextEditor from "./ConsolidatedTextEditor";
 
 interface HeroContent {
   headline: string;
@@ -318,11 +318,11 @@ export default function EnhancedContentManager() {
                 <Label htmlFor="about-summary" className="text-sm font-medium text-gray-700">
                   Professional Summary
                 </Label>
-                <TinyMCEEditor
-                  value={contentData.about.summary || ''}
+                <ConsolidatedTextEditor
+                  content={contentData.about.summary || ''}
                   onChange={(value) => handleAboutChange('summary', value)}
                   placeholder="Your professional background and experience"
-                  height={150}
+                  enableRichText={true}
                 />
               </div>
               
@@ -330,11 +330,11 @@ export default function EnhancedContentManager() {
                 <Label htmlFor="about-competencies" className="text-sm font-medium text-gray-700">
                   Core Competencies
                 </Label>
-                <TinyMCEEditor
-                  value={contentData.about.competencies || ''}
+                <ConsolidatedTextEditor
+                  content={contentData.about.competencies || ''}
                   onChange={(value) => handleAboutChange('competencies', value)}
                   placeholder="Key skills and areas of expertise"
-                  height={120}
+                  enableRichText={true}
                 />
               </div>
 
@@ -363,11 +363,11 @@ export default function EnhancedContentManager() {
                   <Label htmlFor="philosophy-quote" className="text-sm font-medium text-gray-700">
                     Philosophy Quote
                   </Label>
-                  <TinyMCEEditor
-                    value={contentData.about.philosophyQuote || ''}
-                    onChange={(value) => handleAboutChange('philosophyQuote', value)}
+                  <ConsolidatedTextEditor
+                    content={contentData.about.philosophyQuote || ''}
+                    onChange={(value: string) => handleAboutChange('philosophyQuote', value)}
                     placeholder="Your leadership philosophy and approach"
-                    height={120}
+                    enableRichText={true}
                   />
                 </div>
               </div>

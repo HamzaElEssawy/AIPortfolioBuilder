@@ -54,26 +54,32 @@ export default function AboutStreamlined() {
             {/* Personal Narrative */}
             <div className="prose prose-lg max-w-none">
               <div className="text-lg text-text-charcoal leading-relaxed space-y-6">
-                <p>
-                  {content?.competencies || `With over 7 years of experience spanning the MENA region and Southeast Asia, I 
-                  specialize in transforming complex AI concepts into scalable enterprise solutions. 
-                  My journey began in fintech, where I discovered the power of AI to solve real-world 
-                  regulatory challenges.`}
-                </p>
-                
-                <p>
-                  At Tapway, I led the development of enterprise AI vision platforms, scaling from 
-                  startup to serving 10+ major enterprise clients. This experience taught me that 
-                  successful AI products require not just technical sophistication, but deep 
-                  understanding of enterprise needs and cultural contexts.
-                </p>
-                
-                <p>
-                  Currently, as an Entrepreneur in Residence at Antler Malaysia, I'm building AI 
-                  compliance solutions for the fintech sector, having secured $110K+ in early funding. 
-                  My focus remains on creating AI products that are both technically robust and 
-                  culturally intelligent.
-                </p>
+                {content?.competencies ? (
+                  <div dangerouslySetInnerHTML={{ __html: content.competencies }} />
+                ) : (
+                  <>
+                    <p>
+                      With over 7 years of experience spanning the MENA region and Southeast Asia, I 
+                      specialize in transforming complex AI concepts into scalable enterprise solutions. 
+                      My journey began in fintech, where I discovered the power of AI to solve real-world 
+                      regulatory challenges.
+                    </p>
+                    
+                    <p>
+                      At Tapway, I led the development of enterprise AI vision platforms, scaling from 
+                      startup to serving 10+ major enterprise clients. This experience taught me that 
+                      successful AI products require not just technical sophistication, but deep 
+                      understanding of enterprise needs and cultural contexts.
+                    </p>
+                    
+                    <p>
+                      Currently, as an Entrepreneur in Residence at Antler Malaysia, I'm building AI 
+                      compliance solutions for the fintech sector, having secured $110K+ in early funding. 
+                      My focus remains on creating AI products that are both technically robust and 
+                      culturally intelligent.
+                    </p>
+                  </>
+                )}
               </div>
             </div>
 
@@ -106,11 +112,11 @@ export default function AboutStreamlined() {
             <div className="text-4xl text-secondary-green font-serif">"</div>
             <div>
               <blockquote className="text-xl text-text-charcoal italic leading-relaxed mb-4">
-                AI product success isn't just about cutting-edge technology—it's about understanding 
+                {content?.philosophyQuote || `AI product success isn't just about cutting-edge technology—it's about understanding 
                 cultural nuances, regulatory landscapes, and human needs across diverse markets. 
-                True innovation happens when we bridge technical excellence with deep market empathy.
+                True innovation happens when we bridge technical excellence with deep market empathy.`}
               </blockquote>
-              <cite className="text-navy font-semibold">— Hamza El Essawy</cite>
+              <cite className="text-navy font-semibold">— Hamza El Essawy, {content?.philosophyTitle || "Leadership Philosophy"}</cite>
             </div>
           </div>
         </div>
