@@ -594,6 +594,24 @@ What would be most helpful for your current career goals?`;
     }
   });
 
+  // Enhanced Hero Content Management endpoint (admin only)
+  app.post("/api/admin/content/hero", isAdmin, async (req, res) => {
+    try {
+      const heroContent = req.body;
+      await contentManager.updateSection('hero', heroContent);
+      await cacheSync.invalidateContentCache({ invalidatePortfolio: true });
+      
+      res.json({ 
+        success: true, 
+        message: "Hero content updated successfully",
+        content: heroContent 
+      });
+    } catch (error) {
+      console.error("Error updating hero content:", error);
+      res.status(500).json({ message: "Failed to update hero content" });
+    }
+  });
+
   // Enhanced Content Management endpoints (admin only)
   app.get("/api/admin/content/sections", isAdmin, async (req, res) => {
     try {

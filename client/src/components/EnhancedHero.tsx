@@ -82,7 +82,7 @@ export default function EnhancedHero() {
   return (
     <section className={`relative overflow-hidden ${backgroundClass} py-20`}>
       {/* Animated Background Elements */}
-      {heroContent.backgroundSettings.showAnimatedBlobs && (
+      {heroContent.backgroundSettings?.showAnimatedBlobs && (
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute -top-10 -left-10 w-72 h-72 bg-blue-200 dark:bg-blue-800 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
           <div className="absolute -top-10 -right-10 w-72 h-72 bg-purple-200 dark:bg-purple-800 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
@@ -91,7 +91,7 @@ export default function EnhancedHero() {
       )}
 
       {/* Floating Elements */}
-      {heroContent.backgroundSettings.showFloatingElements && (
+      {heroContent.backgroundSettings?.showFloatingElements && (
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-20 left-10 animate-float">
             <div className="w-3 h-3 bg-blue-400 rounded-full opacity-60"></div>
@@ -106,7 +106,7 @@ export default function EnhancedHero() {
       )}
 
       {/* Floating Metrics */}
-      {heroContent.floatingMetrics.map((metric, index) => {
+      {heroContent.floatingMetrics?.map((metric, index) => {
         const IconComponent = iconMap[metric.icon] || TrendingUp;
         const positionClasses = {
           top_left: "top-20 left-10",
@@ -147,29 +147,33 @@ export default function EnhancedHero() {
             {/* Main Headline */}
             <div className="space-y-4">
               <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white leading-tight">
-                {heroContent.primaryTitle.split(' ').map((word, index, array) => 
+                {heroContent.primaryTitle?.split(' ').map((word, index, array) => 
                   index === array.length - 1 ? (
                     <span key={index} className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">{word}</span>
                   ) : (
                     <span key={index}>{word} </span>
                   )
-                )}
+                ) || "Product Visionary"}
               </h1>
               <h2 className="text-2xl lg:text-3xl font-semibold text-gray-700 dark:text-gray-300">
-                {heroContent.secondaryTitle}
+                {heroContent.secondaryTitle || "& Strategic AI Leader"}
               </h2>
             </div>
 
             {/* Description */}
             <div className="space-y-4">
               <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed max-w-lg">
-                {heroContent.description}
+                {heroContent.description || "Architecting next-generation AI products that capture markets and generate exponential value across MENA & Southeast Asia regions"}
               </p>
             </div>
 
             {/* Achievement Cards */}
             <div className="grid grid-cols-3 gap-4 py-6">
-              {heroContent.achievementCards.map((card, index) => {
+              {(heroContent.achievementCards || [
+                { value: "Built 3", label: "unicorn-potential products", icon: "sparkles", color: "blue" },
+                { value: "40%", label: "market share captured", icon: "trending", color: "green" },
+                { value: "300%", label: "YoY growth achieved", icon: "award", color: "purple" }
+              ]).map((card, index) => {
                 const IconComponent = iconMap[card.icon] || Sparkles;
                 const colorClass = colorMap[card.color] || colorMap.blue;
                 
@@ -190,10 +194,10 @@ export default function EnhancedHero() {
               <Button 
                 size="lg" 
                 className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
-                onClick={() => handleCTAClick(heroContent.primaryCTA.action, heroContent.primaryCTA.externalUrl)}
+                onClick={() => handleCTAClick(heroContent.primaryCTA?.action || "scroll_to_contact", heroContent.primaryCTA?.externalUrl)}
               >
                 <Star className="w-5 h-5 mr-2" />
-                {heroContent.primaryCTA.text}
+                {heroContent.primaryCTA?.text || "Let's Connect"}
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
               
@@ -201,21 +205,21 @@ export default function EnhancedHero() {
                 variant="outline" 
                 size="lg"
                 className="border-2 border-gray-300 dark:border-gray-600 hover:border-blue-400 dark:hover:border-blue-500 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm px-8 py-3 rounded-full font-semibold transition-all duration-300"
-                onClick={() => handleCTAClick(heroContent.secondaryCTA.action, heroContent.secondaryCTA.externalUrl)}
+                onClick={() => handleCTAClick(heroContent.secondaryCTA?.action || "scroll_to_timeline", heroContent.secondaryCTA?.externalUrl)}
               >
-                {heroContent.secondaryCTA.text}
+                {heroContent.secondaryCTA?.text || "Career Timeline"}
               </Button>
             </div>
 
             {/* Founder Badge */}
-            {heroContent.founderBadge.show && (
+            {heroContent.founderBadge?.show && (
               <div className="pt-4">
                 <Badge variant="outline" className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/30 dark:to-orange-900/30 border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-200">
                   {(() => {
-                    const BadgeIcon = iconMap[heroContent.founderBadge.icon] || Award;
+                    const BadgeIcon = iconMap[heroContent.founderBadge?.icon] || Award;
                     return <BadgeIcon className="w-3 h-3 mr-1" />;
                   })()}
-                  {heroContent.founderBadge.text}
+                  {heroContent.founderBadge?.text || "AI Founder"}
                 </Badge>
               </div>
             )}
@@ -225,23 +229,9 @@ export default function EnhancedHero() {
           <div className="relative">
             {/* Main Profile Image */}
             <div className="relative z-10">
-              {heroImages.length > 0 ? (
-                <div className="relative">
-                  <div className="w-80 h-80 mx-auto rounded-full overflow-hidden border-4 border-white dark:border-gray-800 shadow-2xl">
-                    <img
-                      src={heroImages[0].imageUrl}
-                      alt="Hamza El Essawy"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  {/* Status Indicator */}
-                  <div className="absolute top-4 right-4 w-6 h-6 bg-green-500 rounded-full border-4 border-white dark:border-gray-800 shadow-lg animate-pulse"></div>
-                </div>
-              ) : (
-                <div className="w-80 h-80 mx-auto rounded-full bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 border-4 border-white dark:border-gray-800 shadow-2xl flex items-center justify-center">
-                  <div className="text-6xl font-bold text-blue-600 dark:text-blue-400">HE</div>
-                </div>
-              )}
+              <div className="w-80 h-80 mx-auto rounded-full bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 border-4 border-white dark:border-gray-800 shadow-2xl flex items-center justify-center">
+                <div className="text-6xl font-bold text-blue-600 dark:text-blue-400">HE</div>
+              </div>
             </div>
 
             {/* Floating Achievement Badges - Better positioned to avoid overlap */}

@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
 import { Save, RefreshCw, AlertCircle, CheckCircle, Quote, User, Briefcase } from "lucide-react";
 import ConsolidatedTextEditor from "./ConsolidatedTextEditor";
+import EnhancedHeroManager from "./EnhancedHeroManager";
 
 interface HeroContent {
   headline: string;
@@ -188,88 +189,7 @@ export default function EnhancedContentManager() {
 
         {/* Hero Section */}
         <TabsContent value="hero" className="space-y-6">
-          <Card className="overflow-hidden">
-            <CardHeader className="bg-blue-50 border-b">
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="text-lg font-semibold text-navy">
-                    Hero Section Management
-                  </CardTitle>
-                  <p className="text-sm text-gray-600 mt-1">Main landing page content</p>
-                </div>
-                <Button
-                  onClick={() => handleSaveSection('hero')}
-                  disabled={saveMutation.isPending}
-                  variant="outline"
-                  size="sm"
-                  className="flex items-center gap-2"
-                >
-                  {saveMutation.isPending ? (
-                    <RefreshCw className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Save className="h-4 w-4" />
-                  )}
-                  Save Hero
-                </Button>
-              </div>
-            </CardHeader>
-            
-            <CardContent className="p-6 space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="hero-headline" className="text-sm font-medium text-gray-700">
-                    Main Headline
-                  </Label>
-                  <Input
-                    id="hero-headline"
-                    value={contentData.hero.headline}
-                    onChange={(e) => handleHeroChange('headline', e.target.value)}
-                    placeholder="Your main professional title"
-                    className="border border-gray-300 rounded-md"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="hero-subheadline" className="text-sm font-medium text-gray-700">
-                    Sub Headline
-                  </Label>
-                  <Input
-                    id="hero-subheadline"
-                    value={contentData.hero.subheadline}
-                    onChange={(e) => handleHeroChange('subheadline', e.target.value)}
-                    placeholder="Your specialization or key descriptor"
-                    className="border border-gray-300 rounded-md"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="hero-cta" className="text-sm font-medium text-gray-700">
-                    Primary CTA Text
-                  </Label>
-                  <Input
-                    id="hero-cta"
-                    value={contentData.hero.ctaText}
-                    onChange={(e) => handleHeroChange('ctaText', e.target.value)}
-                    placeholder="Main call-to-action button text"
-                    className="border border-gray-300 rounded-md"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="hero-cta-secondary" className="text-sm font-medium text-gray-700">
-                    Secondary CTA Text
-                  </Label>
-                  <Input
-                    id="hero-cta-secondary"
-                    value={contentData.hero.ctaSecondaryText}
-                    onChange={(e) => handleHeroChange('ctaSecondaryText', e.target.value)}
-                    placeholder="Secondary button text"
-                    className="border border-gray-300 rounded-md"
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <EnhancedHeroManager />
         </TabsContent>
 
         {/* About Section */}
