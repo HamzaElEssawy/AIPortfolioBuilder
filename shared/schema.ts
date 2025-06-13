@@ -21,16 +21,24 @@ export const contactSubmissions = pgTable("contact_submissions", {
 export const caseStudies = pgTable("case_studies", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
+  subtitle: text("subtitle"),
   challenge: text("challenge").notNull(),
   approach: text("approach").notNull(),
   solution: text("solution").notNull(),
   impact: text("impact").notNull(),
   metrics: text("metrics").array().notNull().default([]),
   technologies: text("technologies").array().notNull().default([]),
-  status: text("status").notNull().default("draft"),
+  status: text("status").notNull().default("draft"), // draft, published, archived
+  featured: boolean("featured").default(false), // for homepage display
+  displayOrder: integer("display_order").default(0),
+  imageUrl: text("image_url"),
+  clientName: text("client_name"),
+  projectDuration: text("project_duration"),
+  teamSize: text("team_size"),
   technicalDetails: jsonb("technical_details"),
   visualElements: jsonb("visual_elements"),
   crossCulturalElements: jsonb("cross_cultural_elements"),
+  slug: text("slug").notNull().unique(),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
