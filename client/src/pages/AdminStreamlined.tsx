@@ -135,16 +135,17 @@ export default function AdminStreamlined() {
 
       <div className="max-w-7xl mx-auto px-8 py-8">
         <Tabs defaultValue="dashboard" className="space-y-8">
-          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-11 gap-1">
+          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-12 gap-1">
             <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
             <TabsTrigger value="content">Content</TabsTrigger>
             <TabsTrigger value="case-studies">Case Studies</TabsTrigger>
             <TabsTrigger value="images">Images</TabsTrigger>
+            <TabsTrigger value="skills">Skills</TabsTrigger>
+            <TabsTrigger value="timeline">Timeline</TabsTrigger>
+            <TabsTrigger value="core-values">Values</TabsTrigger>
             <TabsTrigger value="metrics">Metrics</TabsTrigger>
             <TabsTrigger value="seo">SEO</TabsTrigger>
             <TabsTrigger value="system">System</TabsTrigger>
-            <TabsTrigger value="timeline">Timeline</TabsTrigger>
-            <TabsTrigger value="core-values">Values</TabsTrigger>
             <TabsTrigger value="contacts">Contacts</TabsTrigger>
             <TabsTrigger value="ai-assistant">AI Assistant</TabsTrigger>
           </TabsList>
@@ -286,6 +287,17 @@ export default function AdminStreamlined() {
             <div className="bg-white rounded-lg border border-gray-200 p-6">
               <ErrorBoundary>
                 <PortfolioImageManager />
+              </ErrorBoundary>
+            </div>
+          </TabsContent>
+
+          {/* Skills Management */}
+          <TabsContent value="skills" className="space-y-6">
+            <div className="bg-white rounded-lg border border-gray-200 p-6">
+              <h2 className="text-xl font-bold text-navy mb-4">Skills Management</h2>
+              <p className="text-gray-600 mb-6">Manage your technical skills and proficiency levels</p>
+              <ErrorBoundary>
+                <SkillsManager />
               </ErrorBoundary>
             </div>
           </TabsContent>
