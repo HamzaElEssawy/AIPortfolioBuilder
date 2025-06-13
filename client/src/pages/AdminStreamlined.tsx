@@ -260,9 +260,13 @@ export default function AdminStreamlined() {
 
           {/* Content Management - Hero and About only */}
           <TabsContent value="content" className="space-y-6">
-            <ErrorBoundary>
-              <SimpleContentManager />
-            </ErrorBoundary>
+            <div className="bg-white rounded-lg border border-gray-200 p-6">
+              <h2 className="text-xl font-bold text-navy mb-4">Content Management</h2>
+              <p className="text-gray-600 mb-6">Manage portfolio content with real-time synchronization</p>
+              <ErrorBoundary>
+                <UnifiedContentManager />
+              </ErrorBoundary>
+            </div>
           </TabsContent>
 
           {/* Case Studies Management */}

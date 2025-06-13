@@ -7,6 +7,8 @@ import session from "express-session";
 import { z } from "zod";
 import Anthropic from "@anthropic-ai/sdk";
 import { contentManager } from "./contentManager";
+import { cacheSync, cacheSyncMiddleware } from "./cacheSync";
+import { cache } from "./cache";
 
 // Initialize Anthropic client
 const anthropic = new Anthropic({

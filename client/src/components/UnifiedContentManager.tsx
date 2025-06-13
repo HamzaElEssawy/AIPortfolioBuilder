@@ -1,51 +1,64 @@
-import React, { useState, useEffect } from 'react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import { useToast } from '@/hooks/use-toast';
-import RobustTextEditor from './RobustTextEditor';
-import { Save, RefreshCw, CheckCircle } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
+import { queryClient } from "@/lib/queryClient";
+import { Save, RefreshCw, AlertCircle, CheckCircle } from "lucide-react";
+import RobustTextEditor from "./RobustTextEditor";
 
 interface ContentSection {
   [key: string]: string;
 }
 
-interface ContentData {
-  hero: {
-    headline: string;
-    subheadline: string;
-    ctaText: string;
-    ctaSecondaryText: string;
-  };
-  about: {
-    title: string;
-    summary: string;
-    competencies: string;
-  };
-  [key: string]: ContentSection;
+interface HeroContent {
+  headline: string;
+  subheadline: string;
+  ctaText: string;
+  ctaSecondaryText: string;
 }
 
+interface AboutContent {
+  title: string;
+  summary: string;
+  competencies: string;
+}
+
+interface ContentData {
+  hero: HeroContent;
+  about: AboutContent;
+}
+
+const defaultContentData: ContentData = {
+  hero: {
+    headline: "AI Product Leader &",
+    subheadline: "Multi-time Founder",
+    ctaText: "Let's Connect",
+    ctaSecondaryText: "View Portfolio"
+  },
+  about: {
+    title: "About Hamza",
+    summary: "Experienced AI Product Leader with a proven track record of building scalable solutions.",
+    competencies: "Product Management, AI Strategy, Team Leadership"
+  }
+};
+
 export default function UnifiedContentManager() {
-  const [activeTab, setActiveTab] = useState('hero');
-  const [contentData, setContentData] = useState<ContentData>({
-    hero: { headline: '', subheadline: '', ctaText: '', ctaSecondaryText: '' },
-    about: { title: '', summary: '', competencies: '' }
-  });
+  const { toast } = useToast();
+  const [contentData, setContentData] = useState<ContentData>(defaultContentData);
   const [hasChanges, setHasChanges] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
-  
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
 
-  // Load content for all sections
-  const { data: heroData } = useQuery({
+  // Fetch hero content
+  const { data: heroData, isLoading: heroLoading } = useQuery<HeroContent>({
     queryKey: ['/api/portfolio/content/hero'],
-    refetchInterval: 30000 // Refresh every 30 seconds
+    refetchInterval: 30000
   });
 
-  const { data: aboutData } = useQuery({
+  // Fetch about content
+  const { data: aboutData, isLoading: aboutLoading } = useQuery<AboutContent>({
     queryKey: ['/api/portfolio/content/about'],
     refetchInterval: 30000
   });
@@ -64,20 +77,17 @@ export default function UnifiedContentManager() {
     
     if (Object.keys(updates).length > 0) {
       setContentData(prev => ({ ...prev, ...updates }));
+      setHasChanges(false);
     }
   }, [heroData, aboutData]);
 
   // Save content mutation with comprehensive cache invalidation
   const saveMutation = useMutation({
-    mutationFn: async ({ section, data }: { section: string, data: ContentSection }) => {
-      // First clear server cache
-      await fetch('/api/admin/cache/clear', { method: 'POST' });
-      
-      // Then save content
-      const response = await fetch(`/api/admin/portfolio/content/${section}`, {
+    mutationFn: async ({ section, data }: { section: string, data: HeroContent | AboutContent }) => {
+      const response = await fetch(`/api/portfolio/content/${section}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
       });
       
       if (!response.ok) {
@@ -86,179 +96,197 @@ export default function UnifiedContentManager() {
       
       return response.json();
     },
-    onSuccess: async (_, { section }) => {
-      // Comprehensive cache invalidation
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['/api/portfolio'] }),
-        queryClient.invalidateQueries({ queryKey: [`/api/portfolio/content/${section}`] }),
-        queryClient.invalidateQueries({ queryKey: ['/api/portfolio/content'] })
-      ]);
-      
-      // Force immediate refetch
-      await queryClient.refetchQueries({ 
-        queryKey: [`/api/portfolio/content/${section}`],
-        type: 'active'
-      });
+    onSuccess: (data, variables) => {
+      // Invalidate all related queries
+      queryClient.invalidateQueries({ queryKey: ['/api/portfolio/content/hero'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/portfolio/content/about'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/portfolio'] });
       
       setHasChanges(false);
       setLastSaved(new Date());
       
       toast({
         title: "Content saved successfully",
-        description: `${section} section updated and live on website`,
+        description: `${variables.section} section updated and live on portfolio`,
       });
     },
-    onError: (error) => {
+    onError: (error: Error, variables) => {
       toast({
         title: "Save failed",
-        description: error instanceof Error ? error.message : "Unknown error occurred",
-        variant: "destructive"
+        description: `Failed to update ${variables.section}: ${error.message}`,
+        variant: "destructive",
       });
-    }
+    },
   });
 
-  // Handle field changes
-  const handleFieldChange = (section: string, field: string, value: string) => {
-    setContentData(prev => ({
-      ...prev,
-      [section]: {
-        ...prev[section],
-        [field]: value
-      }
-    }));
+  const handleContentChange = (section: string, field: string, value: string) => {
+    if (section === 'hero') {
+      setContentData(prev => ({
+        ...prev,
+        hero: {
+          ...prev.hero,
+          [field]: value
+        }
+      }));
+    } else if (section === 'about') {
+      setContentData(prev => ({
+        ...prev,
+        about: {
+          ...prev.about,
+          [field]: value
+        }
+      }));
+    }
     setHasChanges(true);
   };
 
-  // Save current section
-  const saveSection = () => {
-    if (!hasChanges) return;
-    
-    const sectionData = contentData[activeTab];
-    saveMutation.mutate({ section: activeTab, data: sectionData });
+  const handleSaveSection = async (sectionName: string) => {
+    if (sectionName === 'hero') {
+      await saveMutation.mutateAsync({ section: sectionName, data: contentData.hero });
+    } else if (sectionName === 'about') {
+      await saveMutation.mutateAsync({ section: sectionName, data: contentData.about });
+    }
   };
 
-  // Auto-save functionality
-  useEffect(() => {
-    if (!hasChanges) return;
-    
-    const autoSaveTimer = setTimeout(() => {
-      saveSection();
-    }, 5000); // Auto-save after 5 seconds of inactivity
-    
-    return () => clearTimeout(autoSaveTimer);
-  }, [hasChanges, contentData, activeTab]);
+  const handleSaveAll = async () => {
+    try {
+      await Promise.all([
+        saveMutation.mutateAsync({ section: 'hero', data: contentData.hero }),
+        saveMutation.mutateAsync({ section: 'about', data: contentData.about })
+      ]);
+    } catch (error) {
+      // Individual errors are handled by the mutation
+    }
+  };
 
-  const renderSectionEditor = (section: string, config: Record<string, { label: string; height?: number; placeholder?: string }>) => {
-    const sectionData = contentData[section] || {};
-    
+  const sections = [
+    {
+      key: 'hero',
+      title: 'Hero Section',
+      description: 'Main landing section content',
+      fields: [
+        { key: 'headline', label: 'Main Headline', placeholder: 'Your main professional title' },
+        { key: 'subheadline', label: 'Sub Headline', placeholder: 'Your specialization or key descriptor' },
+        { key: 'ctaText', label: 'Primary CTA Text', placeholder: 'Main call-to-action button text' },
+        { key: 'ctaSecondaryText', label: 'Secondary CTA Text', placeholder: 'Secondary button text' }
+      ]
+    },
+    {
+      key: 'about',
+      title: 'About Section',
+      description: 'Professional background and summary',
+      fields: [
+        { key: 'title', label: 'Section Title', placeholder: 'About section heading' },
+        { key: 'summary', label: 'Professional Summary', placeholder: 'Your professional background and experience', height: 120 },
+        { key: 'competencies', label: 'Core Competencies', placeholder: 'Key skills and areas of expertise', height: 80 }
+      ]
+    }
+  ];
+
+  if (heroLoading || aboutLoading) {
     return (
-      <div className="space-y-6">
-        {Object.entries(config).map(([field, { label, height = 120, placeholder }]) => (
-          <RobustTextEditor
-            key={`${section}-${field}`}
-            label={label}
-            value={sectionData[field] || ''}
-            onChange={(value) => handleFieldChange(section, field, value)}
-            height={height}
-            placeholder={placeholder}
-            disabled={saveMutation.isPending}
-          />
-        ))}
-        
-        <div className="flex items-center justify-between pt-4 border-t">
-          <div className="flex items-center space-x-2">
-            <Badge variant={hasChanges ? "destructive" : "default"}>
-              {hasChanges ? "Unsaved changes" : "Saved"}
-            </Badge>
-            {lastSaved && (
-              <span className="text-sm text-gray-500">
-                Last saved: {lastSaved.toLocaleTimeString()}
-              </span>
-            )}
-          </div>
-          
-          <Button 
-            onClick={saveSection}
-            disabled={!hasChanges || saveMutation.isPending}
-            className="flex items-center space-x-2"
-          >
-            {saveMutation.isPending ? (
-              <RefreshCw className="w-4 h-4 animate-spin" />
-            ) : (
-              <Save className="w-4 h-4" />
-            )}
-            <span>{saveMutation.isPending ? 'Saving...' : 'Save & Publish'}</span>
-          </Button>
+      <div className="flex items-center justify-center py-12">
+        <div className="text-center">
+          <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
+          <p className="text-gray-600">Loading content...</p>
         </div>
       </div>
     );
-  };
+  }
 
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <span>Content Management</span>
-          <div className="flex items-center space-x-2">
-            <CheckCircle className="w-5 h-5 text-green-500" />
-            <span className="text-sm text-green-600">Live Sync Active</span>
-          </div>
-        </CardTitle>
-      </CardHeader>
+    <div className="space-y-6">
+      {sections.map((section) => (
+        <Card key={section.key} className="overflow-hidden">
+          <CardHeader className="bg-gray-50 border-b">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-lg font-semibold text-navy">
+                  {section.title}
+                </CardTitle>
+                <p className="text-sm text-gray-600 mt-1">{section.description}</p>
+              </div>
+              <Button
+                onClick={() => handleSaveSection(section.key)}
+                disabled={saveMutation.isPending}
+                variant="outline"
+                size="sm"
+                className="flex items-center gap-2"
+              >
+                {saveMutation.isPending ? (
+                  <RefreshCw className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Save className="h-4 w-4" />
+                )}
+                Save {section.title}
+              </Button>
+            </div>
+          </CardHeader>
+          
+          <CardContent className="p-6 space-y-4">
+            {section.fields.map((field) => (
+              <div key={field.key} className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">
+                  {field.label}
+                </label>
+                <RobustTextEditor
+                  value={
+                    section.key === 'hero' 
+                      ? (contentData.hero as any)[field.key] || ''
+                      : section.key === 'about'
+                      ? (contentData.about as any)[field.key] || ''
+                      : ''
+                  }
+                  onChange={(value) => handleContentChange(section.key, field.key, value)}
+                  placeholder={field.placeholder}
+                  height={field.height || 60}
+                  className="border border-gray-300 rounded-md"
+                />
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      ))}
       
-      <CardContent>
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="hero">Hero Section</TabsTrigger>
-            <TabsTrigger value="about">About Section</TabsTrigger>
-          </TabsList>
+      <Separator />
+      
+      <div className="flex items-center justify-between pt-4">
+        <div className="flex items-center space-x-2">
+          <Badge variant={hasChanges ? "destructive" : "default"}>
+            {hasChanges ? "Unsaved changes" : "Saved"}
+          </Badge>
+          {lastSaved && (
+            <span className="text-sm text-gray-500">
+              Last saved: {lastSaved.toLocaleTimeString()}
+            </span>
+          )}
+        </div>
+        
+        <div className="flex items-center space-x-2">
+          <Button
+            onClick={handleSaveAll}
+            disabled={!hasChanges || saveMutation.isPending}
+            className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
+          >
+            {saveMutation.isPending ? (
+              <RefreshCw className="h-4 w-4 animate-spin" />
+            ) : hasChanges ? (
+              <AlertCircle className="h-4 w-4" />
+            ) : (
+              <CheckCircle className="h-4 w-4" />
+            )}
+            {saveMutation.isPending ? "Saving..." : hasChanges ? "Save All Changes" : "All Saved"}
+          </Button>
           
-          <TabsContent value="hero" className="mt-6">
-            {renderSectionEditor('hero', {
-              headline: {
-                label: 'Main Headline',
-                height: 80,
-                placeholder: 'Enter your main headline...'
-              },
-              subheadline: {
-                label: 'Subheadline',
-                height: 120,
-                placeholder: 'Enter supporting text...'
-              },
-              ctaText: {
-                label: 'Primary Button Text',
-                height: 60,
-                placeholder: 'View My Work'
-              },
-              ctaSecondaryText: {
-                label: 'Secondary Button Text',
-                height: 60,
-                placeholder: 'Download Resume'
-              }
-            })}
-          </TabsContent>
-          
-          <TabsContent value="about" className="mt-6">
-            {renderSectionEditor('about', {
-              title: {
-                label: 'Section Title',
-                height: 80,
-                placeholder: 'About [Your Name]'
-              },
-              summary: {
-                label: 'Summary',
-                height: 120,
-                placeholder: 'Brief professional summary...'
-              },
-              competencies: {
-                label: 'Detailed Competencies',
-                height: 200,
-                placeholder: 'Detailed description of your expertise...'
-              }
-            })}
-          </TabsContent>
-        </Tabs>
-      </CardContent>
-    </Card>
+          <Button
+            onClick={() => window.open('/', '_blank')}
+            variant="outline"
+            className="text-blue-600 border-blue-600 hover:bg-blue-50"
+          >
+            View Live Portfolio
+          </Button>
+        </div>
+      </div>
+    </div>
   );
 }
