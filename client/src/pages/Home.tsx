@@ -3,7 +3,7 @@ import Navigation from "@/components/Navigation";
 import Hero from "@/components/Hero";
 import Metrics from "@/components/Metrics";
 import AboutStreamlined from "@/components/AboutStreamlined";
-import CaseStudies from "@/components/CaseStudies";
+import FeaturedCaseStudies from "@/components/FeaturedCaseStudies";
 import Skills from "@/components/Skills";
 import Timeline from "@/components/Timeline";
 import ContactEnhanced from "@/components/ContactEnhanced";
@@ -29,9 +29,10 @@ export default function Home() {
       <Navigation />
       {portfolioStatus.hero && <Hero />}
       {portfolioStatus.about && <AboutStreamlined />}
+      <Metrics />
+      {portfolioStatus.caseStudies && <FeaturedCaseStudies />}
       {portfolioStatus.skills && <Skills />}
       {portfolioStatus.timeline && <Timeline />}
-      {portfolioStatus.caseStudies && <CaseStudies />}
       {portfolioStatus.contact && <ContactEnhanced />}
       <Footer />
     </div>

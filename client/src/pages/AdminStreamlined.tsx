@@ -10,7 +10,7 @@ import type { ContactSubmission } from "@shared/schema";
 
 // Import the functional components
 import EnhancedContentManager from "@/components/EnhancedContentManager";
-import EnhancedCaseStudyEditor from "@/components/EnhancedCaseStudyEditor";
+import CaseStudyManager from "@/components/CaseStudyManager";
 import TimelineManager from "@/components/TimelineManager";
 import CoreValuesManager from "@/components/CoreValuesManager";
 import SkillsManager from "@/components/SkillsManager";
@@ -274,10 +274,8 @@ export default function AdminStreamlined() {
           {/* Case Studies Management */}
           <TabsContent value="case-studies" className="space-y-6">
             <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <h2 className="text-xl font-bold text-navy mb-4">Case Studies</h2>
-              <p className="text-gray-600 mb-6">Manage portfolio case studies with AI enhancement</p>
               <ErrorBoundary>
-                <EnhancedCaseStudyEditor />
+                <CaseStudyManager />
               </ErrorBoundary>
             </div>
           </TabsContent>
