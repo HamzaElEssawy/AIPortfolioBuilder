@@ -9,7 +9,7 @@ import { queryClient } from "@/lib/queryClient";
 import type { ContactSubmission } from "@shared/schema";
 
 // Import the functional components
-import SimpleContentManager from "@/components/SimpleContentManager";
+import UnifiedContentManager from "@/components/UnifiedContentManager";
 import EnhancedCaseStudyEditor from "@/components/EnhancedCaseStudyEditor";
 import TimelineManager from "@/components/TimelineManager";
 import CoreValuesManager from "@/components/CoreValuesManager";
