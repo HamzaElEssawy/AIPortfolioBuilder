@@ -26,7 +26,11 @@ export default function AdminLogin() {
         title: "Login successful",
         description: "Welcome to the admin dashboard",
       });
-      setLocation("/admin");
+      // Force a small delay to ensure session is set
+      setTimeout(() => {
+        setLocation("/admin");
+        window.location.reload();
+      }, 500);
     },
     onError: (error) => {
       toast({
