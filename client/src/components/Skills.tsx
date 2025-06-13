@@ -57,11 +57,19 @@ export default function Skills() {
   }
 
   return (
-    <section id="skills" className="py-20 bg-gray-50">
-      <div className="container mx-auto px-6">
+    <section id="skills" className="py-20 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-blue-900 dark:to-indigo-900 relative overflow-hidden">
+      {/* Background Elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-10 -left-10 w-72 h-72 bg-blue-200 dark:bg-blue-800 rounded-full mix-blend-multiply filter blur-xl opacity-30"></div>
+        <div className="absolute -bottom-10 -right-10 w-72 h-72 bg-purple-200 dark:bg-purple-800 rounded-full mix-blend-multiply filter blur-xl opacity-30"></div>
+      </div>
+
+      <div className="container mx-auto px-6 relative z-10">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-navy mb-4">Skills & Expertise</h2>
-          <p className="text-xl text-text-charcoal max-w-3xl mx-auto">
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
+            Skills & <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">Expertise</span>
+          </h2>
+          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
             Technical capabilities and domain expertise across AI product development, leadership, and innovation
           </p>
         </div>
@@ -70,9 +78,11 @@ export default function Skills() {
           {skillCategories
             .sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0))
             .map((category) => (
-              <div key={category.id} className="bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
-                <h3 className="text-2xl font-bold text-navy mb-6 flex items-center gap-3">
-                  <div className="w-3 h-3 bg-secondary-green rounded-full"></div>
+              <div key={category.id} className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl p-8 border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-3">
+                  <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
+                    <div className="w-3 h-3 bg-blue-600 dark:bg-blue-400 rounded-full"></div>
+                  </div>
                   {category.name}
                 </h3>
                 

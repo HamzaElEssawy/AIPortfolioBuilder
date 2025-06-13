@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Calendar, Users, Clock, ExternalLink, Target, Lightbulb, CheckCircle, TrendingUp, Home } from "lucide-react";
 import { Link } from "wouter";
-import Navigation from "@/components/Navigation";
+import CaseStudyNavigation from "@/components/CaseStudyNavigation";
 
 interface CaseStudy {
   id: number;
@@ -79,23 +79,8 @@ export default function CaseStudyDetail() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-blue-900">
-      <Navigation />
-      <div className="container mx-auto px-6 py-16">
-        {/* Navigation */}
-        <div className="mb-8 flex gap-4">
-          <Link href="/">
-            <Button variant="outline" className="mb-6">
-              <Home className="w-4 h-4 mr-2" />
-              Home
-            </Button>
-          </Link>
-          <Link href="/case-studies">
-            <Button variant="outline" className="mb-6">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Case Studies
-            </Button>
-          </Link>
-        </div>
+      <CaseStudyNavigation />
+      <div className="container mx-auto px-6 pt-24 pb-16">
 
         {/* Header */}
         <div className="text-center mb-12">
