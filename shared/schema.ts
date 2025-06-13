@@ -152,6 +152,12 @@ export const seoSettings = pgTable("seo_settings", {
   ogTitle: text("og_title"),
   ogDescription: text("og_description"),
   ogImage: text("og_image"),
+  twitterTitle: text("twitter_title"),
+  twitterDescription: text("twitter_description"),
+  twitterImage: text("twitter_image"),
+  canonicalUrl: text("canonical_url"),
+  robotsDirective: text("robots_directive").default("index,follow"),
+  structuredData: jsonb("structured_data"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

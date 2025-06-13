@@ -11,6 +11,9 @@ import { workflowManager } from "./workflow";
 
 const app = express();
 
+// Trust proxy for accurate IP identification
+app.set('trust proxy', true);
+
 // Security middleware
 app.use(helmet({
   contentSecurityPolicy: {
