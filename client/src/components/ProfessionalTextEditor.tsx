@@ -140,7 +140,7 @@ export default function ProfessionalTextEditor({
       return {
         ...baseConfig,
         toolbar: 'bold italic | undo redo | removeformat',
-        plugins: ['autoresize'],
+        plugins: 'autoresize',
         valid_elements: 'p,br,strong,em,b,i',
         forced_root_block: 'p',
       };
@@ -156,9 +156,7 @@ export default function ProfessionalTextEditor({
         'link table | code help'
       ].join(' | '),
       
-      plugins: [
-        'advlist autolink lists link charmap searchreplace visualblocks code table help wordcount autoresize'
-      ],
+      plugins: 'advlist autolink lists link charmap searchreplace visualblocks code table help wordcount autoresize',
       
       block_formats: 'Paragraph=p; Heading 1=h1; Heading 2=h2; Heading 3=h3; Preformatted=pre',
       
