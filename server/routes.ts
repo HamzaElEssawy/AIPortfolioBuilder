@@ -1157,6 +1157,18 @@ What would be most helpful for your current career goals?`;
       const { insertSkillSchema } = await import("@shared/schema");
       const validatedData = insertSkillSchema.parse(req.body);
       const skill = await storage.createSkill(validatedData);
+      
+      // Invalidate skills cache for live portfolio
+      await cacheSync.invalidateContentCache({
+        invalidatePortfolio: true,
+        invalidateSpecific: [
+          'route:/skills:{}',
+          'route:/api/portfolio/skills'
+        ],
+        broadcastUpdate: true
+      });
+      
+      console.log(`New skill created and cache invalidated:`, skill.name);
       res.json(skill);
     } catch (error) {
       console.error("Error creating skill:", error);
@@ -1172,6 +1184,18 @@ What would be most helpful for your current career goals?`;
       }
       
       const skill = await storage.updateSkill(id, req.body);
+      
+      // Invalidate skills cache for live portfolio
+      await cacheSync.invalidateContentCache({
+        invalidatePortfolio: true,
+        invalidateSpecific: [
+          'route:/skills:{}',
+          'route:/api/portfolio/skills'
+        ],
+        broadcastUpdate: true
+      });
+      
+      console.log(`Skill ${id} updated and cache invalidated`);
       res.json(skill);
     } catch (error) {
       console.error("Error updating skill:", error);
@@ -1187,6 +1211,18 @@ What would be most helpful for your current career goals?`;
       }
       
       await storage.deleteSkill(id);
+      
+      // Invalidate skills cache for live portfolio
+      await cacheSync.invalidateContentCache({
+        invalidatePortfolio: true,
+        invalidateSpecific: [
+          'route:/skills:{}',
+          'route:/api/portfolio/skills'
+        ],
+        broadcastUpdate: true
+      });
+      
+      console.log(`Skill ${id} deleted and cache invalidated`);
       res.json({ message: "Skill deleted successfully" });
     } catch (error) {
       console.error("Error deleting skill:", error);

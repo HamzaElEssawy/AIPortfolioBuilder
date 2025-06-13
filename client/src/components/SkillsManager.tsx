@@ -273,9 +273,9 @@ export default function SkillsManager() {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          {[1, 2, 3, 4, 5].map((level) => (
+                          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((level) => (
                             <SelectItem key={level} value={level.toString()}>
-                              {level} - {getProficiencyLabel(level)}
+                              {level}/10 - {getProficiencyLabel(level)}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -296,7 +296,7 @@ export default function SkillsManager() {
                         <div className="flex items-center gap-2 mb-1">
                           <h3 className="font-medium">{skill.name}</h3>
                           <Badge variant="secondary">
-                            {getProficiencyLabel(skill.proficiencyLevel)}
+                            {skill.proficiencyLevel}/10 - {getProficiencyLabel(skill.proficiencyLevel)}
                           </Badge>
                         </div>
                         <p className="text-sm text-gray-500">
