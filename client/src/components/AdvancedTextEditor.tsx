@@ -150,8 +150,25 @@ export default function AdvancedTextEditor({
     if (editorRef.current && isEditorReady && value !== lastValueRef.current) {
       const currentContent = editorRef.current.getContent();
       if (currentContent !== value) {
+        // Store cursor position before updating
+        const selection = editorRef.current.selection;
+        const bookmark = selection ? selection.getBookmark(2, true) : null;
+        
         lastValueRef.current = value;
         editorRef.current.setContent(value);
+        
+        // Restore cursor position after content update
+        if (bookmark && selection) {
+          setTimeout(() => {
+            try {
+              selection.moveToBookmark(bookmark);
+            } catch (err) {
+              // If bookmark restoration fails, place cursor at end
+              selection.select(editorRef.current.getBody(), true);
+              selection.collapseToEnd();
+            }
+          }, 10);
+        }
       }
     }
   }, [value, isEditorReady]);
