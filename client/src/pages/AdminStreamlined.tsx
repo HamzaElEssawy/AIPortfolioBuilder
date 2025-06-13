@@ -9,7 +9,7 @@ import { queryClient } from "@/lib/queryClient";
 import type { ContactSubmission } from "@shared/schema";
 
 // Import the functional components
-import UnifiedContentManager from "@/components/UnifiedContentManager";
+import EnhancedContentManager from "@/components/EnhancedContentManager";
 import EnhancedCaseStudyEditor from "@/components/EnhancedCaseStudyEditor";
 import TimelineManager from "@/components/TimelineManager";
 import CoreValuesManager from "@/components/CoreValuesManager";
@@ -264,7 +264,7 @@ export default function AdminStreamlined() {
               <h2 className="text-xl font-bold text-navy mb-4">Content Management</h2>
               <p className="text-gray-600 mb-6">Manage portfolio content with real-time synchronization</p>
               <ErrorBoundary>
-                <UnifiedContentManager />
+                <EnhancedContentManager />
               </ErrorBoundary>
             </div>
           </TabsContent>

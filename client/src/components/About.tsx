@@ -128,19 +128,11 @@ export default function About() {
             </Card>
 
             {/* Professional Narrative */}
-            <div className="space-y-6 text-lg text-text-charcoal leading-relaxed">
-              <p>
-                With over 7 years of experience spanning the MENA region and Southeast Asia, I specialize in transforming complex AI concepts into scalable enterprise solutions. My journey began in fintech, where I discovered the power of AI to solve real-world regulatory challenges.
-              </p>
-              
-              <p>
-                At Tapway, I led the development of enterprise AI vision platforms, scaling from startup to serving 10+ major enterprise clients. This experience taught me that successful AI products require not just technical sophistication, but deep understanding of enterprise needs and cultural contexts.
-              </p>
-              
-              <p>
-                Currently, as an Entrepreneur in Residence at Antler Malaysia, I'm building AI compliance solutions for the fintech sector, having secured $110K+ in early funding. My focus remains on creating AI products that are both technically robust and culturally intelligent.
-              </p>
-            </div>
+            <div className="space-y-6 text-lg text-text-charcoal leading-relaxed"
+                 dangerouslySetInnerHTML={{ 
+                   __html: aboutContent?.competencies || "With over 7 years of experience spanning the MENA region and Southeast Asia, I specialize in transforming complex AI concepts into scalable enterprise solutions."
+                 }}
+            />
 
             {/* Core Values & Approach */}
             <Card className="floating-card border-0">
