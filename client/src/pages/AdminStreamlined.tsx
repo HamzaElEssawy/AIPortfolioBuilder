@@ -15,7 +15,7 @@ import TimelineManager from "@/components/TimelineManager";
 import CoreValuesManager from "@/components/CoreValuesManager";
 import SkillsManager from "@/components/SkillsManager";
 import PortfolioImageManager from "@/components/PortfolioImageManager";
-import PortfolioMetricsManager from "@/components/PortfolioMetricsManager";
+
 import SEOManager from "@/components/SEOManager";
 import SystemMonitor from "@/components/SystemMonitor";
 import AIAssistant from "@/components/AIAssistant";
@@ -143,7 +143,7 @@ export default function AdminStreamlined() {
             <TabsTrigger value="skills">Skills</TabsTrigger>
             <TabsTrigger value="timeline">Timeline</TabsTrigger>
             <TabsTrigger value="core-values">Values</TabsTrigger>
-            <TabsTrigger value="metrics">Metrics</TabsTrigger>
+
             <TabsTrigger value="seo">SEO</TabsTrigger>
             <TabsTrigger value="system">System</TabsTrigger>
             <TabsTrigger value="contacts">Contacts</TabsTrigger>
@@ -300,14 +300,7 @@ export default function AdminStreamlined() {
             </div>
           </TabsContent>
 
-          {/* Portfolio Metrics Management */}
-          <TabsContent value="metrics" className="space-y-6">
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <ErrorBoundary>
-                <PortfolioMetricsManager />
-              </ErrorBoundary>
-            </div>
-          </TabsContent>
+
 
           {/* SEO Management */}
           <TabsContent value="seo" className="space-y-6">

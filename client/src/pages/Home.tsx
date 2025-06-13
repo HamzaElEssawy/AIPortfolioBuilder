@@ -30,7 +30,6 @@ export default function Home() {
       {portfolioStatus.hero && <EnhancedHero />}
       {portfolioStatus.about && <AboutStreamlined />}
       {portfolioStatus.caseStudies && <FeaturedCaseStudies />}
-      <Metrics />
       {portfolioStatus.skills && <Skills />}
       {portfolioStatus.timeline && <Timeline />}
       {portfolioStatus.contact && <ContactEnhanced />}
