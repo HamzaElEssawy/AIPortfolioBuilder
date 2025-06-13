@@ -77,12 +77,12 @@ export default function EnhancedHero() {
     );
   }
 
-  const backgroundClass = gradientMap[heroContent?.backgroundSettings?.gradientStyle] || gradientMap.blue_purple;
+  const backgroundClass = gradientMap[heroContent?.backgroundSettings?.gradientStyle || "blue_purple"] || gradientMap.blue_purple;
 
   return (
     <section className={`relative overflow-hidden ${backgroundClass} py-20`}>
       {/* Animated Background Elements */}
-      {heroContent.backgroundSettings?.showAnimatedBlobs && (
+      {heroContent?.backgroundSettings?.showAnimatedBlobs && (
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute -top-10 -left-10 w-72 h-72 bg-blue-200 dark:bg-blue-800 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
           <div className="absolute -top-10 -right-10 w-72 h-72 bg-purple-200 dark:bg-purple-800 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
@@ -147,13 +147,13 @@ export default function EnhancedHero() {
             {/* Main Headline */}
             <div className="space-y-4">
               <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white leading-tight">
-                {heroContent.primaryTitle?.split(' ').map((word, index, array) => 
+                {heroContent.primaryTitle ? heroContent.primaryTitle.split(' ').map((word, index, array) => 
                   index === array.length - 1 ? (
                     <span key={index} className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">{word}</span>
                   ) : (
                     <span key={index}>{word} </span>
                   )
-                ) || "Product Visionary"}
+                ) : "Product Visionary"}
               </h1>
               <h2 className="text-2xl lg:text-3xl font-semibold text-gray-700 dark:text-gray-300">
                 {heroContent.secondaryTitle || "& Strategic AI Leader"}

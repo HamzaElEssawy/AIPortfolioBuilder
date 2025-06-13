@@ -208,7 +208,7 @@ export default function EnhancedHeroManager() {
           <Button 
             onClick={handleSave}
             disabled={saveMutation.isPending}
-            className="bg-secondary-green hover:bg-secondary-green/90"
+            className="bg-green-600 hover:bg-green-700 text-white disabled:opacity-50"
           >
             <Save className="w-4 h-4 mr-2" />
             {saveMutation.isPending ? "Saving..." : "Save Hero"}

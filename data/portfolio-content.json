@@ -1,12 +1,12 @@
 {
   "hero": {
-    "headline": "AI Product Leader & Multi-time Founder",
-    "subheadline": "7+ Years Scaling AI Solutions from 0-1 | Enterprise Clients Across MENA & Southeast Asia",
-    "description": "Architecting next-generation AI products that capture markets and generate exponential value across MENA & Southeast Asia regions is ",
-    "primaryTitle": "Product Visionary find",
-    "secondaryTitle": "& Strategic AI Leader and more",
+    "headline": "Product Visionary",
+    "subheadline": "& Strategic AI Leader",
+    "description": "Architecting next-generation AI products that capture markets and generate exponential value across MENA & Southeast Asia regions",
+    "primaryTitle": "Product Visionary",
+    "secondaryTitle": "& Strategic AI Leader",
     "statusBadge": {
-      "text": "Elite Product Executive • Available for C-Level Roles and more",
+      "text": "Elite Product Executive • Available for C-Level Roles",
       "type": "available",
       "showIndicator": true
     },
@@ -20,21 +20,21 @@
     },
     "achievementCards": [
       {
-        "value": "Built 3 hr",
+        "value": "Built 3",
         "label": "unicorn-potential products",
         "icon": "sparkles",
         "color": "blue"
       },
       {
-        "value": "40% ",
+        "value": "40%",
         "label": "market share captured",
-        "icon": "users",
+        "icon": "trending",
         "color": "green"
       },
       {
         "value": "300%",
         "label": "YoY growth achieved",
-        "icon": "target",
+        "icon": "award",
         "color": "purple"
       }
     ],
@@ -42,7 +42,7 @@
       {
         "value": "$110K+",
         "label": "Funding Secured",
-        "icon": "dollar",
+        "icon": "trending",
         "position": "top_left"
       },
       {
@@ -54,16 +54,14 @@
     ],
     "founderBadge": {
       "show": true,
-      "text": "AI Founder not",
+      "text": "AI Founder",
       "icon": "award"
     },
     "backgroundSettings": {
+      "gradientStyle": "blue_purple",
       "showAnimatedBlobs": true,
-      "showFloatingElements": true,
-      "gradientStyle": "blue_purple"
-    },
-    "ctaText": "Let's Connect",
-    "ctaSecondaryText": "View Portfolio"
+      "showFloatingElements": true
+    }
   },
   "stats": {
     "stat1Value": "$110K+",
@@ -300,6 +298,6 @@
     "keywords": "AI Product Manager, Machine Learning, Enterprise AI, Product Strategy, Startup Founder, Cross-Cultural Leadership",
     "ogImage": "/images/hamza-og-image.jpg"
   },
-  "lastUpdated": "2025-06-13T05:40:33.933Z",
-  "version": 7
+  "lastUpdated": "2025-06-13T05:50:47.818Z",
+  "version": 9
 }
