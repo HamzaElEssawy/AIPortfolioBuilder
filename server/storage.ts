@@ -62,6 +62,11 @@ export interface IStorage {
   createCaseStudy(caseStudy: InsertCaseStudy): Promise<CaseStudy>;
   updateCaseStudy(id: number, caseStudy: Partial<InsertCaseStudy>): Promise<CaseStudy>;
   deleteCaseStudy(id: number): Promise<void>;
+  updateCaseStudyFeatured(id: number, featured: boolean): Promise<CaseStudy>;
+  reorderCaseStudies(studies: { id: number; displayOrder: number }[]): Promise<void>;
+  getPublishedCaseStudies(): Promise<CaseStudy[]>;
+  getFeaturedCaseStudies(): Promise<CaseStudy[]>;
+  getCaseStudyBySlug(slug: string): Promise<CaseStudy | undefined>;
   
   // Media assets
   getMediaAssets(): Promise<MediaAsset[]>;
@@ -202,6 +207,48 @@ export class DatabaseStorage implements IStorage {
 
   async deleteCaseStudy(id: number): Promise<void> {
     await db.delete(caseStudies).where(eq(caseStudies.id, id));
+  }
+
+  async updateCaseStudyFeatured(id: number, featured: boolean): Promise<CaseStudy> {
+    const [study] = await db
+      .update(caseStudies)
+      .set({ featured, updatedAt: new Date() })
+      .where(eq(caseStudies.id, id))
+      .returning();
+    return study;
+  }
+
+  async reorderCaseStudies(studies: { id: number; displayOrder: number }[]): Promise<void> {
+    for (const study of studies) {
+      await db
+        .update(caseStudies)
+        .set({ displayOrder: study.displayOrder, updatedAt: new Date() })
+        .where(eq(caseStudies.id, study.id));
+    }
+  }
+
+  async getPublishedCaseStudies(): Promise<CaseStudy[]> {
+    const studies = await db
+      .select()
+      .from(caseStudies)
+      .where(eq(caseStudies.status, 'published'))
+      .orderBy(caseStudies.displayOrder);
+    return studies;
+  }
+
+  async getFeaturedCaseStudies(): Promise<CaseStudy[]> {
+    const studies = await db
+      .select()
+      .from(caseStudies)
+      .where(eq(caseStudies.featured, true))
+      .orderBy(caseStudies.displayOrder)
+      .limit(3);
+    return studies;
+  }
+
+  async getCaseStudyBySlug(slug: string): Promise<CaseStudy | undefined> {
+    const [study] = await db.select().from(caseStudies).where(eq(caseStudies.slug, slug));
+    return study || undefined;
   }
 
   // Media assets

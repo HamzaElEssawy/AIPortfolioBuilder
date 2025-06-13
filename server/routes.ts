@@ -1047,6 +1047,128 @@ What would be most helpful for your current career goals?`;
     }
   });
 
+  // Enhanced Case Studies API routes with full CRUD operations
+  app.get("/api/admin/case-studies", isAdmin, async (req, res) => {
+    try {
+      const caseStudies = await storage.getCaseStudies();
+      res.json(caseStudies);
+    } catch (error) {
+      console.error("Error fetching case studies:", error);
+      res.status(500).json({ message: "Failed to fetch case studies" });
+    }
+  });
+
+  app.post("/api/admin/case-studies", isAdmin, async (req, res) => {
+    try {
+      const { insertCaseStudySchema } = await import("@shared/schema");
+      const validatedData = insertCaseStudySchema.parse(req.body);
+      const caseStudy = await storage.createCaseStudy(validatedData);
+      res.json(caseStudy);
+    } catch (error) {
+      console.error("Error creating case study:", error);
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ message: "Validation error", errors: error.errors });
+      } else {
+        res.status(500).json({ message: "Failed to create case study" });
+      }
+    }
+  });
+
+  app.put("/api/admin/case-studies/:id", isAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid case study ID" });
+      }
+      const { insertCaseStudySchema } = await import("@shared/schema");
+      const validatedData = insertCaseStudySchema.parse(req.body);
+      const caseStudy = await storage.updateCaseStudy(id, validatedData);
+      res.json(caseStudy);
+    } catch (error) {
+      console.error("Error updating case study:", error);
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ message: "Validation error", errors: error.errors });
+      } else {
+        res.status(500).json({ message: "Failed to update case study" });
+      }
+    }
+  });
+
+  app.delete("/api/admin/case-studies/:id", isAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid case study ID" });
+      }
+      await storage.deleteCaseStudy(id);
+      res.json({ message: "Case study deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting case study:", error);
+      res.status(500).json({ message: "Failed to delete case study" });
+    }
+  });
+
+  app.patch("/api/admin/case-studies/:id/featured", isAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid case study ID" });
+      }
+      const { featured } = req.body;
+      const caseStudy = await storage.updateCaseStudyFeatured(id, featured);
+      res.json(caseStudy);
+    } catch (error) {
+      console.error("Error updating case study featured status:", error);
+      res.status(500).json({ message: "Failed to update featured status" });
+    }
+  });
+
+  app.patch("/api/admin/case-studies/reorder", isAdmin, async (req, res) => {
+    try {
+      const { studies } = req.body;
+      await storage.reorderCaseStudies(studies);
+      res.json({ message: "Case studies reordered successfully" });
+    } catch (error) {
+      console.error("Error reordering case studies:", error);
+      res.status(500).json({ message: "Failed to reorder case studies" });
+    }
+  });
+
+  // Public case studies endpoints for portfolio website
+  app.get("/api/portfolio/case-studies", cacheMiddleware(300), async (req, res) => {
+    try {
+      const caseStudies = await storage.getPublishedCaseStudies();
+      res.json(caseStudies);
+    } catch (error) {
+      console.error("Error fetching published case studies:", error);
+      res.status(500).json({ message: "Failed to fetch case studies" });
+    }
+  });
+
+  app.get("/api/portfolio/case-studies/featured", cacheMiddleware(300), async (req, res) => {
+    try {
+      const featuredCaseStudies = await storage.getFeaturedCaseStudies();
+      res.json(featuredCaseStudies);
+    } catch (error) {
+      console.error("Error fetching featured case studies:", error);
+      res.status(500).json({ message: "Failed to fetch featured case studies" });
+    }
+  });
+
+  app.get("/api/portfolio/case-studies/:slug", cacheMiddleware(300), async (req, res) => {
+    try {
+      const slug = req.params.slug;
+      const caseStudy = await storage.getCaseStudyBySlug(slug);
+      if (!caseStudy) {
+        return res.status(404).json({ message: "Case study not found" });
+      }
+      res.json(caseStudy);
+    } catch (error) {
+      console.error("Error fetching case study:", error);
+      res.status(500).json({ message: "Failed to fetch case study" });
+    }
+  });
+
   app.delete("/api/admin/metrics/:id", isAdmin, async (req, res) => {
     try {
       const id = parseInt(req.params.id);

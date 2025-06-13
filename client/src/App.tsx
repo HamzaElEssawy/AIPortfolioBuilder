@@ -7,12 +7,16 @@ import Home from "@/pages/Home";
 import AdminStreamlined from "@/pages/AdminStreamlined";
 import AdminLogin from "@/pages/AdminLogin";
 import AdminAuthGuard from "@/components/AdminAuthGuard";
+import CaseStudies from "@/pages/CaseStudies";
+import CaseStudyDetail from "@/pages/CaseStudyDetail";
 import NotFound from "@/pages/not-found";
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
+      <Route path="/case-studies" component={CaseStudies} />
+      <Route path="/case-study/:slug" component={CaseStudyDetail} />
       <Route path="/admin">
         <AdminAuthGuard>
           <AdminStreamlined />
