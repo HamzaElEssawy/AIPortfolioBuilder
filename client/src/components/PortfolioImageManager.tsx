@@ -166,14 +166,35 @@ export default function PortfolioImageManager() {
   };
 
   const handleCreateImage = () => {
-    if (!newImage.imageUrl || !newImage.altText) {
-      toast({ 
-        title: "Validation Error", 
-        description: "Image and alt text are required",
-        variant: "destructive" 
+    // Validate required fields
+    if (!newImage.section?.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Section is required",
+        variant: "destructive"
       });
       return;
     }
+
+    if (!newImage.imageUrl?.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Image URL is required - please upload an image or enter a URL",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!newImage.altText?.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Alt text is required for accessibility",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    console.log('Creating image with data:', newImage);
     createImageMutation.mutate(newImage);
   };
 
@@ -280,11 +301,11 @@ export default function PortfolioImageManager() {
               Add Image
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-2xl">
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Add New Portfolio Image</DialogTitle>
             </DialogHeader>
-            <div className="grid gap-4 py-4">
+            <div className="grid gap-4 py-4 max-h-[70vh] overflow-y-auto">
               <div className="grid gap-2">
                 <Label htmlFor="section">Section</Label>
                 <Select 
@@ -414,14 +435,19 @@ export default function PortfolioImageManager() {
               {newImage.imageUrl && (
                 <div className="grid gap-2">
                   <Label>Preview</Label>
-                  <img 
-                    src={newImage.imageUrl} 
-                    alt={newImage.altText}
-                    className="w-full h-32 object-cover rounded border"
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none';
-                    }}
-                  />
+                  <div className="border rounded-lg overflow-hidden bg-gray-50">
+                    <img 
+                      src={newImage.imageUrl} 
+                      alt={newImage.altText || "Preview"}
+                      className="w-full h-48 object-contain"
+                      onError={(e) => {
+                        e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2Y3ZjdmNyIvPjx0ZXh0IHg9IjEwMCIgeT0iNTUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OTk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+SW1hZ2UgTm90IEZvdW5kPC90ZXh0Pjwvc3ZnPg==';
+                      }}
+                      onLoad={() => {
+                        console.log('New image preview loaded successfully');
+                      }}
+                    />
+                  </div>
                 </div>
               )}
             </div>
@@ -534,11 +560,11 @@ export default function PortfolioImageManager() {
       {/* Edit Image Dialog */}
       {editingImage && (
         <Dialog open={!!editingImage} onOpenChange={() => setEditingImage(null)}>
-          <DialogContent className="max-w-2xl">
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Edit Portfolio Image</DialogTitle>
             </DialogHeader>
-            <div className="grid gap-4 py-4">
+            <div className="grid gap-4 py-4 max-h-[70vh] overflow-y-auto">
               <div className="grid gap-2">
                 <Label htmlFor="edit-section">Section</Label>
                 <Select 
@@ -671,17 +697,24 @@ export default function PortfolioImageManager() {
                 </div>
               </div>
               
-              <div className="grid gap-2">
-                <Label>Preview</Label>
-                <img 
-                  src={editingImage.imageUrl} 
-                  alt={editingImage.altText}
-                  className="w-full h-32 object-cover rounded border"
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none';
-                  }}
-                />
-              </div>
+              {editingImage.imageUrl && (
+                <div className="grid gap-2">
+                  <Label>Preview</Label>
+                  <div className="border rounded-lg overflow-hidden bg-gray-50">
+                    <img 
+                      src={editingImage.imageUrl} 
+                      alt={editingImage.altText || "Preview"}
+                      className="w-full h-48 object-contain"
+                      onError={(e) => {
+                        e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2Y3ZjdmNyIvPjx0ZXh0IHg9IjEwMCIgeT0iNTUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OTk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+SW1hZ2UgTm90IEZvdW5kPC90ZXh0Pjwvc3ZnPg==';
+                      }}
+                      onLoad={() => {
+                        console.log('Image loaded successfully');
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
             
             <div className="flex justify-end gap-2">
