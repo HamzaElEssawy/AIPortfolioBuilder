@@ -40,6 +40,8 @@ export default function PortfolioImageManager() {
       apiRequest("/api/admin/portfolio-images", "POST", image),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/portfolio-images"] });
+      // Also invalidate portfolio image queries for live site
+      queryClient.invalidateQueries({ queryKey: ["/api/portfolio/images"] });
       setNewImage({
         section: "hero",
         imageUrl: "",
@@ -48,8 +50,17 @@ export default function PortfolioImageManager() {
         orderIndex: 0,
         isActive: true,
       });
+      setUploadMode("file");
       setIsDialogOpen(false);
       toast({ title: "Image added successfully" });
+    },
+    onError: (error) => {
+      console.error('Create image error:', error);
+      toast({ 
+        title: "Failed to add image", 
+        description: "Please try again",
+        variant: "destructive" 
+      });
     },
   });
 
@@ -58,8 +69,17 @@ export default function PortfolioImageManager() {
       apiRequest(`/api/admin/portfolio-images/${id}`, "PUT", image),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/portfolio-images"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/portfolio/images"] });
       setEditingImage(null);
       toast({ title: "Image updated successfully" });
+    },
+    onError: (error) => {
+      console.error('Update image error:', error);
+      toast({ 
+        title: "Failed to update image", 
+        description: "Please try again",
+        variant: "destructive" 
+      });
     },
   });
 
@@ -68,7 +88,16 @@ export default function PortfolioImageManager() {
       apiRequest(`/api/admin/portfolio-images/${id}`, "DELETE"),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/portfolio-images"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/portfolio/images"] });
       toast({ title: "Image deleted successfully" });
+    },
+    onError: (error) => {
+      console.error('Delete image error:', error);
+      toast({ 
+        title: "Failed to delete image", 
+        description: "Please try again",
+        variant: "destructive" 
+      });
     },
   });
 
@@ -128,9 +157,14 @@ export default function PortfolioImageManager() {
     updateImageMutation.mutate(image);
   };
 
-  const handleDeleteImage = (id: number) => {
-    if (confirm("Are you sure you want to delete this image?")) {
-      deleteImageMutation.mutate(id);
+  const handleDeleteImage = async (id: number) => {
+    const confirmed = window.confirm("Are you sure you want to delete this image? This action cannot be undone.");
+    if (confirmed) {
+      try {
+        await deleteImageMutation.mutateAsync(id);
+      } catch (error) {
+        console.error('Delete failed:', error);
+      }
     }
   };
 
@@ -472,12 +506,75 @@ export default function PortfolioImageManager() {
               </div>
               
               <div className="grid gap-2">
-                <Label htmlFor="edit-imageUrl">Image URL</Label>
-                <Input
-                  id="edit-imageUrl"
-                  value={editingImage.imageUrl}
-                  onChange={(e) => setEditingImage({...editingImage, imageUrl: e.target.value})}
-                />
+                <div className="flex items-center gap-2 mb-2">
+                  <Button
+                    type="button"
+                    variant={uploadMode === "file" ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setUploadMode("file")}
+                  >
+                    <Upload className="w-4 h-4 mr-2" />
+                    Upload File
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={uploadMode === "url" ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setUploadMode("url")}
+                  >
+                    URL
+                  </Button>
+                </div>
+                
+                {uploadMode === "file" ? (
+                  <div className="space-y-2">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          setIsUploading(true);
+                          const reader = new FileReader();
+                          reader.onload = (event) => {
+                            const dataUrl = event.target?.result as string;
+                            setEditingImage(prev => prev ? {...prev, imageUrl: dataUrl} : null);
+                            setIsUploading(false);
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                      className="hidden"
+                      id="edit-file-input"
+                    />
+                    <div 
+                      className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-gray-400 transition-colors"
+                      onClick={() => document.getElementById('edit-file-input')?.click()}
+                    >
+                      {isUploading ? (
+                        <div className="flex items-center justify-center gap-2">
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                          <span>Uploading...</span>
+                        </div>
+                      ) : (
+                        <div>
+                          <Upload className="w-8 h-8 mx-auto mb-2 text-gray-400" />
+                          <p className="text-sm text-gray-600">Click to upload new image</p>
+                          <p className="text-xs text-gray-400 mt-1">PNG, JPG up to 5MB</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    <Label htmlFor="edit-imageUrl">Image URL</Label>
+                    <Input
+                      id="edit-imageUrl"
+                      value={editingImage.imageUrl}
+                      onChange={(e) => setEditingImage({...editingImage, imageUrl: e.target.value})}
+                    />
+                  </div>
+                )}
               </div>
               
               <div className="grid gap-2">
