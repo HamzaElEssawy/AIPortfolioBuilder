@@ -272,7 +272,7 @@ export default function RevampedContentManager() {
                 <div>
                   <Label htmlFor="competencies">Core Competencies (Rich Text)</Label>
                   <div className="mt-1">
-                    <TinyMCEEditor
+                    <SimpleRichTextEditor
                       value={aboutContent.competencies}
                       onChange={(value: string) => handleAboutChange('competencies', value)}
                       placeholder="Describe your core competencies and expertise areas..."
@@ -285,7 +285,7 @@ export default function RevampedContentManager() {
                 <div>
                   <Label htmlFor="philosophyQuote">Leadership Philosophy Quote</Label>
                   <div className="mt-1">
-                    <TinyMCEEditor
+                    <SimpleRichTextEditor
                       value={aboutContent.philosophyQuote}
                       onChange={(value: string) => handleAboutChange('philosophyQuote', value)}
                       placeholder="Share your leadership philosophy..."
