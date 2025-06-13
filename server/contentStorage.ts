@@ -73,7 +73,7 @@ class DatabaseContentManager {
   async getContent(sectionId: string): Promise<any | null> {
     try {
       const cacheKey = `content:${sectionId}`;
-      const cached = cache.get<ContentData>(cacheKey);
+      const cached = cache.get<any>(cacheKey);
       if (cached) return cached;
 
       const result = await db

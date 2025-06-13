@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { useQuery } from "@tanstack/react-query";
 import { Star, TrendingUp, Users, Award, ArrowRight, Sparkles, DollarSign, Target, Crown } from "lucide-react";
 import type { HeroContent } from "@shared/contentSchema";
+import type { PortfolioImage } from "@shared/schema";
 
 const iconMap = {
   sparkles: Sparkles,
@@ -130,10 +131,10 @@ export default function EnhancedHero() {
         );
       })}
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center min-h-[600px]">
           {/* Content Column */}
-          <div className="space-y-8">
+          <div className="space-y-6 lg:space-y-8 order-2 lg:order-1">
             {/* Status Badge */}
             <div className="flex items-center gap-3">
               <Badge className={`${colorMap[heroContent?.statusBadge?.type === 'available' ? 'green' : heroContent?.statusBadge?.type === 'busy' ? 'orange' : 'green']} border`}>
@@ -146,7 +147,7 @@ export default function EnhancedHero() {
 
             {/* Main Headline */}
             <div className="space-y-4">
-              <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white leading-tight">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-gray-900 dark:text-white leading-tight">
                 {heroContent.primaryTitle ? heroContent.primaryTitle.split(' ').map((word, index, array) => 
                   index === array.length - 1 ? (
                     <span key={index} className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">{word}</span>
@@ -155,7 +156,7 @@ export default function EnhancedHero() {
                   )
                 ) : "Product Visionary"}
               </h1>
-              <h2 className="text-2xl lg:text-3xl font-semibold text-gray-700 dark:text-gray-300">
+              <h2 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-gray-700 dark:text-gray-300">
                 {heroContent.secondaryTitle || "& Strategic AI Leader"}
               </h2>
             </div>
@@ -226,12 +227,10 @@ export default function EnhancedHero() {
           </div>
 
           {/* Visual Column */}
-          <div className="relative">
+          <div className="relative order-1 lg:order-2 flex justify-center lg:justify-end">
             {/* Main Profile Image */}
             <div className="relative z-10">
-              <div className="w-80 h-80 mx-auto rounded-full bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 border-4 border-white dark:border-gray-800 shadow-2xl flex items-center justify-center">
-                <div className="text-6xl font-bold text-blue-600 dark:text-blue-400">HE</div>
-              </div>
+              <HeroImageDisplay />
             </div>
 
             {/* Floating Achievement Badges - Better positioned to avoid overlap */}
