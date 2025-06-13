@@ -8,7 +8,7 @@ import { z } from "zod";
 import Anthropic from "@anthropic-ai/sdk";
 import { contentManager } from "./contentManager";
 import { cacheSync, cacheSyncMiddleware } from "./cacheSync";
-import { cache } from "./cache";
+import { cache, cacheMiddleware } from "./cache";
 
 // Initialize Anthropic client
 const anthropic = new Anthropic({
@@ -874,8 +874,8 @@ What would be most helpful for your current career goals?`;
     }
   });
 
-  // Portfolio content endpoints for live website
-  app.get("/api/portfolio/content", async (req, res) => {
+  // Portfolio content endpoints for live website with caching
+  app.get("/api/portfolio/content", cacheMiddleware(300), async (req, res) => {
     try {
       const content = await contentManager.getAllSections();
       res.json(content);
@@ -885,7 +885,7 @@ What would be most helpful for your current career goals?`;
     }
   });
 
-  app.get("/api/portfolio/content/:section", async (req, res) => {
+  app.get("/api/portfolio/content/:section", cacheMiddleware(300), async (req, res) => {
     try {
       const sectionType = req.params.section as any;
       const content = await contentManager.getSection(sectionType);
