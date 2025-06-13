@@ -32,7 +32,7 @@ export default function SkillsManager() {
   const [newSkill, setNewSkill] = useState({
     name: "",
     categoryId: 1,
-    proficiencyLevel: 5,
+    proficiencyLevel: 8,
     orderIndex: 0
   });
   const { toast } = useToast();
@@ -122,14 +122,11 @@ export default function SkillsManager() {
   };
 
   const getProficiencyLabel = (level: number) => {
-    const labels = {
-      1: "Beginner",
-      2: "Basic",
-      3: "Intermediate",
-      4: "Advanced",
-      5: "Expert"
-    };
-    return labels[level as keyof typeof labels] || "Unknown";
+    if (level >= 9) return "Expert";
+    if (level >= 7) return "Advanced";
+    if (level >= 5) return "Intermediate";
+    if (level >= 3) return "Basic";
+    return "Beginner";
   };
 
   if (isLoading) {
@@ -201,9 +198,9 @@ export default function SkillsManager() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {[1, 2, 3, 4, 5].map((level) => (
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((level) => (
                     <SelectItem key={level} value={level.toString()}>
-                      {level} - {getProficiencyLabel(level)}
+                      {level}/10 - {getProficiencyLabel(level)}
                     </SelectItem>
                   ))}
                 </SelectContent>

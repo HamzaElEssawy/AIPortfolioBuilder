@@ -1122,6 +1122,36 @@ What would be most helpful for your current career goals?`;
     }
   });
 
+  app.put("/api/admin/skill-categories/:id", isAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid category ID" });
+      }
+      
+      const category = await storage.updateSkillCategory(id, req.body);
+      res.json(category);
+    } catch (error) {
+      console.error("Error updating skill category:", error);
+      res.status(500).json({ message: "Failed to update skill category" });
+    }
+  });
+
+  app.delete("/api/admin/skill-categories/:id", isAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid category ID" });
+      }
+      
+      await storage.deleteSkillCategory(id);
+      res.json({ message: "Skill category deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting skill category:", error);
+      res.status(500).json({ message: "Failed to delete skill category" });
+    }
+  });
+
   app.post("/api/admin/skills", isAdmin, async (req, res) => {
     try {
       const { insertSkillSchema } = await import("@shared/schema");
@@ -1131,6 +1161,36 @@ What would be most helpful for your current career goals?`;
     } catch (error) {
       console.error("Error creating skill:", error);
       res.status(500).json({ message: "Failed to create skill" });
+    }
+  });
+
+  app.put("/api/admin/skills/:id", isAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid skill ID" });
+      }
+      
+      const skill = await storage.updateSkill(id, req.body);
+      res.json(skill);
+    } catch (error) {
+      console.error("Error updating skill:", error);
+      res.status(500).json({ message: "Failed to update skill" });
+    }
+  });
+
+  app.delete("/api/admin/skills/:id", isAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid skill ID" });
+      }
+      
+      await storage.deleteSkill(id);
+      res.json({ message: "Skill deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting skill:", error);
+      res.status(500).json({ message: "Failed to delete skill" });
     }
   });
 
