@@ -16,12 +16,12 @@
     "ctaSecondaryText": "View Portfolio"
   },
   "about": {
-    "title": "About Hamza - Testing Update",
-    "summary": "<p>This is a <strong>test update</strong> with <em>TinyMCE formatting</em> to verify rich text editing works correctly.</p>",
-    "competencies": "<p>Core competencies now include:</p><ul><li>AI Product Strategy</li><li>Machine Learning Operations</li><li>Cross-functional Team Leadership</li></ul><p>Updated with <strong>TinyMCE formatting</strong> capabilities.</p>",
-    "philosophyTitle": "Updated Leadership Philosophy",
-    "philosophyQuote": "<p>Testing the quote section management: <em>AI product success requires understanding cultural nuances and human needs across diverse markets.</em></p>"
+    "title": "About Hamza",
+    "summary": "Experienced AI Product Leader with a proven track record of building scalable solutions that transform businesses through intelligent automation and strategic product development.",
+    "competencies": "AI Product Strategy, Machine Learning Operations, Cross-functional Team Leadership, Enterprise Solution Architecture, Regulatory Compliance Systems\n\nAt Tapway, I led the development of enterprise AI vision platforms, scaling from startup to serving 10+ major enterprise clients. This experience taught me that successful AI products require not just technical sophistication, but deep understanding of enterprise needs and cultural contexts.\n\nCurrently, as an Entrepreneur in Residence at Antler Malaysia, I'm building AI compliance solutions for the fintech sector, having secured $110K+ in early funding. My focus remains on creating AI products that are both technically robust and culturally intelligent.",
+    "philosophyTitle": "Leadership Philosophy",
+    "philosophyQuote": "AI product success isn't just about cutting-edge technology—it's about understanding cultural nuances, regulatory landscapes, and human needs across diverse markets. True innovation happens when we bridge technical excellence with deep market empathy."
   },
-  "lastUpdated": "2025-06-13T01:29:54.438Z",
-  "version": 142
+  "lastUpdated": "2025-06-13T01:30:20.639Z",
+  "version": 143
 }
