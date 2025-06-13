@@ -2,12 +2,12 @@
   "hero": {
     "headline": "Product Visionary",
     "subheadline": "Strategic AI Leader and Product Visionary",
-    "description": "Architecting next-generation AI products that capture markets and generate exponential value across MENA & Southeast Asia regions hero here",
+    "description": "Architecting next-generation AI products that capture markets and generate exponential value across MENA & Southeast Asia regions",
     "primaryTitle": "AI Product Leader find",
-    "secondaryTitle": "& Strategic AI Leader more",
+    "secondaryTitle": "& Strategic AI Leader",
     "statusBadge": {
-      "text": "Available for C-Level Roles and founding opportunity ",
-      "type": "busy",
+      "text": "Available for C-Level Roles",
+      "type": "available",
       "showIndicator": true
     },
     "primaryCTA": {
@@ -23,7 +23,7 @@
         "icon": "sparkles",
         "color": "blue",
         "label": "unicorn-potential products",
-        "value": "Built 3 hr"
+        "value": "Built 3"
       },
       {
         "icon": "award",
@@ -38,20 +38,7 @@
         "value": "300%"
       }
     ],
-    "floatingMetrics": [
-      {
-        "icon": "target",
-        "label": "Funding Secured",
-        "value": "$110K+",
-        "position": "top_left"
-      },
-      {
-        "icon": "trending",
-        "label": "Founders Mentored",
-        "value": "15+",
-        "position": "top_right"
-      }
-    ],
+    "floatingMetrics": [],
     "founderBadge": {
       "icon": "crown",
       "show": true,
@@ -298,6 +285,6 @@
     "keywords": "AI Product Manager, Machine Learning, Enterprise AI, Product Strategy, Startup Founder, Cross-Cultural Leadership",
     "ogImage": "/images/hamza-og-image.jpg"
   },
-  "lastUpdated": "2025-06-13T06:26:14.183Z",
-  "version": 20
+  "lastUpdated": "2025-06-13T06:33:43.662Z",
+  "version": 26
 }

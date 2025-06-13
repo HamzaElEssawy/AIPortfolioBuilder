@@ -107,6 +107,13 @@ export default function PortfolioImageManager() {
     background: "bg-orange-100 text-orange-800",
   };
 
+  const sectionDescriptions = {
+    hero: "Main profile image displayed prominently in the hero section at the top of your portfolio",
+    about: "Professional photo used in the About section to accompany your biography",
+    profile: "Additional profile images that can be used throughout your portfolio",
+    background: "Background images for sections or decorative purposes",
+  };
+
   if (isLoading) {
     return (
       <div className="space-y-6">
@@ -253,11 +260,14 @@ export default function PortfolioImageManager() {
 
       {sections.map((section) => (
         <div key={section} className="space-y-4">
-          <div className="flex items-center gap-2">
-            <h3 className="text-lg font-semibold capitalize">{section} Images</h3>
-            <Badge className={sectionColors[section as keyof typeof sectionColors] || "bg-gray-100 text-gray-800"}>
-              {groupedImages[section]?.length || 0} images
-            </Badge>
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <h3 className="text-lg font-semibold capitalize">{section} Images</h3>
+              <Badge className={sectionColors[section as keyof typeof sectionColors] || "bg-gray-100 text-gray-800"}>
+                {groupedImages[section]?.length || 0} images
+              </Badge>
+            </div>
+            <p className="text-sm text-gray-600">{sectionDescriptions[section as keyof typeof sectionDescriptions]}</p>
           </div>
           
           {groupedImages[section]?.length ? (
