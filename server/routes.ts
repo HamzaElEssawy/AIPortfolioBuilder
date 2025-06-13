@@ -7,6 +7,7 @@ import session from "express-session";
 import { z } from "zod";
 import Anthropic from "@anthropic-ai/sdk";
 import { contentManager } from "./contentManager";
+import { dbContentManager } from "./contentStorage";
 import { cacheSync, cacheSyncMiddleware } from "./cacheSync";
 import { cache, cacheMiddleware } from "./cache";
 import { db } from "./db";
@@ -887,10 +888,10 @@ What would be most helpful for your current career goals?`;
     }
   });
 
-  // Portfolio content endpoints for live website with caching
+  // Portfolio content endpoints for live website with caching - NEW DATABASE VERSION
   app.get("/api/portfolio/content", cacheMiddleware(300), async (req, res) => {
     try {
-      const content = await contentManager.getAllSections();
+      const content = await dbContentManager.getAllContent();
       res.json(content);
     } catch (error) {
       console.error("Error fetching portfolio content:", error);
@@ -900,9 +901,22 @@ What would be most helpful for your current career goals?`;
 
   app.get("/api/portfolio/content/:section", cacheMiddleware(300), async (req, res) => {
     try {
-      const sectionType = req.params.section as any;
-      const content = await contentManager.getSection(sectionType);
-      res.json(content);
+      const sectionId = req.params.section;
+      const content = await dbContentManager.getContent(sectionId);
+      
+      if (!content) {
+        // Fallback to default content if not found in database
+        const defaultContent = await contentManager.getSection(sectionId as any);
+        if (defaultContent) {
+          // Migrate to database
+          await dbContentManager.saveContent(sectionId, defaultContent);
+          res.json(defaultContent);
+        } else {
+          res.status(404).json({ message: "Content not found" });
+        }
+      } else {
+        res.json(content);
+      }
     } catch (error) {
       console.error("Error fetching section content:", error);
       res.status(500).json({ message: "Failed to fetch section content" });
