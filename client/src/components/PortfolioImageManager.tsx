@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
-import { Trash2, Edit, Plus, Image, Eye, EyeOff } from "lucide-react";
+import { Trash2, Edit, Plus, Image, Eye, EyeOff, Upload } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { apiRequest } from "@/lib/queryClient";
 import type { PortfolioImage, InsertPortfolioImage } from "@shared/schema";
@@ -19,6 +19,9 @@ export default function PortfolioImageManager() {
   const queryClient = useQueryClient();
   const [editingImage, setEditingImage] = useState<PortfolioImage | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [uploadMode, setUploadMode] = useState<"url" | "file">("file");
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [newImage, setNewImage] = useState<InsertPortfolioImage>({
     section: "hero",
     imageUrl: "",
@@ -69,11 +72,51 @@ export default function PortfolioImageManager() {
     },
   });
 
+  const handleFileUpload = async (file: File) => {
+    if (file.size > 5 * 1024 * 1024) {
+      toast({ 
+        title: "File too large", 
+        description: "Please select an image smaller than 5MB",
+        variant: "destructive" 
+      });
+      return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+      toast({ 
+        title: "Invalid file type", 
+        description: "Please select an image file",
+        variant: "destructive" 
+      });
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      // Convert to base64 data URL for simple storage
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const dataUrl = e.target?.result as string;
+        setNewImage(prev => ({ ...prev, imageUrl: dataUrl }));
+        setIsUploading(false);
+      };
+      reader.readAsDataURL(file);
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast({ 
+        title: "Upload failed", 
+        description: "Please try again",
+        variant: "destructive" 
+      });
+      setIsUploading(false);
+    }
+  };
+
   const handleCreateImage = () => {
     if (!newImage.imageUrl || !newImage.altText) {
       toast({ 
         title: "Validation Error", 
-        description: "Image URL and alt text are required",
+        description: "Image and alt text are required",
         variant: "destructive" 
       });
       return;
@@ -110,8 +153,8 @@ export default function PortfolioImageManager() {
   const sectionDescriptions = {
     hero: "Main profile image displayed prominently in the hero section at the top of your portfolio",
     about: "Professional photo used in the About section to accompany your biography",
-    profile: "Additional profile images that can be used throughout your portfolio",
-    background: "Background images for sections or decorative purposes",
+    profile: "Additional profile images for gallery sections, testimonials, or team displays (currently not used in portfolio)",
+    background: "Background images for section headers or decorative purposes (currently not used in portfolio)",
   };
 
   if (isLoading) {
@@ -175,13 +218,67 @@ export default function PortfolioImageManager() {
               </div>
               
               <div className="grid gap-2">
-                <Label htmlFor="imageUrl">Image URL</Label>
-                <Input
-                  id="imageUrl"
-                  value={newImage.imageUrl}
-                  onChange={(e) => setNewImage({...newImage, imageUrl: e.target.value})}
-                  placeholder="https://example.com/image.jpg"
-                />
+                <div className="flex items-center gap-2 mb-2">
+                  <Button
+                    type="button"
+                    variant={uploadMode === "file" ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setUploadMode("file")}
+                  >
+                    <Upload className="w-4 h-4 mr-2" />
+                    Upload File
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={uploadMode === "url" ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setUploadMode("url")}
+                  >
+                    URL
+                  </Button>
+                </div>
+                
+                {uploadMode === "file" ? (
+                  <div className="space-y-2">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) handleFileUpload(file);
+                      }}
+                      className="hidden"
+                    />
+                    <div 
+                      className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-gray-400 transition-colors"
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      {isUploading ? (
+                        <div className="flex items-center justify-center gap-2">
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                          <span>Uploading...</span>
+                        </div>
+                      ) : (
+                        <div>
+                          <Upload className="w-8 h-8 mx-auto mb-2 text-gray-400" />
+                          <p className="text-sm text-gray-600">Click to upload image or drag and drop</p>
+                          <p className="text-xs text-gray-400 mt-1">PNG, JPG up to 5MB</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    <Label htmlFor="imageUrl">Image URL</Label>
+                    <Input
+                      id="imageUrl"
+                      value={newImage.imageUrl}
+                      onChange={(e) => setNewImage({...newImage, imageUrl: e.target.value})}
+                      placeholder="https://example.com/image.jpg"
+                    />
+                  </div>
+                )}
               </div>
               
               <div className="grid gap-2">
