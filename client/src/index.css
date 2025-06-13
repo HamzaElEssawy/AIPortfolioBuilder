@@ -48,6 +48,31 @@
   --space-2: 0.5rem;    /* 8px */
   --space-3: 0.75rem;   /* 12px */
   --space-4: 1rem;      /* 16px */
+  --space-6: 1.5rem;    /* 24px */
+  --space-8: 2rem;      /* 32px */
+  --space-12: 3rem;     /* 48px */
+  --space-16: 4rem;     /* 64px */
+  --space-24: 6rem;     /* 96px */
+  
+  /* Container System */
+  --container-xl: 1200px;
+  
+  /* Enhanced shadow system */
+  --shadow-soft: 0 2px 8px rgba(26, 54, 93, 0.08);
+  --shadow-card: 0 4px 16px rgba(26, 54, 93, 0.12);
+  --shadow-elevated: 0 8px 32px rgba(26, 54, 93, 0.16);
+  --shadow-cta: 0 6px 24px rgba(234, 88, 12, 0.25);
+  --shadow-glow: 0 0 40px rgba(5, 150, 105, 0.15);
+  --shadow-premium: 0 10px 40px rgba(26, 54, 93, 0.2);
+  --shadow-float: 0 20px 60px rgba(26, 54, 93, 0.15);
+  
+  /* Modern gradients */
+  --gradient-primary: linear-gradient(135deg, #1a365d 0%, #2c5282 100%);
+  --gradient-secondary: linear-gradient(135deg, #059669 0%, #065f46 100%);
+  --gradient-accent: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
+  --gradient-hero: linear-gradient(135deg, #1a365d 0%, #059669 50%, #ea580c 100%);
+  --gradient-card: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+  --gradient-bg: linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #f1f5f9 100%);
 }
 
 /* TinyMCE Editor Styles */
@@ -85,32 +110,6 @@
 .tinymce-wrapper:focus-within {
   border-color: #3b82f6;
   box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
-}
-  --space-6: 1.5rem;    /* 24px */
-  --space-8: 2rem;      /* 32px */
-  --space-12: 3rem;     /* 48px */
-  --space-16: 4rem;     /* 64px */
-  --space-24: 6rem;     /* 96px */
-  
-  /* Container System */
-  --container-xl: 1200px;
-  
-  /* Enhanced shadow system */
-  --shadow-soft: 0 2px 8px rgba(26, 54, 93, 0.08);
-  --shadow-card: 0 4px 16px rgba(26, 54, 93, 0.12);
-  --shadow-elevated: 0 8px 32px rgba(26, 54, 93, 0.16);
-  --shadow-cta: 0 6px 24px rgba(234, 88, 12, 0.25);
-  --shadow-glow: 0 0 40px rgba(5, 150, 105, 0.15);
-  --shadow-premium: 0 10px 40px rgba(26, 54, 93, 0.2);
-  --shadow-float: 0 20px 60px rgba(26, 54, 93, 0.15);
-  
-  /* Modern gradients */
-  --gradient-primary: linear-gradient(135deg, #1a365d 0%, #2c5282 100%);
-  --gradient-secondary: linear-gradient(135deg, #059669 0%, #065f46 100%);
-  --gradient-accent: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
-  --gradient-hero: linear-gradient(135deg, #1a365d 0%, #059669 50%, #ea580c 100%);
-  --gradient-card: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
-  --gradient-bg: linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #f1f5f9 100%);
 }
 
 .dark {
