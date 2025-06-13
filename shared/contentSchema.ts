@@ -25,6 +25,8 @@ export const aboutContentSchema = z.object({
   title: z.string().min(1, "About title is required"),
   summary: z.string().min(1, "Professional summary is required"),
   competencies: z.string().min(1, "Core competencies are required"),
+  philosophyQuote: z.string().min(1, "Philosophy quote is required"),
+  philosophyTitle: z.string().min(1, "Philosophy title is required"),
   profileImage: z.string().optional(),
 });
 

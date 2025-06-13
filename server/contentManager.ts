@@ -26,6 +26,8 @@ const defaultPortfolioContent: PortfolioContent = {
     title: "About Hamza",
     summary: "AI Product Leader with 7+ years of experience scaling enterprise AI platforms across global markets. Proven track record of building and leading cross-cultural teams, securing funding, and delivering measurable business impact through innovative AI solutions.",
     competencies: "AI/ML Product Strategy, Cross-Cultural Leadership, Enterprise Scaling, Regulatory Compliance, Team Building, Startup Funding, Technical Architecture",
+    philosophyQuote: "AI product success isn't just about cutting-edge technology—it's about understanding cultural nuances, regulatory landscapes, and human needs across diverse markets. True innovation happens when we bridge technical excellence with deep market empathy.",
+    philosophyTitle: "Leadership Philosophy",
     profileImage: "/images/hamza-profile.jpg"
   },
   experience: {
