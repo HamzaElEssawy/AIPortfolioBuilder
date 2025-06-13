@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
-import { Textarea } from '@/components/ui/textarea';
+import { useRef, useState, useEffect } from 'react';
+import { Editor } from '@tinymce/tinymce-react';
 import { Button } from '@/components/ui/button';
-import { Edit3, Save, Bold, Italic, List, AlignLeft } from 'lucide-react';
+import { Edit3, Save } from 'lucide-react';
 
 interface TinyMCEEditorProps {
   value: string;
@@ -18,6 +18,7 @@ export default function TinyMCEEditor({
   placeholder = "Start typing...",
   disabled = false
 }: TinyMCEEditorProps) {
+  const editorRef = useRef<any>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [tempValue, setTempValue] = useState(value || '');
 
@@ -25,8 +26,8 @@ export default function TinyMCEEditor({
     setTempValue(value || '');
   }, [value]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setTempValue(e.target.value);
+  const handleEditorChange = (content: string) => {
+    setTempValue(content);
   };
 
   const handleSave = () => {
@@ -44,34 +45,6 @@ export default function TinyMCEEditor({
     setIsEditing(true);
   };
 
-  const applyFormatting = (format: string) => {
-    const textarea = document.querySelector('textarea[data-editor="true"]') as HTMLTextAreaElement;
-    if (!textarea) return;
-
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selectedText = tempValue.substring(start, end);
-    let newText = '';
-
-    switch (format) {
-      case 'bold':
-        newText = tempValue.substring(0, start) + `**${selectedText}**` + tempValue.substring(end);
-        break;
-      case 'italic':
-        newText = tempValue.substring(0, start) + `*${selectedText}*` + tempValue.substring(end);
-        break;
-      case 'list':
-        const lines = selectedText.split('\n');
-        const listItems = lines.map(line => line.trim() ? `• ${line.trim()}` : line).join('\n');
-        newText = tempValue.substring(0, start) + listItems + tempValue.substring(end);
-        break;
-      default:
-        return;
-    }
-
-    setTempValue(newText);
-  };
-
   if (!isEditing) {
     return (
       <div className="relative group">
@@ -80,13 +53,7 @@ export default function TinyMCEEditor({
           onClick={handleStartEdit}
         >
           {value ? (
-            <div className="whitespace-pre-wrap break-words">
-              {value.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                    .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                    .split('\n').map((line, i) => (
-                <div key={i} dangerouslySetInnerHTML={{ __html: line || '<br>' }} />
-              ))}
-            </div>
+            <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: value }} />
           ) : (
             <div className="text-gray-400 italic">{placeholder}</div>
           )}
@@ -106,41 +73,77 @@ export default function TinyMCEEditor({
   return (
     <div className="space-y-2">
       <div className="border border-gray-300 rounded-md overflow-hidden">
-        <div className="bg-gray-50 border-b border-gray-300 px-3 py-2 flex gap-1">
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={() => applyFormatting('bold')}
-            className="h-8 w-8 p-0"
-          >
-            <Bold className="h-4 w-4" />
-          </Button>
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={() => applyFormatting('italic')}
-            className="h-8 w-8 p-0"
-          >
-            <Italic className="h-4 w-4" />
-          </Button>
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={() => applyFormatting('list')}
-            className="h-8 w-8 p-0"
-          >
-            <List className="h-4 w-4" />
-          </Button>
-        </div>
-        <Textarea
-          data-editor="true"
-          value={tempValue}
-          onChange={handleInputChange}
-          placeholder={placeholder}
+        <Editor
+          apiKey="no-api-key"
+          onInit={(evt, editor) => {
+            editorRef.current = editor;
+          }}
+          initialValue={tempValue}
+          onEditorChange={handleEditorChange}
           disabled={disabled}
-          className="border-0 resize-none focus:ring-0 rounded-none"
-          style={{ height: `${height}px` }}
-          autoFocus
+          init={{
+            height,
+            menubar: false,
+            plugins: [
+              'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+              'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+              'insertdatetime', 'media', 'table', 'help', 'wordcount', 'emoticons'
+            ],
+            toolbar: 'undo redo | blocks | ' +
+              'bold italic underline strikethrough | alignleft aligncenter ' +
+              'alignright alignjustify | bullist numlist outdent indent | ' +
+              'removeformat | link image | table | emoticons | help',
+            content_style: `
+              body { 
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; 
+                font-size: 14px;
+                line-height: 1.6;
+                color: #374151;
+                margin: 8px;
+              }
+              p { margin: 0 0 8px 0; }
+              ul, ol { margin: 0 0 8px 0; padding-left: 20px; }
+              h1, h2, h3, h4, h5, h6 { margin: 0 0 12px 0; color: #1f2937; }
+              blockquote { 
+                border-left: 4px solid #d1d5db; 
+                margin: 0 0 8px 0; 
+                padding-left: 12px; 
+                color: #6b7280; 
+                font-style: italic; 
+              }
+              table { border-collapse: collapse; width: 100%; }
+              th, td { border: 1px solid #d1d5db; padding: 8px; text-align: left; }
+              th { background-color: #f9fafb; font-weight: 600; }
+            `,
+            placeholder,
+            branding: false,
+            promotion: false,
+            resize: true,
+            statusbar: true,
+            elementpath: false,
+            skin: 'oxide',
+            theme: 'silver',
+            paste_as_text: false,
+            paste_word_valid_elements: 'b,strong,i,em,u,s,a,p,br,ul,ol,li,h1,h2,h3,h4,h5,h6,blockquote',
+            valid_elements: 'p,br,strong,b,em,i,u,s,strike,a[href|target],ul,ol,li,h1,h2,h3,h4,h5,h6,blockquote,table,thead,tbody,tr,th,td',
+            forced_root_block: 'p',
+            force_br_newlines: false,
+            force_p_newlines: true,
+            convert_newlines_to_brs: false,
+            entity_encoding: 'raw',
+            image_advtab: true,
+            image_caption: true,
+            image_uploadtab: false,
+            link_assume_external_targets: true,
+            link_context_toolbar: true,
+            table_use_colgroups: true,
+            table_responsive_width: true,
+            setup: (editor) => {
+              editor.on('init', () => {
+                editor.focus();
+              });
+            }
+          }}
         />
       </div>
       <div className="flex gap-2">
