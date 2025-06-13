@@ -102,7 +102,7 @@ export default function EnhancedHero() {
                 Scaling 0→1 Products | Building AI-First Solutions
               </h3>
               <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed max-w-lg">
-                {heroContent?.description || "Architecting next-generation AI products that capture markets and generate exponential value across MENA & Southeast Asia regions"}
+                {heroContent?.subheadline || "Architecting next-generation AI products that capture markets and generate exponential value across MENA & Southeast Asia regions"}
               </p>
             </div>
 
@@ -227,38 +227,7 @@ export default function EnhancedHero() {
         </div>
       </div>
 
-      {/* Custom CSS for animations */}
-      <style jsx>{`
-        @keyframes blob {
-          0% { transform: translate(0px, 0px) scale(1); }
-          33% { transform: translate(30px, -50px) scale(1.1); }
-          66% { transform: translate(-20px, 20px) scale(0.9); }
-          100% { transform: translate(0px, 0px) scale(1); }
-        }
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-20px); }
-        }
-        @keyframes float-delayed {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-15px); }
-        }
-        .animate-blob {
-          animation: blob 7s infinite;
-        }
-        .animation-delay-2000 {
-          animation-delay: 2s;
-        }
-        .animation-delay-4000 {
-          animation-delay: 4s;
-        }
-        .animate-float {
-          animation: float 6s ease-in-out infinite;
-        }
-        .animate-float-delayed {
-          animation: float-delayed 8s ease-in-out infinite;
-        }
-      `}</style>
+      {/* Animation styles are handled via Tailwind CSS */}
     </section>
   );
 }

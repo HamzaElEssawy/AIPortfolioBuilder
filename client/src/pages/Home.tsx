@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import Navigation from "@/components/Navigation";
-import Hero from "@/components/Hero";
+import EnhancedHero from "@/components/EnhancedHero";
 import Metrics from "@/components/Metrics";
 import AboutStreamlined from "@/components/AboutStreamlined";
 import FeaturedCaseStudies from "@/components/FeaturedCaseStudies";
@@ -27,7 +27,7 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       <Navigation />
-      {portfolioStatus.hero && <Hero />}
+      {portfolioStatus.hero && <EnhancedHero />}
       {portfolioStatus.about && <AboutStreamlined />}
       {portfolioStatus.caseStudies && <FeaturedCaseStudies />}
       <Metrics />
