@@ -70,7 +70,7 @@ class DatabaseContentManager {
     return DatabaseContentManager.instance;
   }
 
-  async getContent(sectionId: string): Promise<ContentData | null> {
+  async getContent(sectionId: string): Promise<any | null> {
     try {
       const cacheKey = `content:${sectionId}`;
       const cached = cache.get<ContentData>(cacheKey);
@@ -95,7 +95,7 @@ class DatabaseContentManager {
     }
   }
 
-  async saveContent(sectionId: string, content: ContentData): Promise<void> {
+  async saveContent(sectionId: string, content: any): Promise<void> {
     try {
       // Sanitize content to remove any React component metadata
       const sanitizedContent = this.sanitizeContent(content);
@@ -139,8 +139,8 @@ class DatabaseContentManager {
     }
   }
 
-  private sanitizeContent(content: ContentData): ContentData {
-    const sanitized: ContentData = {};
+  private sanitizeContent(content: any): any {
+    const sanitized: any = {};
 
     Object.entries(content).forEach(([key, value]) => {
       if (typeof value === 'string') {
@@ -164,14 +164,20 @@ class DatabaseContentManager {
           cleanValue = cleanValue.replace(/<[^>]*>/g, '').trim();
         }
 
-        sanitized[key as keyof ContentData] = cleanValue;
+        sanitized[key] = cleanValue;
+      } else if (typeof value === 'object' && value !== null) {
+        // Preserve complex objects like statusBadge, CTAs, achievements, etc.
+        sanitized[key] = value;
+      } else {
+        // Preserve other data types (boolean, number, etc.)
+        sanitized[key] = value;
       }
     });
 
     return sanitized;
   }
 
-  private async createVersion(sectionId: string, content: ContentData): Promise<void> {
+  private async createVersion(sectionId: string, content: any): Promise<void> {
     try {
       await db.insert(contentVersions).values({
         sectionId,

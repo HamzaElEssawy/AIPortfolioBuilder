@@ -2,11 +2,11 @@
   "hero": {
     "headline": "Product Visionary",
     "subheadline": "& Strategic AI Leader",
-    "description": "Architecting next-generation AI products that capture markets and generate exponential value across MENA & Southeast Asia regions",
-    "primaryTitle": "Product Visionary",
-    "secondaryTitle": "& Strategic AI Leader",
+    "description": "Architecting next-generation AI products that capture markets and generate exponential value across MENA & Southeast Asia regions. bbb",
+    "primaryTitle": "Product Visionary find",
+    "secondaryTitle": "& Strategic AI Leader and more",
     "statusBadge": {
-      "text": "Elite Product Executive • Available for C-Level Roles",
+      "text": "Elite Product Executive • Available for C-Level Roles bbb",
       "type": "available",
       "showIndicator": true
     },
@@ -20,21 +20,21 @@
     },
     "achievementCards": [
       {
-        "value": "Built 3",
+        "value": "Built 3 hr",
         "label": "unicorn-potential products",
         "icon": "sparkles",
         "color": "blue"
       },
       {
         "value": "40%",
-        "label": "market share captured",
-        "icon": "trending",
+        "label": "market share captured. bb",
+        "icon": "target",
         "color": "green"
       },
       {
         "value": "300%",
         "label": "YoY growth achieved",
-        "icon": "award",
+        "icon": "sparkles",
         "color": "purple"
       }
     ],
@@ -55,12 +55,12 @@
     "founderBadge": {
       "show": true,
       "text": "AI Founder",
-      "icon": "award"
+      "icon": "crown"
     },
     "backgroundSettings": {
       "gradientStyle": "blue_purple",
-      "showAnimatedBlobs": true,
-      "showFloatingElements": true
+      "showAnimatedBlobs": false,
+      "showFloatingElements": false
     }
   },
   "stats": {
@@ -298,6 +298,6 @@
     "keywords": "AI Product Manager, Machine Learning, Enterprise AI, Product Strategy, Startup Founder, Cross-Cultural Leadership",
     "ogImage": "/images/hamza-og-image.jpg"
   },
-  "lastUpdated": "2025-06-13T05:50:47.818Z",
-  "version": 9
+  "lastUpdated": "2025-06-13T06:04:09.102Z",
+  "version": 14
 }
