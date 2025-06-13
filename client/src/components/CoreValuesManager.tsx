@@ -1,12 +1,15 @@
 import { useState } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { queryClient } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Plus, Edit, Trash2, Save, X, Target } from "lucide-react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
-import { useToast } from "@/hooks/use-toast";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Plus, Edit2, Trash2, Save, X, Target } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import ConsolidatedTextEditor from "./ConsolidatedTextEditor";
 
 interface CoreValue {
   id: number;
@@ -14,289 +17,332 @@ interface CoreValue {
   description: string;
   icon: string;
   orderIndex: number;
-  createdAt: string;
-  updatedAt: string;
 }
 
-interface InsertCoreValue {
-  title: string;
-  description: string;
-  icon: string;
-  orderIndex: number;
-}
+const iconOptions = [
+  { value: "target", label: "Target", icon: "🎯" },
+  { value: "lightbulb", label: "Innovation", icon: "💡" },
+  { value: "users", label: "Collaboration", icon: "👥" },
+  { value: "award", label: "Excellence", icon: "🏆" },
+  { value: "heart", label: "Passion", icon: "❤️" },
+  { value: "shield", label: "Integrity", icon: "🛡️" },
+  { value: "zap", label: "Energy", icon: "⚡" },
+  { value: "compass", label: "Direction", icon: "🧭" },
+  { value: "star", label: "Quality", icon: "⭐" },
+  { value: "rocket", label: "Growth", icon: "🚀" },
+];
 
 export default function CoreValuesManager() {
   const [editingValue, setEditingValue] = useState<CoreValue | null>(null);
-  const [newValue, setNewValue] = useState<InsertCoreValue>({
+  const [newValue, setNewValue] = useState({
     title: "",
     description: "",
     icon: "target",
     orderIndex: 0
   });
-  const [isCreating, setIsCreating] = useState(false);
-  
   const { toast } = useToast();
-  const queryClient = useQueryClient();
 
   const { data: coreValues = [], isLoading } = useQuery<CoreValue[]>({
     queryKey: ["/api/admin/core-values"],
   });
 
-  const createMutation = useMutation({
-    mutationFn: async (value: InsertCoreValue) => {
-      return apiRequest("POST", "/api/admin/core-values", value);
+  const createValueMutation = useMutation({
+    mutationFn: async (valueData: typeof newValue) => {
+      const response = await fetch("/api/admin/core-values", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(valueData),
+      });
+      if (!response.ok) throw new Error("Failed to create core value");
+      return response.json();
     },
     onSuccess: () => {
-      toast({ title: "Core value created successfully" });
       queryClient.invalidateQueries({ queryKey: ["/api/admin/core-values"] });
-      setIsCreating(false);
+      queryClient.invalidateQueries({ queryKey: ["/api/portfolio/core-values"] });
       setNewValue({
         title: "",
         description: "",
         icon: "target",
         orderIndex: 0
       });
+      toast({ title: "Success", description: "Core value created successfully" });
     },
-    onError: () => {
-      toast({ title: "Failed to create core value", variant: "destructive" });
-    }
+    onError: (error: any) => {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    },
   });
 
-  const updateMutation = useMutation({
-    mutationFn: async ({ id, ...value }: Partial<CoreValue>) => {
-      return apiRequest("PUT", `/api/admin/core-values/${id}`, value);
+  const updateValueMutation = useMutation({
+    mutationFn: async ({ id, ...valueData }: CoreValue) => {
+      const response = await fetch(`/api/admin/core-values/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(valueData),
+      });
+      if (!response.ok) throw new Error("Failed to update core value");
+      return response.json();
     },
     onSuccess: () => {
-      toast({ title: "Core value updated successfully" });
       queryClient.invalidateQueries({ queryKey: ["/api/admin/core-values"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/portfolio/core-values"] });
       setEditingValue(null);
+      toast({ title: "Success", description: "Core value updated successfully" });
     },
-    onError: () => {
-      toast({ title: "Failed to update core value", variant: "destructive" });
-    }
+    onError: (error: any) => {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    },
   });
 
-  const deleteMutation = useMutation({
+  const deleteValueMutation = useMutation({
     mutationFn: async (id: number) => {
-      return apiRequest("DELETE", `/api/admin/core-values/${id}`);
+      const response = await fetch(`/api/admin/core-values/${id}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) throw new Error("Failed to delete core value");
+      return response.json();
     },
     onSuccess: () => {
-      toast({ title: "Core value deleted successfully" });
       queryClient.invalidateQueries({ queryKey: ["/api/admin/core-values"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/portfolio/core-values"] });
+      toast({ title: "Success", description: "Core value deleted successfully" });
     },
-    onError: () => {
-      toast({ title: "Failed to delete core value", variant: "destructive" });
-    }
+    onError: (error: any) => {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    },
   });
 
-  const iconOptions = [
-    { value: "target", label: "Target" },
-    { value: "globe", label: "Globe" },
-    { value: "shield", label: "Shield" },
-    { value: "users", label: "Users" },
-    { value: "trending-up", label: "Trending Up" },
-    { value: "lightbulb", label: "Lightbulb" }
-  ];
-
-  const handleCreate = () => {
-    createMutation.mutate(newValue);
-  };
-
-  const handleUpdate = () => {
-    if (editingValue) {
-      updateMutation.mutate(editingValue);
+  const handleCreateValue = () => {
+    if (!newValue.title.trim() || !newValue.description.trim()) {
+      toast({ title: "Error", description: "Title and description are required", variant: "destructive" });
+      return;
     }
+    createValueMutation.mutate(newValue);
   };
+
+  const handleUpdateValue = () => {
+    if (!editingValue || !editingValue.title.trim() || !editingValue.description.trim()) {
+      toast({ title: "Error", description: "Title and description are required", variant: "destructive" });
+      return;
+    }
+    updateValueMutation.mutate(editingValue);
+  };
+
+  const getIconEmoji = (iconName: string) => {
+    const icon = iconOptions.find(opt => opt.value === iconName);
+    return icon ? icon.icon : "🎯";
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading core values...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-navy">Core Values & Approach Manager</h2>
-          <p className="text-text-charcoal">Manage your core values and professional approach</p>
+          <h2 className="text-2xl font-bold text-gray-900">Core Values Management</h2>
+          <p className="text-gray-600">Define your professional principles and values</p>
         </div>
-        <Button onClick={() => setIsCreating(true)} className="bg-secondary-green hover:bg-secondary-green/90">
-          <Plus className="h-4 w-4 mr-2" />
-          Add Core Value
-        </Button>
       </div>
 
-      {/* Create New Value */}
-      {isCreating && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Plus className="h-5 w-5" />
-              Add New Core Value
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-2">Title</label>
-                <Input
-                  value={newValue.title}
-                  onChange={(e) => setNewValue({ ...newValue, title: e.target.value })}
-                  placeholder="e.g., Cultural Intelligence"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">Order Index</label>
-                <Input
-                  type="number"
-                  value={newValue.orderIndex}
-                  onChange={(e) => setNewValue({ ...newValue, orderIndex: parseInt(e.target.value) || 0 })}
-                />
-              </div>
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium mb-2">Description</label>
-              <Textarea
-                value={newValue.description}
-                onChange={(e) => setNewValue({ ...newValue, description: e.target.value })}
-                placeholder="Brief description of this core value"
+      {/* Add New Core Value */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Plus className="h-5 w-5" />
+            Add New Core Value
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="value-title">Value Title</Label>
+              <Input
+                id="value-title"
+                value={newValue.title}
+                onChange={(e) => setNewValue({ ...newValue, title: e.target.value })}
+                placeholder="e.g., Innovation, Integrity, Excellence"
               />
             </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2">Icon</label>
-              <select
+            
+            <div className="space-y-2">
+              <Label htmlFor="value-icon">Icon</Label>
+              <Select
                 value={newValue.icon}
-                onChange={(e) => setNewValue({ ...newValue, icon: e.target.value })}
-                className="w-full p-2 border border-gray-300 rounded-md"
+                onValueChange={(value) => setNewValue({ ...newValue, icon: value })}
               >
-                {iconOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {iconOptions.map((icon) => (
+                    <SelectItem key={icon.value} value={icon.value}>
+                      <div className="flex items-center gap-2">
+                        <span>{icon.icon}</span>
+                        {icon.label}
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
-
-            <div className="flex gap-2">
-              <Button onClick={handleCreate} disabled={createMutation.isPending}>
-                <Save className="h-4 w-4 mr-2" />
-                {createMutation.isPending ? "Creating..." : "Create Value"}
-              </Button>
-              <Button variant="outline" onClick={() => setIsCreating(false)}>
-                <X className="h-4 w-4 mr-2" />
-                Cancel
-              </Button>
+            
+            <div className="space-y-2">
+              <Label htmlFor="value-order">Display Order</Label>
+              <Input
+                id="value-order"
+                type="number"
+                value={newValue.orderIndex}
+                onChange={(e) => setNewValue({ ...newValue, orderIndex: parseInt(e.target.value) || 0 })}
+                placeholder="0"
+              />
             </div>
-          </CardContent>
-        </Card>
-      )}
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="value-description">Description</Label>
+            <ConsolidatedTextEditor
+              content={newValue.description}
+              onChange={(value: string) => setNewValue({ ...newValue, description: value })}
+              placeholder="Describe what this value means to you and how it guides your work..."
+              enableRichText={true}
+            />
+          </div>
+          
+          <Button 
+            onClick={handleCreateValue}
+            disabled={createValueMutation.isPending || !newValue.title.trim() || !newValue.description.trim()}
+            className="w-full md:w-auto"
+          >
+            {createValueMutation.isPending ? "Creating..." : "Add Core Value"}
+          </Button>
+        </CardContent>
+      </Card>
 
       {/* Core Values List */}
-      <div className="space-y-4">
-        {isLoading ? (
-          <div className="text-center py-8">Loading core values...</div>
-        ) : coreValues.length === 0 ? (
-          <Card>
-            <CardContent className="text-center py-8">
-              <Target className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-              <p className="text-text-charcoal">No core values yet. Add your first value!</p>
-            </CardContent>
-          </Card>
-        ) : (
-          coreValues
-            .sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0))
-            .map((value) => (
-              <Card key={value.id}>
-                <CardContent className="p-6">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Target className="h-5 w-5" />
+            Core Values ({coreValues.length})
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {coreValues.length === 0 ? (
+            <div className="text-center py-12">
+              <Target className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+              <p className="text-gray-500 mb-4">No core values defined yet</p>
+              <p className="text-sm text-gray-400">Add your first core value to showcase your professional principles</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {coreValues
+                .sort((a, b) => a.orderIndex - b.orderIndex)
+                .map((value) => (
+                <div key={value.id} className="border rounded-lg p-4">
                   {editingValue?.id === value.id ? (
-                    // Edit Mode
                     <div className="space-y-4">
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium mb-2">Title</label>
-                          <Input
-                            value={editingValue.title}
-                            onChange={(e) => setEditingValue({ ...editingValue, title: e.target.value })}
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium mb-2">Order Index</label>
-                          <Input
-                            type="number"
-                            value={editingValue.orderIndex}
-                            onChange={(e) => setEditingValue({ ...editingValue, orderIndex: parseInt(e.target.value) || 0 })}
-                          />
-                        </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <Input
+                          value={editingValue.title}
+                          onChange={(e) => setEditingValue({ ...editingValue, title: e.target.value })}
+                          placeholder="Value title"
+                        />
+                        
+                        <Select
+                          value={editingValue.icon}
+                          onValueChange={(value) => setEditingValue({ ...editingValue, icon: value })}
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {iconOptions.map((icon) => (
+                              <SelectItem key={icon.value} value={icon.value}>
+                                <div className="flex items-center gap-2">
+                                  <span>{icon.icon}</span>
+                                  {icon.label}
+                                </div>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
                       
-                      <div>
-                        <label className="block text-sm font-medium mb-2">Description</label>
-                        <Textarea
-                          value={editingValue.description}
-                          onChange={(e) => setEditingValue({ ...editingValue, description: e.target.value })}
+                      <ConsolidatedTextEditor
+                        content={editingValue.description}
+                        onChange={(value: string) => setEditingValue({ ...editingValue, description: value })}
+                        placeholder="Value description..."
+                        enableRichText={true}
+                      />
+                      
+                      <div className="flex items-center gap-4">
+                        <Input
+                          type="number"
+                          value={editingValue.orderIndex}
+                          onChange={(e) => setEditingValue({ ...editingValue, orderIndex: parseInt(e.target.value) || 0 })}
+                          placeholder="Order"
+                          className="w-20"
                         />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium mb-2">Icon</label>
-                        <select
-                          value={editingValue.icon}
-                          onChange={(e) => setEditingValue({ ...editingValue, icon: e.target.value })}
-                          className="w-full p-2 border border-gray-300 rounded-md"
-                        >
-                          {iconOptions.map((option) => (
-                            <option key={option.value} value={option.value}>
-                              {option.label}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-
-                      <div className="flex gap-2">
-                        <Button onClick={handleUpdate} disabled={updateMutation.isPending}>
-                          <Save className="h-4 w-4 mr-2" />
-                          {updateMutation.isPending ? "Saving..." : "Save Changes"}
-                        </Button>
-                        <Button variant="outline" onClick={() => setEditingValue(null)}>
-                          <X className="h-4 w-4 mr-2" />
-                          Cancel
-                        </Button>
+                        
+                        <div className="flex gap-2 ml-auto">
+                          <Button size="sm" onClick={handleUpdateValue} disabled={updateValueMutation.isPending}>
+                            <Save className="h-4 w-4" />
+                          </Button>
+                          <Button size="sm" variant="outline" onClick={() => setEditingValue(null)}>
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   ) : (
-                    // View Mode
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 bg-secondary-green/10 rounded-full flex items-center justify-center">
-                          <Target className="h-6 w-6 text-secondary-green" />
+                    <div className="space-y-3">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <span className="text-2xl">{getIconEmoji(value.icon)}</span>
+                            <h3 className="font-semibold text-lg">{value.title}</h3>
+                            <Badge variant="outline">#{value.orderIndex}</Badge>
+                          </div>
+                          <div 
+                            className="text-gray-600 text-sm leading-relaxed" 
+                            dangerouslySetInnerHTML={{ __html: value.description }}
+                          />
                         </div>
-                        <div>
-                          <h3 className="font-bold text-navy mb-2">{value.title}</h3>
-                          <p className="text-text-charcoal">{value.description}</p>
+                        
+                        <div className="flex gap-2 ml-4">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setEditingValue(value)}
+                          >
+                            <Edit2 className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => deleteValueMutation.mutate(value.id)}
+                            disabled={deleteValueMutation.isPending}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
                         </div>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setEditingValue(value)}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => deleteMutation.mutate(value.id)}
-                          disabled={deleteMutation.isPending}
-                          className="text-red-600 hover:text-red-700"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
                       </div>
                     </div>
                   )}
-                </CardContent>
-              </Card>
-            ))
-        )}
-      </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

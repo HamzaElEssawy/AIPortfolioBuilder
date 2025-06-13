@@ -13,6 +13,7 @@ import EnhancedContentManager from "@/components/EnhancedContentManager";
 import EnhancedCaseStudyEditor from "@/components/EnhancedCaseStudyEditor";
 import TimelineManager from "@/components/TimelineManager";
 import CoreValuesManager from "@/components/CoreValuesManager";
+import SkillsManager from "@/components/SkillsManager";
 import PortfolioImageManager from "@/components/PortfolioImageManager";
 import PortfolioMetricsManager from "@/components/PortfolioMetricsManager";
 import SEOManager from "@/components/SEOManager";

@@ -320,7 +320,7 @@ export default function EnhancedContentManager() {
                 </Label>
                 <ConsolidatedTextEditor
                   content={contentData.about.summary || ''}
-                  onChange={(value) => handleAboutChange('summary', value)}
+                  onChange={(value: string) => handleAboutChange('summary', value)}
                   placeholder="Your professional background and experience"
                   enableRichText={true}
                 />
@@ -332,7 +332,7 @@ export default function EnhancedContentManager() {
                 </Label>
                 <ConsolidatedTextEditor
                   content={contentData.about.competencies || ''}
-                  onChange={(value) => handleAboutChange('competencies', value)}
+                  onChange={(value: string) => handleAboutChange('competencies', value)}
                   placeholder="Key skills and areas of expertise"
                   enableRichText={true}
                 />
