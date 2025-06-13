@@ -20,7 +20,8 @@ export default function TinyMCEEditor({
 }: TinyMCEEditorProps) {
   const editorRef = useRef<any>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [tempValue, setTempValue] = useState(value || '');
+  const [tempValue, setTempValue] = useState('');
+  const [editorKey, setEditorKey] = useState(0);
 
   useEffect(() => {
     setTempValue(value || '');
@@ -41,8 +42,11 @@ export default function TinyMCEEditor({
   };
 
   const handleStartEdit = () => {
-    setTempValue(value || '');
+    const content = value || '';
+    setTempValue(content);
     setIsEditing(true);
+    // Force re-render of editor with new key
+    setEditorKey(prev => prev + 1);
   };
 
   if (!isEditing) {
@@ -74,6 +78,7 @@ export default function TinyMCEEditor({
     <div className="space-y-2">
       <div className="border border-gray-300 rounded-md overflow-hidden">
         <Editor
+          key={editorKey}
           apiKey="no-api-key"
           onInit={(evt, editor) => {
             editorRef.current = editor;
@@ -140,7 +145,15 @@ export default function TinyMCEEditor({
             table_responsive_width: true,
             setup: (editor) => {
               editor.on('init', () => {
-                editor.focus();
+                setTimeout(() => {
+                  editor.focus();
+                }, 100);
+              });
+              
+              editor.on('focus', () => {
+                if (!editor.getContent() && tempValue) {
+                  editor.setContent(tempValue);
+                }
               });
             }
           }}
