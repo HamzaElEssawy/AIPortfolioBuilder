@@ -9,7 +9,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
 import { Save, RefreshCw, AlertTriangle, CheckCircle2 } from "lucide-react";
-import CleanTextEditor from "./CleanTextEditor";
+import AdvancedTextEditor from "./AdvancedTextEditor";
 
 interface HeroContent {
   headline: string;
@@ -272,7 +272,7 @@ export default function RevampedContentManager() {
                 <div>
                   <Label htmlFor="competencies">Core Competencies (Rich Text)</Label>
                   <div className="mt-1">
-                    <CleanTextEditor
+                    <AdvancedTextEditor
                       value={aboutContent.competencies}
                       onChange={(value) => handleAboutChange('competencies', value)}
                       placeholder="Describe your core competencies and expertise areas..."
@@ -285,7 +285,7 @@ export default function RevampedContentManager() {
                 <div>
                   <Label htmlFor="philosophyQuote">Leadership Philosophy Quote</Label>
                   <div className="mt-1">
-                    <CleanTextEditor
+                    <AdvancedTextEditor
                       value={aboutContent.philosophyQuote}
                       onChange={(value) => handleAboutChange('philosophyQuote', value)}
                       placeholder="Share your leadership philosophy..."

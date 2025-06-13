@@ -1,7 +1,7 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useCallback } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 
-interface CleanTextEditorProps {
+interface AdvancedTextEditorProps {
   value: string;
   onChange: (content: string) => void;
   placeholder?: string;
@@ -9,65 +9,57 @@ interface CleanTextEditorProps {
   mode?: 'rich' | 'minimal' | 'plain';
 }
 
-export default function CleanTextEditor({ 
+export default function AdvancedTextEditor({ 
   value, 
   onChange, 
   placeholder = "Enter content...", 
   height = 300,
   mode = 'rich'
-}: CleanTextEditorProps) {
+}: AdvancedTextEditorProps) {
   const editorRef = useRef<any>(null);
-  const [editorKey, setEditorKey] = useState(0);
   const [isEditorReady, setIsEditorReady] = useState(false);
+  const lastValueRef = useRef(value);
 
-  const handleEditorChange = (content: string, editor: any) => {
-    // Prevent cursor jumping by only updating when content actually changes
-    if (content !== value && isEditorReady) {
-      const cleanContent = sanitizeContent(content, mode);
-      onChange(cleanContent);
-    }
-  };
-
-  const sanitizeContent = (content: string, editorMode: string): string => {
+  const sanitizeContent = useCallback((content: string, editorMode: string): string => {
     if (editorMode === 'plain') {
-      // For plain text fields, strip all HTML
       return content.replace(/<[^>]*>/g, '').trim();
     }
 
     if (editorMode === 'minimal') {
-      // For minimal rich text, allow only basic formatting
-      const allowedTags = ['<p>', '</p>', '<br>', '<strong>', '</strong>', '<em>', '</em>', '<b>', '</b>', '<i>', '</i>'];
+      const allowedTags = ['p', 'br', 'strong', 'em', 'b', 'i'];
       let cleaned = content;
       
       // Remove all HTML tags except allowed ones
       cleaned = cleaned.replace(/<(?!\/?(?:p|br|strong|em|b|i)\b)[^>]*>/gi, '');
-      
-      // Remove style attributes and data attributes
       cleaned = cleaned.replace(/\s*(style|class|data-[^=]*|id)="[^"]*"/gi, '');
       
       return cleaned.trim();
     }
 
-    // For rich text mode, allow more formatting but clean unwanted attributes
+    // Rich text mode - clean unwanted attributes but keep formatting
     let cleaned = content;
     
-    // Remove React component metadata
+    // Remove React component metadata and unwanted attributes
     cleaned = cleaned.replace(/<div[^>]*data-replit-metadata[^>]*>.*?<\/div>/g, '');
     cleaned = cleaned.replace(/data-replit-metadata="[^"]*"/g, '');
     cleaned = cleaned.replace(/data-component-name="[^"]*"/g, '');
-    
-    // Remove Tailwind CSS classes and inline styles with CSS variables
     cleaned = cleaned.replace(/class="[^"]*"/g, '');
     cleaned = cleaned.replace(/style="[^"]*--tw-[^"]*"/g, '');
-    
-    // Remove empty paragraphs and divs
     cleaned = cleaned.replace(/<p>\s*<\/p>/g, '');
     cleaned = cleaned.replace(/<div>\s*<\/div>/g, '');
     
     return cleaned.trim();
-  };
+  }, []);
 
-  const getEditorConfig = () => {
+  const handleEditorChange = useCallback((content: string) => {
+    if (isEditorReady && content !== lastValueRef.current) {
+      const cleanContent = sanitizeContent(content, mode);
+      lastValueRef.current = cleanContent;
+      onChange(cleanContent);
+    }
+  }, [isEditorReady, mode, onChange, sanitizeContent]);
+
+  const getEditorConfig = useCallback(() => {
     const baseConfig = {
       height,
       menubar: false,
@@ -77,6 +69,7 @@ export default function CleanTextEditor({
       paste_data_images: true,
       paste_as_text: mode === 'plain',
       browser_spellcheck: true,
+      placeholder,
       content_style: `
         body { 
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
@@ -91,32 +84,17 @@ export default function CleanTextEditor({
         ul, ol { margin: 0 0 1em 1.5em; }
         li { margin: 0 0 0.5em 0; }
         h1, h2, h3, h4, h5, h6 { margin: 1em 0 0.5em 0; font-weight: 600; }
+        a { color: #3b82f6; text-decoration: underline; }
+        code { background: #f3f4f6; padding: 2px 4px; border-radius: 3px; font-family: monospace; }
       `,
       setup: (editor: any) => {
         editor.on('init', () => {
           setIsEditorReady(true);
         });
         
-        editor.on('input change', (e: any) => {
+        editor.on('input change', () => {
           const content = editor.getContent();
-          handleEditorChange(content, editor);
-        });
-        
-        // Prevent cursor jumping on external updates
-        editor.on('SetContent', (e: any) => {
-          if (e.initial) return;
-          
-          // Store cursor position
-          const bookmark = editor.selection.getBookmark(2, true);
-          setTimeout(() => {
-            if (bookmark && editor.selection) {
-              try {
-                editor.selection.moveToBookmark(bookmark);
-              } catch (err) {
-                // Ignore bookmark restoration errors
-              }
-            }
-          }, 0);
+          handleEditorChange(content);
         });
       }
     };
@@ -125,7 +103,7 @@ export default function CleanTextEditor({
       return {
         ...baseConfig,
         toolbar: false,
-        plugins: [],
+        plugins: ['autoresize'],
         forced_root_block: '',
         force_br_newlines: true,
         force_p_newlines: false,
@@ -150,7 +128,7 @@ export default function CleanTextEditor({
         'lists', 'link', 'autoresize', 'code', 'paste', 'searchreplace',
         'autolink', 'directionality', 'wordcount'
       ],
-      valid_elements: 'p,br,strong,em,b,i,u,ul,ol,li,a[href|target],code',
+      valid_elements: 'p,br,strong,em,b,i,u,ul,ol,li,a[href|target],code,h1,h2,h3,h4,h5,h6',
       forced_root_block: 'p',
       paste_retain_style_properties: 'font-weight font-style text-decoration',
       link_target_list: [
@@ -165,29 +143,15 @@ export default function CleanTextEditor({
         args.content = args.content.replace(/style="[^"]*"/g, '');
       }
     };
-  };
+  }, [height, mode, placeholder, handleEditorChange]);
 
-  // Prevent unnecessary re-renders that cause cursor jumping
+  // Update editor content only when necessary to prevent cursor jumping
   useEffect(() => {
-    if (editorRef.current && isEditorReady) {
+    if (editorRef.current && isEditorReady && value !== lastValueRef.current) {
       const currentContent = editorRef.current.getContent();
       if (currentContent !== value) {
-        // Store cursor position before setting content
-        const bookmark = editorRef.current.selection.getBookmark(2, true);
+        lastValueRef.current = value;
         editorRef.current.setContent(value);
-        
-        // Restore cursor position after a brief delay
-        setTimeout(() => {
-          if (bookmark && editorRef.current?.selection) {
-            try {
-              editorRef.current.selection.moveToBookmark(bookmark);
-            } catch (err) {
-              // Fallback: place cursor at end
-              editorRef.current.selection.select(editorRef.current.getBody(), true);
-              editorRef.current.selection.collapseToEnd();
-            }
-          }
-        }, 10);
       }
     }
   }, [value, isEditorReady]);
@@ -195,15 +159,12 @@ export default function CleanTextEditor({
   return (
     <div className="border border-gray-200 rounded-md overflow-hidden">
       <Editor
-        key={editorKey}
         apiKey="no-api-key"
         onInit={(evt, editor) => {
           editorRef.current = editor;
-          setIsEditorReady(true);
         }}
-        value={value}
+        initialValue={value}
         init={getEditorConfig()}
-        onEditorChange={() => {}} // Handle changes in setup instead
       />
     </div>
   );
