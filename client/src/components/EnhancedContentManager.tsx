@@ -330,13 +330,11 @@ export default function EnhancedContentManager() {
                 <Label htmlFor="about-competencies" className="text-sm font-medium text-gray-700">
                   Core Competencies
                 </Label>
-                <textarea
-                  id="about-competencies"
-                  value={contentData.about.competencies ? contentData.about.competencies.replace(/<[^>]*>/g, '') : ''}
-                  onChange={(e) => handleAboutChange('competencies', e.target.value)}
+                <TinyMCEEditor
+                  value={contentData.about.competencies || ''}
+                  onChange={(value) => handleAboutChange('competencies', value)}
                   placeholder="Key skills and areas of expertise"
-                  className="w-full min-h-[120px] p-3 border border-gray-300 rounded-md resize-vertical focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  rows={5}
+                  height={120}
                 />
               </div>
 
@@ -365,13 +363,11 @@ export default function EnhancedContentManager() {
                   <Label htmlFor="philosophy-quote" className="text-sm font-medium text-gray-700">
                     Philosophy Quote
                   </Label>
-                  <textarea
-                    id="philosophy-quote"
-                    value={contentData.about.philosophyQuote.replace(/<[^>]*>/g, '')}
-                    onChange={(e) => handleAboutChange('philosophyQuote', e.target.value)}
+                  <TinyMCEEditor
+                    value={contentData.about.philosophyQuote || ''}
+                    onChange={(value) => handleAboutChange('philosophyQuote', value)}
                     placeholder="Your leadership philosophy and approach"
-                    className="w-full min-h-[120px] p-3 border border-gray-300 rounded-md resize-vertical focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    rows={4}
+                    height={120}
                   />
                 </div>
               </div>
