@@ -1441,11 +1441,50 @@ What would be most helpful for your current career goals?`;
   app.put("/api/admin/portfolio-images/:id", isAdmin, async (req, res) => {
     try {
       const { id } = req.params;
-      const image = await storage.updatePortfolioImage(parseInt(id), req.body);
+      const imageId = parseInt(id);
+      
+      if (isNaN(imageId)) {
+        return res.status(400).json({ 
+          message: "Invalid image ID",
+          details: "Image ID must be a valid number"
+        });
+      }
+
+      // Validate required fields
+      const { section, imageUrl, altText } = req.body;
+      if (!section || !imageUrl || !altText) {
+        return res.status(400).json({
+          message: "Missing required fields",
+          details: "Section, image URL, and alt text are required",
+          missing: {
+            section: !section,
+            imageUrl: !imageUrl,
+            altText: !altText
+          }
+        });
+      }
+
+      // Check if image exists
+      const existingImage = await storage.getPortfolioImage(imageId);
+      if (!existingImage) {
+        return res.status(404).json({ 
+          message: "Portfolio image not found",
+          details: `No image found with ID ${imageId}`
+        });
+      }
+
+      console.log(`Updating portfolio image ${imageId} with data:`, req.body);
+      
+      const image = await storage.updatePortfolioImage(imageId, req.body);
+      
+      console.log(`Successfully updated portfolio image ${imageId}:`, image);
       res.json(image);
     } catch (error) {
       console.error("Error updating portfolio image:", error);
-      res.status(500).json({ message: "Failed to update portfolio image" });
+      res.status(500).json({ 
+        message: "Failed to update portfolio image",
+        details: error instanceof Error ? error.message : "Unknown error occurred"
+      });
     }
   });
 

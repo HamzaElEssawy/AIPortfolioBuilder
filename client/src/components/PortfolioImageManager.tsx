@@ -54,11 +54,23 @@ export default function PortfolioImageManager() {
       setIsDialogOpen(false);
       toast({ title: "Image added successfully" });
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error('Create image error:', error);
+      
+      // Extract detailed error message from API response
+      let errorMessage = "Please try again";
+      let errorDetails = "";
+      
+      if (error?.response?.data) {
+        errorMessage = error.response.data.message || errorMessage;
+        errorDetails = error.response.data.details || "";
+      } else if (error?.message) {
+        errorMessage = error.message;
+      }
+      
       toast({ 
         title: "Failed to add image", 
-        description: "Please try again",
+        description: errorDetails || errorMessage,
         variant: "destructive" 
       });
     },
@@ -73,11 +85,23 @@ export default function PortfolioImageManager() {
       setEditingImage(null);
       toast({ title: "Image updated successfully" });
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error('Update image error:', error);
+      
+      // Extract detailed error message from API response
+      let errorMessage = "Please try again";
+      let errorDetails = "";
+      
+      if (error?.response?.data) {
+        errorMessage = error.response.data.message || errorMessage;
+        errorDetails = error.response.data.details || "";
+      } else if (error?.message) {
+        errorMessage = error.message;
+      }
+      
       toast({ 
         title: "Failed to update image", 
-        description: "Please try again",
+        description: errorDetails || errorMessage,
         variant: "destructive" 
       });
     },
@@ -154,6 +178,35 @@ export default function PortfolioImageManager() {
   };
 
   const handleUpdateImage = (image: PortfolioImage) => {
+    // Validate required fields before sending
+    if (!image.section?.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Section is required",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!image.imageUrl?.trim()) {
+      toast({
+        title: "Validation Error", 
+        description: "Image URL is required",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!image.altText?.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Alt text is required",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    console.log('Updating image with data:', image);
     updateImageMutation.mutate(image);
   };
 
