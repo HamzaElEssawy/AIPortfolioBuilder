@@ -598,13 +598,33 @@ What would be most helpful for your current career goals?`;
   app.post("/api/admin/content/hero", isAdmin, async (req, res) => {
     try {
       const heroContent = req.body;
+      console.log("Saving enhanced hero content:", heroContent);
+      
+      // Save to both storage systems for reliability
       await contentManager.updateSection('hero', heroContent);
-      await cacheSync.invalidateContentCache({ invalidatePortfolio: true });
+      await dbContentManager.saveContent('hero', heroContent);
+      
+      // Clear all relevant caches
+      await cacheSync.invalidateContentCache({ 
+        invalidatePortfolio: true,
+        invalidateContent: true,
+        invalidateSpecific: [
+          'route:/content/hero',
+          'route:/api/portfolio/content/hero'
+        ],
+        broadcastUpdate: true
+      });
+      
+      // Clear content manager cache to ensure immediate updates
+      contentManager.clearCache();
+      
+      console.log("Hero content saved and cache invalidated");
       
       res.json({ 
         success: true, 
         message: "Hero content updated successfully",
-        content: heroContent 
+        content: heroContent,
+        timestamp: new Date().toISOString()
       });
     } catch (error) {
       console.error("Error updating hero content:", error);
@@ -911,7 +931,7 @@ What would be most helpful for your current career goals?`;
   app.get("/api/portfolio/content/:section", cacheMiddleware(300), async (req, res) => {
     try {
       const sectionId = req.params.section;
-      const content = await dbContentManager.getContent(sectionId);
+      let content = await dbContentManager.getContent(sectionId);
       
       if (!content) {
         // Fallback to default content if not found in database
@@ -919,12 +939,98 @@ What would be most helpful for your current career goals?`;
         if (defaultContent) {
           // Migrate to database
           await dbContentManager.saveContent(sectionId, defaultContent);
-          res.json(defaultContent);
-        } else {
-          res.status(404).json({ message: "Content not found" });
+          content = defaultContent;
         }
-      } else {
+      }
+
+      // For hero section, ensure we return the enhanced structure expected by the component
+      if (sectionId === 'hero' && content) {
+        const contentAny = content as any;
+        const enhancedHeroContent = {
+          // Basic content
+          headline: contentAny.headline || "Product Visionary",
+          subheadline: contentAny.subheadline || "& Strategic AI Leader",
+          description: contentAny.description || "Architecting next-generation AI products that capture markets and generate exponential value across MENA & Southeast Asia regions",
+          
+          // Professional titles (derived from headline/subheadline if not present)
+          primaryTitle: contentAny.primaryTitle || contentAny.headline || "Product Visionary",
+          secondaryTitle: contentAny.secondaryTitle || contentAny.subheadline || "& Strategic AI Leader",
+          
+          // Status badge
+          statusBadge: contentAny.statusBadge || {
+            text: "Elite Product Executive • Available for C-Level Roles",
+            type: "available" as const,
+            showIndicator: true,
+          },
+          
+          // Call to action buttons
+          primaryCTA: contentAny.primaryCTA || {
+            text: contentAny.ctaText || "Let's Connect",
+            action: "scroll_to_contact" as const,
+          },
+          secondaryCTA: contentAny.secondaryCTA || {
+            text: contentAny.ctaSecondaryText || "Career Timeline",
+            action: "scroll_to_timeline" as const,
+          },
+          
+          // Achievement cards
+          achievementCards: contentAny.achievementCards || [
+            {
+              value: "Built 3",
+              label: "unicorn-potential products",
+              icon: "sparkles" as const,
+              color: "blue" as const,
+            },
+            {
+              value: "40%",
+              label: "market share captured",
+              icon: "trending" as const,
+              color: "green" as const,
+            },
+            {
+              value: "300%",
+              label: "YoY growth achieved",
+              icon: "award" as const,
+              color: "purple" as const,
+            },
+          ],
+          
+          // Floating metrics
+          floatingMetrics: contentAny.floatingMetrics || [
+            {
+              value: "$110K+",
+              label: "Funding Secured",
+              icon: "trending" as const,
+              position: "top_left" as const,
+            },
+            {
+              value: "15+",
+              label: "Founders Mentored",
+              icon: "users" as const,
+              position: "bottom_right" as const,
+            },
+          ],
+          
+          // Founder badge
+          founderBadge: contentAny.founderBadge || {
+            show: true,
+            text: "AI Founder",
+            icon: "award" as const,
+          },
+          
+          // Background settings
+          backgroundSettings: contentAny.backgroundSettings || {
+            gradientStyle: "blue_purple" as const,
+            showAnimatedBlobs: true,
+            showFloatingElements: true,
+          },
+        };
+        
+        res.json(enhancedHeroContent);
+      } else if (content) {
         res.json(content);
+      } else {
+        res.status(404).json({ message: "Content not found" });
       }
     } catch (error) {
       console.error("Error fetching section content:", error);

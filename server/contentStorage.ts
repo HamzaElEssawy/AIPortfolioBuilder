@@ -4,6 +4,7 @@ import { eq } from "drizzle-orm";
 import { cache } from "./cache";
 
 interface ContentData {
+  // Basic content fields
   title?: string;
   summary?: string;
   competencies?: string;
@@ -13,6 +14,48 @@ interface ContentData {
   subheadline?: string;
   ctaText?: string;
   ctaSecondaryText?: string;
+  description?: string;
+  
+  // Enhanced hero fields
+  primaryTitle?: string;
+  secondaryTitle?: string;
+  statusBadge?: {
+    text: string;
+    type: "available" | "busy" | "unavailable";
+    showIndicator: boolean;
+  };
+  primaryCTA?: {
+    text: string;
+    action: "scroll_to_contact" | "scroll_to_timeline" | "external_link";
+    externalUrl?: string;
+  };
+  secondaryCTA?: {
+    text: string;
+    action: "scroll_to_contact" | "scroll_to_timeline" | "external_link";
+    externalUrl?: string;
+  };
+  achievementCards?: Array<{
+    value: string;
+    label: string;
+    icon: "sparkles" | "trending" | "award" | "users" | "target";
+    color: "blue" | "green" | "purple" | "orange" | "pink" | "red";
+  }>;
+  floatingMetrics?: Array<{
+    value: string;
+    label: string;
+    icon: "sparkles" | "trending" | "award" | "users" | "target";
+    position: "top_left" | "top_right" | "bottom_left" | "bottom_right";
+  }>;
+  founderBadge?: {
+    show: boolean;
+    text: string;
+    icon: "sparkles" | "trending" | "award" | "users" | "target";
+  };
+  backgroundSettings?: {
+    gradientStyle: "blue_purple" | "blue_indigo" | "purple_pink" | "minimal";
+    showAnimatedBlobs: boolean;
+    showFloatingElements: boolean;
+  };
 }
 
 class DatabaseContentManager {
