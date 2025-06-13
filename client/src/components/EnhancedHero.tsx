@@ -91,7 +91,7 @@ export default function EnhancedHero() {
       )}
 
       {/* Floating Elements */}
-      {heroContent.backgroundSettings?.showFloatingElements && (
+      {heroContent?.backgroundSettings?.showFloatingElements && (
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-20 left-10 animate-float">
             <div className="w-3 h-3 bg-blue-400 rounded-full opacity-60"></div>
@@ -106,7 +106,7 @@ export default function EnhancedHero() {
       )}
 
       {/* Floating Metrics */}
-      {heroContent.floatingMetrics?.map((metric, index) => {
+      {heroContent?.floatingMetrics?.map((metric, index) => {
         const IconComponent = iconMap[metric.icon] || TrendingUp;
         const positionClasses = {
           top_left: "top-20 left-10",
@@ -136,11 +136,11 @@ export default function EnhancedHero() {
           <div className="space-y-8">
             {/* Status Badge */}
             <div className="flex items-center gap-3">
-              <Badge className={`${colorMap[heroContent.statusBadge?.type === 'available' ? 'green' : heroContent.statusBadge?.type === 'busy' ? 'orange' : 'green']} border`}>
-                {heroContent.statusBadge?.showIndicator && (
+              <Badge className={`${colorMap[heroContent?.statusBadge?.type === 'available' ? 'green' : heroContent?.statusBadge?.type === 'busy' ? 'orange' : 'green']} border`}>
+                {heroContent?.statusBadge?.showIndicator && (
                   <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
                 )}
-                {heroContent.statusBadge?.text}
+                {heroContent?.statusBadge?.text || "Elite Product Executive • Available for C-Level Roles"}
               </Badge>
             </div>
 
@@ -169,7 +169,7 @@ export default function EnhancedHero() {
 
             {/* Achievement Cards */}
             <div className="grid grid-cols-3 gap-4 py-6">
-              {(heroContent.achievementCards || [
+              {(heroContent?.achievementCards || [
                 { value: "Built 3", label: "unicorn-potential products", icon: "sparkles", color: "blue" },
                 { value: "40%", label: "market share captured", icon: "trending", color: "green" },
                 { value: "300%", label: "YoY growth achieved", icon: "award", color: "purple" }
