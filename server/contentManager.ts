@@ -7,10 +7,68 @@ const CONTENT_FILE_PATH = path.join(process.cwd(), 'data', 'portfolio-content.js
 // Default portfolio content based on current website
 const defaultPortfolioContent: PortfolioContent = {
   hero: {
-    headline: "AI Product Leader & Multi-time Founder",
-    subheadline: "7+ Years Scaling AI Solutions from 0→1 | Enterprise Clients Across MENA & Southeast Asia",
-    ctaText: "View My Work",
-    ctaSecondaryText: "Download Resume"
+    headline: "Product Visionary",
+    subheadline: "& Strategic AI Leader", 
+    description: "Architecting next-generation AI products that capture markets and generate exponential value across MENA & Southeast Asia regions",
+    primaryTitle: "Product Visionary",
+    secondaryTitle: "& Strategic AI Leader",
+    statusBadge: {
+      text: "Elite Product Executive • Available for C-Level Roles",
+      type: "available",
+      showIndicator: true,
+    },
+    primaryCTA: {
+      text: "Let's Connect",
+      action: "scroll_to_contact",
+    },
+    secondaryCTA: {
+      text: "Career Timeline", 
+      action: "scroll_to_timeline",
+    },
+    achievementCards: [
+      {
+        value: "Built 3",
+        label: "unicorn-potential products",
+        icon: "sparkles",
+        color: "blue",
+      },
+      {
+        value: "40%",
+        label: "market share captured",
+        icon: "trending",
+        color: "green",
+      },
+      {
+        value: "300%",
+        label: "YoY growth achieved",
+        icon: "award",
+        color: "purple",
+      },
+    ],
+    floatingMetrics: [
+      {
+        value: "$110K+",
+        label: "Funding Secured",
+        icon: "trending",
+        position: "top_left",
+      },
+      {
+        value: "15+",
+        label: "Founders Mentored",
+        icon: "users",
+        position: "bottom_right",
+      },
+    ],
+    founderBadge: {
+      show: true,
+      text: "AI Founder",
+      icon: "award",
+    },
+    backgroundSettings: {
+      showAnimatedBlobs: true,
+      showFloatingElements: true,
+      gradientStyle: "blue_purple",
+    },
   },
   stats: {
     stat1Value: "$110K+",

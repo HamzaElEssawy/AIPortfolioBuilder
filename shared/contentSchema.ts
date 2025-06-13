@@ -1,11 +1,64 @@
 import { z } from "zod";
 
-// Hero Section Schema
+// Hero Section Schema - Enhanced for comprehensive admin control
 export const heroContentSchema = z.object({
+  // Basic content
   headline: z.string().min(1, "Headline is required"),
   subheadline: z.string().min(1, "Subheadline is required"),
-  ctaText: z.string().min(1, "Call to action text is required"),
-  ctaSecondaryText: z.string().optional(),
+  description: z.string().min(1, "Description is required"),
+  
+  // Professional titles
+  primaryTitle: z.string().min(1, "Primary title is required"),
+  secondaryTitle: z.string().min(1, "Secondary title is required"),
+  
+  // Status badge
+  statusBadge: z.object({
+    text: z.string().min(1, "Status text is required"),
+    type: z.enum(["available", "busy", "unavailable"]).default("available"),
+    showIndicator: z.boolean().default(true),
+  }),
+  
+  // Call to action buttons
+  primaryCTA: z.object({
+    text: z.string().min(1, "Primary CTA text is required"),
+    action: z.enum(["scroll_to_contact", "scroll_to_timeline", "external_link"]).default("scroll_to_contact"),
+    externalUrl: z.string().optional(),
+  }),
+  secondaryCTA: z.object({
+    text: z.string().min(1, "Secondary CTA text is required"),
+    action: z.enum(["scroll_to_contact", "scroll_to_timeline", "external_link"]).default("scroll_to_timeline"),
+    externalUrl: z.string().optional(),
+  }),
+  
+  // Achievement cards (3 cards)
+  achievementCards: z.array(z.object({
+    value: z.string().min(1, "Achievement value is required"),
+    label: z.string().min(1, "Achievement label is required"),
+    icon: z.enum(["sparkles", "trending", "award", "users", "target"]).default("sparkles"),
+    color: z.enum(["blue", "green", "purple", "orange", "pink"]).default("blue"),
+  })).length(3, "Exactly 3 achievement cards are required"),
+  
+  // Floating metrics badges
+  floatingMetrics: z.array(z.object({
+    value: z.string().min(1, "Metric value is required"),
+    label: z.string().min(1, "Metric label is required"),
+    icon: z.enum(["trending", "users", "award", "target", "dollar"]).default("trending"),
+    position: z.enum(["top_left", "top_right", "bottom_left", "bottom_right"]).default("top_left"),
+  })).max(3, "Maximum 3 floating metrics allowed"),
+  
+  // Founder badge
+  founderBadge: z.object({
+    show: z.boolean().default(true),
+    text: z.string().default("AI Founder"),
+    icon: z.enum(["award", "star", "crown", "sparkles"]).default("award"),
+  }),
+  
+  // Background settings
+  backgroundSettings: z.object({
+    showAnimatedBlobs: z.boolean().default(true),
+    showFloatingElements: z.boolean().default(true),
+    gradientStyle: z.enum(["blue_purple", "blue_indigo", "purple_pink", "minimal"]).default("blue_purple"),
+  }),
 });
 
 // Stats Section Schema
