@@ -39,10 +39,14 @@ export default function PortfolioImageManager() {
   const createImageMutation = useMutation({
     mutationFn: (image: InsertPortfolioImage) => 
       apiRequest("/api/admin/portfolio-images", "POST", image),
-    onSuccess: () => {
+    onSuccess: (data) => {
+      // Invalidate all image-related caches
       queryClient.invalidateQueries({ queryKey: ["/api/admin/portfolio-images"] });
-      // Also invalidate portfolio image queries for live site
-      queryClient.invalidateQueries({ queryKey: ["/api/portfolio/images"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/portfolio/images/hero"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/portfolio/images/about"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/portfolio/images/profile"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/portfolio/images/background"] });
+      
       setNewImage({
         section: "hero",
         imageUrl: "",
@@ -53,7 +57,7 @@ export default function PortfolioImageManager() {
       });
       setUploadMode("file");
       setIsDialogOpen(false);
-      toast({ title: "Image added successfully" });
+      toast({ title: "Image added and portfolio updated successfully" });
     },
     onError: (error: any) => {
       console.error('Create image error:', error);
@@ -80,11 +84,16 @@ export default function PortfolioImageManager() {
   const updateImageMutation = useMutation({
     mutationFn: ({ id, ...image }: Partial<PortfolioImage> & { id: number }) =>
       apiRequest(`/api/admin/portfolio-images/${id}`, "PUT", image),
-    onSuccess: () => {
+    onSuccess: (data) => {
+      // Invalidate all image-related caches
       queryClient.invalidateQueries({ queryKey: ["/api/admin/portfolio-images"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/portfolio/images"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/portfolio/images/hero"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/portfolio/images/about"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/portfolio/images/profile"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/portfolio/images/background"] });
+      
       setEditingImage(null);
-      toast({ title: "Image updated successfully" });
+      toast({ title: "Image updated and portfolio refreshed successfully" });
     },
     onError: (error: any) => {
       console.error('Update image error:', error);
@@ -112,9 +121,14 @@ export default function PortfolioImageManager() {
     mutationFn: (id: number) => 
       apiRequest(`/api/admin/portfolio-images/${id}`, "DELETE"),
     onSuccess: () => {
+      // Invalidate all image-related caches
       queryClient.invalidateQueries({ queryKey: ["/api/admin/portfolio-images"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/portfolio/images"] });
-      toast({ title: "Image deleted successfully" });
+      queryClient.invalidateQueries({ queryKey: ["/api/portfolio/images/hero"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/portfolio/images/about"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/portfolio/images/profile"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/portfolio/images/background"] });
+      
+      toast({ title: "Image deleted and portfolio refreshed successfully" });
     },
     onError: (error) => {
       console.error('Delete image error:', error);
