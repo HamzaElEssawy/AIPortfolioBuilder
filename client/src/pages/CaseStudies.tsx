@@ -2,8 +2,9 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Calendar, Users, Clock } from "lucide-react";
+import { ArrowRight, Calendar, Users, Clock, Home } from "lucide-react";
 import { Link } from "wouter";
+import Navigation from "@/components/Navigation";
 
 interface CaseStudy {
   id: number;
@@ -46,6 +47,7 @@ export default function CaseStudies() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-blue-900">
+      <Navigation />
       <div className="container mx-auto px-6 py-16">
         {/* Header Section */}
         <div className="text-center mb-16">

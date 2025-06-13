@@ -88,22 +88,7 @@ export default function Metrics() {
             })}
         </div>
 
-        {/* Leadership Philosophy Integration */}
-        <div className="mt-16 max-w-4xl mx-auto">
-          <div className="bg-white/10 rounded-xl p-8 border border-white/20">
-            <div className="flex items-start gap-4 mb-6">
-              <div className="text-4xl text-secondary-green">"</div>
-              <div>
-                <h3 className="text-xl font-bold text-white mb-4">Leadership Philosophy</h3>
-                <p className="text-gray-300 italic leading-relaxed">
-                  AI product success isn't just about cutting-edge technology—it's about understanding cultural nuances, 
-                  regulatory landscapes, and human needs across diverse markets. True innovation happens when we bridge 
-                  technical excellence with deep market empathy.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+
       </div>
     </section>
   );

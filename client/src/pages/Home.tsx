@@ -29,8 +29,8 @@ export default function Home() {
       <Navigation />
       {portfolioStatus.hero && <Hero />}
       {portfolioStatus.about && <AboutStreamlined />}
-      <Metrics />
       {portfolioStatus.caseStudies && <FeaturedCaseStudies />}
+      <Metrics />
       {portfolioStatus.skills && <Skills />}
       {portfolioStatus.timeline && <Timeline />}
       {portfolioStatus.contact && <ContactEnhanced />}
