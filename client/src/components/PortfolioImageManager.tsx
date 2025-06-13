@@ -13,7 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { apiRequest } from "@/lib/queryClient";
 import type { PortfolioImage, InsertPortfolioImage } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
-import ImageDebugger from "./ImageDebugger";
+
 
 export default function PortfolioImageManager() {
   const { toast } = useToast();
@@ -289,8 +289,6 @@ export default function PortfolioImageManager() {
 
   return (
     <div className="space-y-6">
-      <ImageDebugger />
-      
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-navy">Portfolio Images</h2>
@@ -422,7 +420,9 @@ export default function PortfolioImageManager() {
                     value={newImage.orderIndex?.toString() || ""}
                     onChange={(e) => setNewImage({...newImage, orderIndex: parseInt(e.target.value) || 0})}
                     min="0"
+                    placeholder="0"
                   />
+                  <p className="text-xs text-gray-500">Lower numbers appear first (0 = first, 1 = second, etc.)</p>
                 </div>
                 
                 <div className="flex items-center space-x-2 mt-6">
@@ -687,7 +687,9 @@ export default function PortfolioImageManager() {
                     value={editingImage.orderIndex?.toString() || ""}
                     onChange={(e) => setEditingImage({...editingImage, orderIndex: parseInt(e.target.value) || 0})}
                     min="0"
+                    placeholder="0"
                   />
+                  <p className="text-xs text-gray-500">Lower numbers appear first (0 = first, 1 = second, etc.)</p>
                 </div>
                 
                 <div className="flex items-center space-x-2 mt-6">

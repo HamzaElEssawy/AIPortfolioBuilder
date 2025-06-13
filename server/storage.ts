@@ -600,8 +600,11 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updatePortfolioImage(id: number, updateData: Partial<InsertPortfolioImage>): Promise<PortfolioImage> {
+    // Remove timestamp fields from update data to avoid conversion errors
+    const { createdAt, updatedAt, ...cleanUpdateData } = updateData as any;
+    
     const result = await db.update(portfolioImages)
-      .set({ ...updateData, updatedAt: new Date() })
+      .set({ ...cleanUpdateData, updatedAt: new Date() })
       .where(eq(portfolioImages.id, id))
       .returning();
     return result[0];

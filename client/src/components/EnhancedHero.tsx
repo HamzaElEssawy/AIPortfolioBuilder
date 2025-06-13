@@ -37,7 +37,8 @@ function HeroImageDisplay() {
     queryKey: ["/api/portfolio/images/hero"],
   });
 
-  const heroImage = heroImages.find(img => img.section === "hero") || heroImages[0];
+  const activeHeroImages = heroImages.filter(img => img.isActive).sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
+  const heroImage = activeHeroImages[0];
 
   return (
     <div className="w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 mx-auto rounded-full bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 border-4 border-white dark:border-gray-800 shadow-2xl flex items-center justify-center overflow-hidden">

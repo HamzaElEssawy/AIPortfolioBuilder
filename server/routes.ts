@@ -1477,7 +1477,20 @@ What would be most helpful for your current career goals?`;
       
       const image = await storage.updatePortfolioImage(imageId, req.body);
       
-      console.log(`Successfully updated portfolio image ${imageId}:`, image);
+      // Invalidate cache for the specific section
+      await cacheSync.invalidateContentCache({
+        invalidatePortfolio: true,
+        invalidateSpecific: [
+          `route:/images/${image.section}:{}`,
+          `route:/api/portfolio/images/${image.section}`,
+          'route:/images/hero:{}',
+          'route:/images/about:{}',
+          'route:/images/profile:{}'
+        ],
+        broadcastUpdate: true
+      });
+      
+      console.log(`Successfully updated portfolio image ${imageId} and invalidated cache:`, image);
       res.json(image);
     } catch (error) {
       console.error("Error updating portfolio image:", error);
@@ -1491,7 +1504,29 @@ What would be most helpful for your current career goals?`;
   app.delete("/api/admin/portfolio-images/:id", isAdmin, async (req, res) => {
     try {
       const { id } = req.params;
-      await storage.deletePortfolioImage(parseInt(id));
+      const imageId = parseInt(id);
+      
+      // Get the image info before deletion for cache invalidation
+      const image = await storage.getPortfolioImage(imageId);
+      
+      await storage.deletePortfolioImage(imageId);
+      
+      // Invalidate cache for the specific section
+      if (image) {
+        await cacheSync.invalidateContentCache({
+          invalidatePortfolio: true,
+          invalidateSpecific: [
+            `route:/images/${image.section}:{}`,
+            `route:/api/portfolio/images/${image.section}`,
+            'route:/images/hero:{}',
+            'route:/images/about:{}',
+            'route:/images/profile:{}'
+          ],
+          broadcastUpdate: true
+        });
+      }
+      
+      console.log(`Portfolio image ${imageId} deleted and cache invalidated`);
       res.json({ message: "Portfolio image deleted successfully" });
     } catch (error) {
       console.error("Error deleting portfolio image:", error);
