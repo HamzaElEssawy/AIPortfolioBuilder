@@ -57,7 +57,7 @@ export default function About() {
           <h2 className="text-3xl lg:text-4xl font-bold text-navy mb-6">
             {aboutContent?.title || "About Hamza"}
           </h2>
-          <div className="text-lg text-text-charcoal max-w-3xl mx-auto leading-relaxed"
+          <div className="text-lg text-text-charcoal max-w-3xl mx-auto leading-relaxed prose prose-lg max-w-none"
                dangerouslySetInnerHTML={{ __html: aboutContent?.summary || "Professional AI Product Leader with expertise in scaling enterprise solutions." }}
           />
         </div>
@@ -119,7 +119,7 @@ export default function About() {
                     {aboutContent?.philosophyTitle || "Leadership Philosophy"}
                   </h3>
                 </div>
-                <blockquote className="text-lg text-text-charcoal leading-relaxed italic"
+                <blockquote className="text-lg text-text-charcoal leading-relaxed italic prose prose-lg max-w-none"
                            dangerouslySetInnerHTML={{ 
                              __html: aboutContent?.philosophyQuote || "AI product success isn't just about cutting-edge technology—it's about understanding cultural nuances, regulatory landscapes, and human needs across diverse markets. True innovation happens when we bridge technical excellence with deep market empathy."
                            }}
@@ -128,7 +128,7 @@ export default function About() {
             </Card>
 
             {/* Professional Narrative */}
-            <div className="space-y-6 text-lg text-text-charcoal leading-relaxed"
+            <div className="space-y-6 text-lg text-text-charcoal leading-relaxed prose prose-lg max-w-none"
                  dangerouslySetInnerHTML={{ 
                    __html: aboutContent?.competencies || "With over 7 years of experience spanning the MENA region and Southeast Asia, I specialize in transforming complex AI concepts into scalable enterprise solutions."
                  }}

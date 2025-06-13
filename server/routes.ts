@@ -749,11 +749,23 @@ What would be most helpful for your current career goals?`;
       // Update the live portfolio content directly
       const updatedContent = await contentManager.updateSection(sectionId, content);
       
-      // Clear content manager cache and invalidate section cache
+      // Clear content manager cache BEFORE invalidating section cache
       contentManager.clearCache();
-      await cacheSync.invalidateSection(sectionId);
       
-      console.log(`Content manager cache cleared and section cache invalidated for ${sectionId}`);
+      // Comprehensive cache invalidation
+      await cacheSync.invalidateContentCache({
+        invalidatePortfolio: true,
+        invalidateContent: true,
+        invalidateSpecific: [
+          `route:/content/${sectionId}`,
+          `route:/api/portfolio/content/${sectionId}`,
+          'route:/content/about',
+          'route:/api/portfolio/content'
+        ],
+        broadcastUpdate: true
+      });
+      
+      console.log(`Content manager cache cleared and comprehensive cache invalidated for ${sectionId}`);
       
       // Force reload content to verify update
       const verifyContent = await contentManager.getSection(sectionId);
@@ -761,7 +773,7 @@ What would be most helpful for your current career goals?`;
       
       res.json({ 
         success: true, 
-        message: "Content updated and published with real-time sync",
+        message: "Content updated and published with comprehensive cache invalidation",
         sectionId,
         content: verifyContent,
         version: updatedContent.version,

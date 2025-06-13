@@ -21,7 +21,6 @@ class CacheSynchronizer {
     return CacheSynchronizer.instance;
   }
 
-  // Register WebSocket client for real-time updates
   addClient(client: any): void {
     this.clients.add(client);
     logger.debug('Cache sync client connected', { clientCount: this.clients.size });
@@ -32,7 +31,6 @@ class CacheSynchronizer {
     logger.debug('Cache sync client disconnected', { clientCount: this.clients.size });
   }
 
-  // Comprehensive cache invalidation for content updates
   async invalidateContentCache(options: CacheSyncOptions = {}): Promise<void> {
     const patterns = [];
 
@@ -56,7 +54,6 @@ class CacheSynchronizer {
       patterns.push(...options.invalidateSpecific);
     }
 
-    // Default comprehensive invalidation
     if (patterns.length === 0) {
       patterns.push('route:/api/portfolio');
       patterns.push('route:/content');
@@ -74,7 +71,6 @@ class CacheSynchronizer {
       broadcastUpdate: options.broadcastUpdate
     });
 
-    // Broadcast to connected clients for real-time updates
     if (options.broadcastUpdate && this.clients.size > 0) {
       this.broadcastUpdate({
         type: 'cache_invalidated',
@@ -84,13 +80,14 @@ class CacheSynchronizer {
     }
   }
 
-  // Targeted cache invalidation for specific content sections
   async invalidateSection(section: string): Promise<void> {
     const patterns = [
       `route:/api/portfolio/content/${section}`,
       `route:/content/${section}`,
       `route:/images/${section}`,
-      'route:/api/portfolio' // Always invalidate main portfolio cache
+      'route:/api/portfolio',
+      'route:/content/about',
+      'route:/api/portfolio/content'
     ];
 
     let totalInvalidated = 0;
@@ -105,48 +102,40 @@ class CacheSynchronizer {
       entriesInvalidated: totalInvalidated
     });
 
-    // Broadcast section update
-    this.broadcastUpdate({
-      type: 'section_updated',
-      section,
-      timestamp: new Date().toISOString()
-    });
+    if (this.clients.size > 0) {
+      this.broadcastUpdate({
+        type: 'section_invalidated',
+        section,
+        patterns,
+        timestamp: new Date().toISOString()
+      });
+    }
   }
 
-  // Preemptive cache warming for critical content
   async warmCriticalContent(): Promise<void> {
-    const criticalEndpoints = [
-      '/api/portfolio/content/hero',
-      '/api/portfolio/content/about',
-      '/api/portfolio/metrics',
-      '/api/portfolio/skills'
-    ];
-
-    const warmupPromises = criticalEndpoints.map(async (endpoint) => {
-      try {
-        // This would typically make a request to warm the cache
-        logger.debug('Warming cache for endpoint', { endpoint });
-      } catch (error) {
-        logger.warn('Cache warming failed for endpoint', { endpoint, error });
-      }
-    });
-
-    await Promise.all(warmupPromises);
-    logger.info('Critical content cache warming completed', {
-      endpoints: criticalEndpoints.length
-    });
+    try {
+      const criticalRoutes = [
+        'route:/content/hero',
+        'route:/content/about',
+        'route:/api/portfolio/content'
+      ];
+      
+      logger.debug('Warming critical content routes', { routes: criticalRoutes.length });
+    } catch (error) {
+      logger.error('Failed to warm critical content', { error });
+    }
   }
 
-  // Broadcast updates to connected clients
   private broadcastUpdate(update: any): void {
-    const message = JSON.stringify(update);
+    if (this.clients.size === 0) return;
+    
     let successCount = 0;
     let errorCount = 0;
-
-    this.clients.forEach((client) => {
+    
+    this.clients.forEach(client => {
       try {
-        if (client.readyState === 1) { // WebSocket.OPEN
-          client.send(message);
+        if (client.readyState === 1) {
+          client.send(JSON.stringify(update));
           successCount++;
         } else {
           this.clients.delete(client);
@@ -154,7 +143,7 @@ class CacheSynchronizer {
       } catch (error) {
         errorCount++;
         this.clients.delete(client);
-        logger.warn('Failed to broadcast update to client', { error });
+        logger.warn('Failed to broadcast to client', { error });
       }
     });
 
@@ -165,7 +154,6 @@ class CacheSynchronizer {
     });
   }
 
-  // Get cache statistics for monitoring
   getCacheStats(): any {
     const stats = cache.getStats();
     return {
@@ -175,41 +163,15 @@ class CacheSynchronizer {
     };
   }
 
-  // Clean up expired cache entries
   async cleanup(): Promise<void> {
-    // The cache manager handles its own cleanup
     logger.debug('Cache cleanup initiated');
   }
 }
 
 export const cacheSync = CacheSynchronizer.getInstance();
 
-// Middleware to handle cache invalidation on content updates
 export function cacheSyncMiddleware(section?: string) {
   return async (req: any, res: any, next: any) => {
-    const originalSend = res.send;
-    
-    res.send = function(body: any) {
-      // Only invalidate cache on successful updates
-      if (res.statusCode >= 200 && res.statusCode < 300) {
-        if (req.method === 'PUT' || req.method === 'POST' || req.method === 'DELETE') {
-          setImmediate(async () => {
-            if (section) {
-              await cacheSync.invalidateSection(section);
-            } else {
-              await cacheSync.invalidateContentCache({
-                invalidatePortfolio: true,
-                invalidateContent: true,
-                broadcastUpdate: true
-              });
-            }
-          });
-        }
-      }
-      
-      return originalSend.call(this, body);
-    };
-    
     next();
   };
 }
