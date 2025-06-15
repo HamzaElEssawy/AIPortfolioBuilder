@@ -112,6 +112,12 @@ export default function SimpleCaseStudyImageUpload({ caseStudyId, caseStudyTitle
     uploadMutation.mutate(formData);
   };
 
+  const handleButtonClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    handleUpload(e as any);
+  };
+
   const handleDelete = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -194,7 +200,8 @@ export default function SimpleCaseStudyImageUpload({ caseStudyId, caseStudyTitle
             />
           </div>
           <Button
-            type="submit"
+            type="button"
+            onClick={handleButtonClick}
             disabled={!selectedFile || uploadMutation.isPending}
             className="w-full"
           >
