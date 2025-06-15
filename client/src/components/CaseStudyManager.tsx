@@ -17,7 +17,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import AdvancedTextEditor from "@/components/AdvancedTextEditor";
+import UltimateTextEditor from "@/components/UltimateTextEditor";
 
 interface CaseStudy {
   id: number;
@@ -478,46 +478,42 @@ export default function CaseStudyManager() {
               </div>
 
               <div>
-                <Label htmlFor="challenge">Challenge *</Label>
-                <AdvancedTextEditor
+                <UltimateTextEditor
+                  label="Challenge *"
                   value={formData.challenge}
                   onChange={(content) => setFormData(prev => ({ ...prev, challenge: content }))}
                   placeholder="Describe the main challenge or problem that needed to be solved..."
                   height={150}
-                  mode="rich"
                 />
               </div>
 
               <div>
-                <Label htmlFor="approach">Approach *</Label>
-                <AdvancedTextEditor
+                <UltimateTextEditor
+                  label="Approach *"
                   value={formData.approach}
                   onChange={(content) => setFormData(prev => ({ ...prev, approach: content }))}
                   placeholder="Explain your methodology and strategic approach..."
                   height={150}
-                  mode="rich"
                 />
               </div>
 
               <div>
-                <Label htmlFor="solution">Solution *</Label>
-                <AdvancedTextEditor
+                <UltimateTextEditor
+                  label="Solution *"
                   value={formData.solution}
                   onChange={(content) => setFormData(prev => ({ ...prev, solution: content }))}
                   placeholder="Detail the solution implemented and key features..."
                   height={150}
-                  mode="rich"
                 />
               </div>
 
               <div>
-                <Label htmlFor="impact">Impact *</Label>
-                <AdvancedTextEditor
+                <UltimateTextEditor
+                  label="Impact *"
                   value={formData.impact}
                   onChange={(content) => setFormData(prev => ({ ...prev, impact: content }))}
                   placeholder="Quantify the results and business impact achieved..."
                   height={150}
-                  mode="rich"
                 />
               </div>
 
