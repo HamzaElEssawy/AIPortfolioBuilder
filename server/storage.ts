@@ -463,9 +463,12 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateSkill(id: number, updateData: Partial<InsertSkill>): Promise<Skill> {
+    // Remove timestamp fields from update data to avoid conversion errors
+    const { createdAt, updatedAt, ...cleanUpdateData } = updateData as any;
+    
     const [skill] = await db
       .update(skills)
-      .set(updateData)
+      .set({ ...cleanUpdateData, updatedAt: new Date() })
       .where(eq(skills.id, id))
       .returning();
     return skill;
