@@ -17,6 +17,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import AdvancedTextEditor from "@/components/AdvancedTextEditor";
 
 interface CaseStudy {
   id: number;
@@ -110,7 +111,7 @@ export default function CaseStudyManager() {
           : data.technologies,
         slug: data.slug || generateSlug(data.title),
       };
-      return apiRequest("/api/admin/case-studies", "POST", payload);
+      return apiRequest("POST", "/api/admin/case-studies", payload);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/case-studies"] });
@@ -137,7 +138,7 @@ export default function CaseStudyManager() {
           ? data.technologies.split(",").map(t => t.trim()).filter(Boolean)
           : data.technologies,
       };
-      return apiRequest(`/api/admin/case-studies/${id}`, "PUT", payload);
+      return apiRequest("PUT", `/api/admin/case-studies/${id}`, payload);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/case-studies"] });
@@ -155,7 +156,7 @@ export default function CaseStudyManager() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
-      return apiRequest(`/api/admin/case-studies/${id}`, "DELETE");
+      return apiRequest("DELETE", `/api/admin/case-studies/${id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/case-studies"] });
@@ -170,7 +171,7 @@ export default function CaseStudyManager() {
 
   const toggleFeaturedMutation = useMutation({
     mutationFn: async ({ id, featured }: { id: number; featured: boolean }) => {
-      return apiRequest(`/api/admin/case-studies/${id}/featured`, "PATCH", { featured });
+      return apiRequest("PATCH", `/api/admin/case-studies/${id}/featured`, { featured });
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/case-studies"] });
@@ -185,7 +186,7 @@ export default function CaseStudyManager() {
 
   const reorderMutation = useMutation({
     mutationFn: async (reorderedStudies: { id: number; displayOrder: number }[]) => {
-      return apiRequest("/api/admin/case-studies/reorder", "PATCH", { studies: reorderedStudies });
+      return apiRequest("PATCH", "/api/admin/case-studies/reorder", { studies: reorderedStudies });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/case-studies"] });
@@ -478,45 +479,45 @@ export default function CaseStudyManager() {
 
               <div>
                 <Label htmlFor="challenge">Challenge *</Label>
-                <Textarea
-                  id="challenge"
+                <AdvancedTextEditor
                   value={formData.challenge}
-                  onChange={(e) => setFormData(prev => ({ ...prev, challenge: e.target.value }))}
-                  rows={3}
-                  required
+                  onChange={(content) => setFormData(prev => ({ ...prev, challenge: content }))}
+                  placeholder="Describe the main challenge or problem that needed to be solved..."
+                  height={150}
+                  mode="rich"
                 />
               </div>
 
               <div>
                 <Label htmlFor="approach">Approach *</Label>
-                <Textarea
-                  id="approach"
+                <AdvancedTextEditor
                   value={formData.approach}
-                  onChange={(e) => setFormData(prev => ({ ...prev, approach: e.target.value }))}
-                  rows={3}
-                  required
+                  onChange={(content) => setFormData(prev => ({ ...prev, approach: content }))}
+                  placeholder="Explain your methodology and strategic approach..."
+                  height={150}
+                  mode="rich"
                 />
               </div>
 
               <div>
                 <Label htmlFor="solution">Solution *</Label>
-                <Textarea
-                  id="solution"
+                <AdvancedTextEditor
                   value={formData.solution}
-                  onChange={(e) => setFormData(prev => ({ ...prev, solution: e.target.value }))}
-                  rows={3}
-                  required
+                  onChange={(content) => setFormData(prev => ({ ...prev, solution: content }))}
+                  placeholder="Detail the solution implemented and key features..."
+                  height={150}
+                  mode="rich"
                 />
               </div>
 
               <div>
                 <Label htmlFor="impact">Impact *</Label>
-                <Textarea
-                  id="impact"
+                <AdvancedTextEditor
                   value={formData.impact}
-                  onChange={(e) => setFormData(prev => ({ ...prev, impact: e.target.value }))}
-                  rows={3}
-                  required
+                  onChange={(content) => setFormData(prev => ({ ...prev, impact: content }))}
+                  placeholder="Quantify the results and business impact achieved..."
+                  height={150}
+                  mode="rich"
                 />
               </div>
 
