@@ -18,7 +18,10 @@ import {
   Trophy,
   ChevronRight,
   Eye,
-  Lightbulb
+  Lightbulb,
+  Settings,
+  BarChart3,
+  Briefcase
 } from "lucide-react";
 import type { SkillCategory, Skill } from "@shared/schema";
 import { useState, useEffect } from "react";
@@ -40,10 +43,11 @@ export default function Skills() {
   const getCategoryIcon = (categoryName: string) => {
     const name = categoryName.toLowerCase();
     if (name.includes('ai') || name.includes('machine learning')) return Brain;
+    if (name.includes('technical') && name.includes('leadership')) return Settings;
     if (name.includes('leadership') || name.includes('management')) return Users;
     if (name.includes('technical') || name.includes('development')) return Code;
     if (name.includes('product') || name.includes('strategy')) return TrendingUp;
-    if (name.includes('business')) return Rocket;
+    if (name.includes('business')) return Briefcase;
     return Zap;
   };
 
@@ -214,7 +218,7 @@ export default function Skills() {
             Skills & <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 animate-pulse">Expertise</span>
           </h2>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-8">
-            Gamified view of technical capabilities and domain expertise across AI product development, leadership, and innovation
+            A comprehensive skill tree showcasing technical expertise and leadership capabilities that drive product excellence and exponential business growth.
           </p>
           
           {/* Skill Legend */}

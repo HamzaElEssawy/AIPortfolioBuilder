@@ -136,11 +136,11 @@ export default function SkillsManager() {
   };
 
   const getProficiencyLabel = (level: number) => {
-    if (level >= 9) return "Expert";
-    if (level >= 7) return "Advanced";
-    if (level >= 5) return "Intermediate";
-    if (level >= 3) return "Basic";
-    return "Beginner";
+    if (level >= 9) return "Master";
+    if (level >= 7) return "Expert";
+    if (level >= 5) return "Advanced";
+    if (level >= 3) return "Intermediate";
+    return "Developing";
   };
 
   const getProficiencyColor = (level: number) => {
