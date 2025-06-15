@@ -54,6 +54,8 @@ interface CaseStudyFormData {
   status: string;
   featured: boolean;
   imageUrl: string;
+  imageFile: string;
+  externalUrl: string;
   clientName: string;
   projectDuration: string;
   teamSize: string;
@@ -72,6 +74,8 @@ const initialFormData: CaseStudyFormData = {
   status: "draft",
   featured: false,
   imageUrl: "",
+  imageFile: "",
+  externalUrl: "",
   clientName: "",
   projectDuration: "",
   teamSize: "",
@@ -96,7 +100,7 @@ export default function CaseStudyManager() {
         metrics: data.metrics.split(",").map(m => m.trim()).filter(Boolean),
         technologies: data.technologies.split(",").map(t => t.trim()).filter(Boolean),
       };
-      return apiRequest("POST", "/api/admin/case-studies", payload);
+      return apiRequest("/api/admin/case-studies", "POST", payload);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/case-studies"] });
@@ -117,7 +121,7 @@ export default function CaseStudyManager() {
         metrics: data.metrics.split(",").map(m => m.trim()).filter(Boolean),
         technologies: data.technologies.split(",").map(t => t.trim()).filter(Boolean),
       };
-      return apiRequest("PUT", `/api/admin/case-studies/${id}`, payload);
+      return apiRequest(`/api/admin/case-studies/${id}`, "PUT", payload);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/case-studies"] });
@@ -133,7 +137,7 @@ export default function CaseStudyManager() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
-      return apiRequest("DELETE", `/api/admin/case-studies/${id}`);
+      return apiRequest(`/api/admin/case-studies/${id}`, "DELETE");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/case-studies"] });
@@ -146,7 +150,7 @@ export default function CaseStudyManager() {
 
   const toggleFeaturedMutation = useMutation({
     mutationFn: async ({ id, featured }: { id: number; featured: boolean }) => {
-      return apiRequest("PATCH", `/api/admin/case-studies/${id}/featured`, { featured });
+      return apiRequest(`/api/admin/case-studies/${id}/featured`, "PATCH", { featured });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/case-studies"] });
@@ -155,7 +159,7 @@ export default function CaseStudyManager() {
 
   const reorderMutation = useMutation({
     mutationFn: async (reorderedStudies: { id: number; displayOrder: number }[]) => {
-      return apiRequest("PATCH", "/api/admin/case-studies/reorder", { studies: reorderedStudies });
+      return apiRequest("/api/admin/case-studies/reorder", "PATCH", { studies: reorderedStudies });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/case-studies"] });
@@ -176,6 +180,8 @@ export default function CaseStudyManager() {
       status: caseStudy.status,
       featured: caseStudy.featured,
       imageUrl: caseStudy.imageUrl || "",
+      imageFile: caseStudy.imageFile || "",
+      externalUrl: caseStudy.externalUrl || "",
       clientName: caseStudy.clientName || "",
       projectDuration: caseStudy.projectDuration || "",
       teamSize: caseStudy.teamSize || "",
@@ -298,7 +304,11 @@ export default function CaseStudyManager() {
                     value={formData.slug}
                     onChange={(e) => setFormData(prev => ({ ...prev, slug: e.target.value }))}
                     required
+                    placeholder="ai-content-automation"
                   />
+                  <p className="text-xs text-gray-500 mt-1">
+                    This creates the web address for your case study (e.g., yoursite.com/case-study/ai-content-automation)
+                  </p>
                 </div>
                 <div>
                   <Label htmlFor="status">Status</Label>
@@ -343,15 +353,56 @@ export default function CaseStudyManager() {
                 </div>
               </div>
 
-              <div>
-                <Label htmlFor="imageUrl">Image URL</Label>
-                <Input
-                  id="imageUrl"
-                  value={formData.imageUrl}
-                  onChange={(e) => setFormData(prev => ({ ...prev, imageUrl: e.target.value }))}
-                  placeholder="https://example.com/image.jpg"
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="imageFile">Case Study Image</Label>
+                  <Input
+                    id="imageFile"
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        // In a real implementation, this would upload to your storage service
+                        const fileName = file.name;
+                        setFormData(prev => ({ ...prev, imageFile: fileName }));
+                      }
+                    }}
+                    className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Upload an image from your computer (JPG, PNG, WebP)
+                  </p>
+                </div>
+                <div>
+                  <Label htmlFor="externalUrl">Project/Company Link</Label>
+                  <Input
+                    id="externalUrl"
+                    value={formData.externalUrl}
+                    onChange={(e) => setFormData(prev => ({ ...prev, externalUrl: e.target.value }))}
+                    placeholder="https://company.com/product"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Link to the product, company, or live project (optional)
+                  </p>
+                </div>
               </div>
+
+              {/* Legacy Image URL field for existing cases */}
+              {formData.imageUrl && (
+                <div>
+                  <Label htmlFor="imageUrl">Current Image URL</Label>
+                  <Input
+                    id="imageUrl"
+                    value={formData.imageUrl}
+                    onChange={(e) => setFormData(prev => ({ ...prev, imageUrl: e.target.value }))}
+                    placeholder="https://example.com/image.jpg"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Legacy image URL - use file upload above for new images
+                  </p>
+                </div>
+              )}
 
               <div>
                 <Label htmlFor="challenge">Challenge *</Label>
