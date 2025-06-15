@@ -15,11 +15,12 @@ interface CaseStudyImage {
 }
 
 interface SimpleCaseStudyImageUploadProps {
-  caseStudyId: number;
+  caseStudyId: number | null;
   caseStudyTitle: string;
+  isCreateMode?: boolean;
 }
 
-export default function SimpleCaseStudyImageUpload({ caseStudyId, caseStudyTitle }: SimpleCaseStudyImageUploadProps) {
+export default function SimpleCaseStudyImageUpload({ caseStudyId, caseStudyTitle, isCreateMode = false }: SimpleCaseStudyImageUploadProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [altText, setAltText] = useState("");
   const { toast } = useToast();
@@ -27,12 +28,16 @@ export default function SimpleCaseStudyImageUpload({ caseStudyId, caseStudyTitle
 
   const { data: images = [], isLoading } = useQuery<CaseStudyImage[]>({
     queryKey: [`/api/portfolio/images/case-study/${caseStudyId}`],
+    enabled: !isCreateMode && caseStudyId !== null,
   });
 
   const currentImage = images.length > 0 ? images[0] : null;
 
   const uploadMutation = useMutation({
     mutationFn: async (data: FormData) => {
+      if (isCreateMode || !caseStudyId) {
+        throw new Error("Please create the case study first, then add an image by editing it.");
+      }
       const response = await fetch(`/api/admin/portfolio-images/case-study/${caseStudyId}`, {
         method: "POST",
         body: data,
@@ -44,9 +49,11 @@ export default function SimpleCaseStudyImageUpload({ caseStudyId, caseStudyTitle
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/portfolio/images/case-study/${caseStudyId}`] });
-      queryClient.invalidateQueries({ queryKey: ["/api/portfolio/case-studies"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/case-studies"] });
+      if (caseStudyId) {
+        queryClient.invalidateQueries({ queryKey: [`/api/portfolio/images/case-study/${caseStudyId}`] });
+        queryClient.invalidateQueries({ queryKey: ["/api/portfolio/case-studies"] });
+        queryClient.invalidateQueries({ queryKey: ["/api/admin/case-studies"] });
+      }
       setSelectedFile(null);
       setAltText("");
       toast({
@@ -190,7 +197,8 @@ export default function SimpleCaseStudyImageUpload({ caseStudyId, caseStudyTitle
               type="file"
               accept="image/*"
               onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
-              className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+              disabled={isCreateMode}
+              className={`file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 ${isCreateMode ? 'disabled:opacity-50' : ''}`}
             />
           </div>
           <div>
@@ -200,17 +208,26 @@ export default function SimpleCaseStudyImageUpload({ caseStudyId, caseStudyTitle
               value={altText}
               onChange={(e) => setAltText(e.target.value)}
               placeholder="Describe the image..."
+              disabled={isCreateMode}
+              className={isCreateMode ? 'disabled:opacity-50' : ''}
             />
           </div>
           <Button
             type="button"
             onClick={handleButtonClick}
-            disabled={!selectedFile || uploadMutation.isPending}
-            className="w-full"
+            disabled={isCreateMode || !selectedFile || uploadMutation.isPending}
+            className={`w-full ${isCreateMode ? 'disabled:opacity-50' : ''}`}
           >
             <Upload className="w-4 h-4 mr-2" />
             {uploadMutation.isPending ? "Uploading..." : "Upload Image"}
           </Button>
+          {isCreateMode && (
+            <div className="text-center py-2">
+              <p className="text-xs text-blue-600 bg-blue-50 px-3 py-1 rounded-full inline-block">
+                Create the case study first, then you can add an image by editing it.
+              </p>
+            </div>
+          )}
         </form>
       )}
     </div>
