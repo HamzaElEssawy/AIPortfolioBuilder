@@ -399,9 +399,12 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateExperienceEntry(id: number, updateData: Partial<InsertExperienceEntry>): Promise<ExperienceEntry> {
+    // Remove timestamp fields from update data to avoid conversion errors
+    const { createdAt, updatedAt, ...cleanUpdateData } = updateData as any;
+    
     const [entry] = await db
       .update(experienceEntries)
-      .set({ ...updateData, updatedAt: new Date() })
+      .set({ ...cleanUpdateData, updatedAt: new Date() })
       .where(eq(experienceEntries.id, id))
       .returning();
     return entry;
