@@ -32,6 +32,8 @@ export const caseStudies = pgTable("case_studies", {
   featured: boolean("featured").default(false), // for homepage display
   displayOrder: integer("display_order").default(0),
   imageUrl: text("image_url"),
+  imageFile: text("image_file"), // For local uploaded images
+  externalUrl: text("external_url"), // Link to product/company
   clientName: text("client_name"),
   projectDuration: text("project_duration"),
   teamSize: text("team_size"),
