@@ -44,10 +44,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const adminUsername = process.env.ADMIN_USERNAME || "admin";
       const adminPassword = process.env.ADMIN_PASSWORD || "admin123";
       
+      console.log("Login attempt:", { 
+        received: { username, password: password ? '***' : 'empty' },
+        expected: { username: adminUsername, password: adminPassword ? '***' : 'empty' },
+        match: { username: username === adminUsername, password: password === adminPassword }
+      });
+      
       if (username === adminUsername && password === adminPassword) {
         req.session.isAdmin = true;
+        console.log("Login successful for:", username);
         res.json({ success: true, message: "Login successful" });
       } else {
+        console.log("Login failed - credentials mismatch");
         res.status(401).json({ message: "Invalid credentials" });
       }
     } catch (error) {
