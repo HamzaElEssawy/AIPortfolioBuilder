@@ -197,8 +197,7 @@ export default function SimpleCaseStudyImageUpload({ caseStudyId, caseStudyTitle
               type="file"
               accept="image/*"
               onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
-              disabled={isCreateMode}
-              className={`file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 ${isCreateMode ? 'disabled:opacity-50' : ''}`}
+              className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
             />
           </div>
           <div>
@@ -208,8 +207,6 @@ export default function SimpleCaseStudyImageUpload({ caseStudyId, caseStudyTitle
               value={altText}
               onChange={(e) => setAltText(e.target.value)}
               placeholder="Describe the image..."
-              disabled={isCreateMode}
-              className={isCreateMode ? 'disabled:opacity-50' : ''}
             />
           </div>
           <Button
