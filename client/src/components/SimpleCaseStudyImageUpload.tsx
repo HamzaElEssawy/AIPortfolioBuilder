@@ -75,9 +75,12 @@ export default function SimpleCaseStudyImageUpload({ caseStudyId, caseStudyTitle
       return response.json();
     },
     onSuccess: () => {
+      // Force refresh the image query
       queryClient.invalidateQueries({ queryKey: [`/api/portfolio/images/case-study/${caseStudyId}`] });
+      queryClient.refetchQueries({ queryKey: [`/api/portfolio/images/case-study/${caseStudyId}`] });
       queryClient.invalidateQueries({ queryKey: ["/api/portfolio/case-studies"] });
       queryClient.invalidateQueries({ queryKey: ["/api/admin/case-studies"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/portfolio/case-studies/featured"] });
       toast({
         title: "Success",
         description: "Image removed successfully",

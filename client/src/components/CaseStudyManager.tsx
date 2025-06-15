@@ -395,7 +395,7 @@ export default function CaseStudyManager() {
                   <div className="p-4 bg-blue-50 rounded-lg">
                     <p className="text-sm text-blue-700 font-medium">📸 Case Study Image</p>
                     <p className="text-xs text-blue-600 mt-1">
-                      Save the case study first to add an image.
+                      Create the case study first, then you can add an image by editing it.
                     </p>
                   </div>
                 )}

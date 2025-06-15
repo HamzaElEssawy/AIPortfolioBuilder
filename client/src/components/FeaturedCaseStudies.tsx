@@ -5,6 +5,47 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Star, Users, Clock, TrendingUp, ExternalLink } from "lucide-react";
 import { Link } from "wouter";
 
+interface CaseStudyImage {
+  id: number;
+  imageUrl: string;
+  altText: string;
+  caption?: string;
+  isActive: boolean;
+}
+
+function CaseStudyImage({ caseStudyId, title }: { caseStudyId: number; title: string }) {
+  const { data: images = [] } = useQuery<CaseStudyImage[]>({
+    queryKey: [`/api/portfolio/images/case-study/${caseStudyId}`],
+  });
+
+  const primaryImage = images.find(img => img.isActive) || images[0];
+
+  if (!primaryImage) {
+    return (
+      <div className="w-full h-40 mb-4 rounded-lg overflow-hidden bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 flex items-center justify-center">
+        <div className="text-center p-4">
+          <div className="w-12 h-12 bg-blue-200 dark:bg-blue-800 rounded-full flex items-center justify-center mx-auto mb-2">
+            <svg className="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <p className="text-xs text-gray-600 dark:text-gray-400">{title}</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-full h-40 mb-4 rounded-lg overflow-hidden">
+      <img
+        src={primaryImage.imageUrl}
+        alt={primaryImage.altText}
+        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+      />
+    </div>
+  );
+}
+
 interface CaseStudy {
   id: number;
   title: string;
@@ -85,15 +126,7 @@ export default function FeaturedCaseStudies() {
                 </div>
 
                 {/* Hero Image */}
-                {caseStudy.imageUrl && (
-                  <div className="w-full h-40 mb-4 rounded-lg overflow-hidden">
-                    <img
-                      src={caseStudy.imageUrl}
-                      alt={caseStudy.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                  </div>
-                )}
+                <CaseStudyImage caseStudyId={caseStudy.id} title={caseStudy.title} />
 
                 <CardTitle className="text-xl font-bold text-gray-900 dark:text-white mb-2">
                   {caseStudy.title}

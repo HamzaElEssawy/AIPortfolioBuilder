@@ -1831,8 +1831,14 @@ What would be most helpful for your current career goals?`;
       
       await storage.deletePortfolioImage(imageId);
       
-      // Invalidate cache for the specific section
+      // Invalidate cache for the specific section and case study images
       if (image) {
+        // Clear case study specific cache if this is a case study image
+        if (image.caseStudyId) {
+          cache.delete(`route:/images/case-study/${image.caseStudyId}:{}`);
+          cache.delete(`images/case-study/${image.caseStudyId}`);
+        }
+        
         await cacheSync.invalidateContentCache({
           invalidatePortfolio: true,
           invalidateSpecific: [
@@ -1840,7 +1846,8 @@ What would be most helpful for your current career goals?`;
             `route:/api/portfolio/images/${image.section}`,
             'route:/images/hero:{}',
             'route:/images/about:{}',
-            'route:/images/profile:{}'
+            'route:/images/profile:{}',
+            `route:/images/case-study/${image.caseStudyId}:{}`
           ],
           broadcastUpdate: true
         });
