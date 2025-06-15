@@ -33,7 +33,8 @@ import PortfolioManager from "@/components/PortfolioManager";
 import KnowledgeBaseManager from "@/components/KnowledgeBaseManager";
 import RevampedContentManager from "@/components/RevampedContentManager";
 import DeploymentRecommendations from "@/components/DeploymentRecommendations";
-import EnhancedCaseStudyEditor from "@/components/EnhancedCaseStudyEditor";
+import CaseStudyManager from "@/components/CaseStudyManager";
+import CaseStudyImageManager from "@/components/CaseStudyImageManager";
 import VisualHierarchyEnhancer from "@/components/VisualHierarchyEnhancer";
 import TimelineManager from "@/components/TimelineManager";
 import CoreValuesManager from "@/components/CoreValuesManager";
@@ -386,9 +387,9 @@ export default function Admin() {
             <RevampedContentManager />
           </TabsContent>
 
-          {/* Enhanced Case Study Editor Tab */}
+          {/* Case Study Management Tab */}
           <TabsContent value="case-studies" className="space-y-6">
-            <EnhancedCaseStudyEditor />
+            <CaseStudyManager />
           </TabsContent>
 
           {/* Timeline Management Tab */}
