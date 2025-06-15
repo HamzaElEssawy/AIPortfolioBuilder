@@ -85,6 +85,7 @@ export default function CaseStudyManager() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [formData, setFormData] = useState<CaseStudyFormData>(initialFormData);
+  const [tempImageData, setTempImageData] = useState<{ tempId: string; imageUrl: string; altText: string } | null>(null);
   const { toast } = useToast();
 
   const { data: caseStudies, isLoading } = useQuery<CaseStudy[]>({
@@ -108,6 +109,7 @@ export default function CaseStudyManager() {
           ? data.technologies.split(",").map(t => t.trim()).filter(Boolean)
           : data.technologies,
         slug: data.slug || generateSlug(data.title),
+        tempImageId: tempImageData?.tempId || null,
       };
       return apiRequest("POST", "/api/admin/case-studies", payload);
     },

@@ -18,11 +18,18 @@ interface SimpleCaseStudyImageUploadProps {
   caseStudyId: number | null;
   caseStudyTitle: string;
   isCreateMode?: boolean;
+  onTempImageUploaded?: (tempImageData: { tempId: string; imageUrl: string; altText: string }) => void;
 }
 
-export default function SimpleCaseStudyImageUpload({ caseStudyId, caseStudyTitle, isCreateMode = false }: SimpleCaseStudyImageUploadProps) {
+export default function SimpleCaseStudyImageUpload({ 
+  caseStudyId, 
+  caseStudyTitle, 
+  isCreateMode = false, 
+  onTempImageUploaded 
+}: SimpleCaseStudyImageUploadProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [altText, setAltText] = useState("");
+  const [tempImageData, setTempImageData] = useState<{ tempId: string; imageUrl: string; altText: string } | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -35,10 +42,17 @@ export default function SimpleCaseStudyImageUpload({ caseStudyId, caseStudyTitle
 
   const uploadMutation = useMutation({
     mutationFn: async (data: FormData) => {
-      if (!caseStudyId) {
-        throw new Error("Case study ID is required for image upload.");
+      let url: string;
+      
+      if (isCreateMode || !caseStudyId) {
+        // Use temporary upload endpoint for create mode
+        url = "/api/admin/portfolio-images/case-study/temp";
+      } else {
+        // Use regular upload endpoint for edit mode
+        url = `/api/admin/portfolio-images/case-study/${caseStudyId}`;
       }
-      const response = await fetch(`/api/admin/portfolio-images/case-study/${caseStudyId}`, {
+      
+      const response = await fetch(url, {
         method: "POST",
         body: data,
       });
@@ -48,18 +62,34 @@ export default function SimpleCaseStudyImageUpload({ caseStudyId, caseStudyTitle
       }
       return response.json();
     },
-    onSuccess: () => {
-      if (caseStudyId) {
+    onSuccess: (data) => {
+      if (isCreateMode || !caseStudyId) {
+        // Handle temporary upload success
+        const tempImageData = {
+          tempId: data.tempId,
+          imageUrl: data.imageUrl,
+          altText: data.altText
+        };
+        setTempImageData(tempImageData);
+        if (onTempImageUploaded) {
+          onTempImageUploaded(tempImageData);
+        }
+        toast({
+          title: "Success",
+          description: "Image uploaded and ready for case study creation",
+        });
+      } else {
+        // Handle regular upload success
         queryClient.invalidateQueries({ queryKey: [`/api/portfolio/images/case-study/${caseStudyId}`] });
         queryClient.invalidateQueries({ queryKey: ["/api/portfolio/case-studies"] });
         queryClient.invalidateQueries({ queryKey: ["/api/admin/case-studies"] });
+        toast({
+          title: "Success",
+          description: "Image uploaded successfully",
+        });
       }
       setSelectedFile(null);
       setAltText("");
-      toast({
-        title: "Success",
-        description: "Image uploaded successfully",
-      });
     },
     onError: (error: any) => {
       toast({

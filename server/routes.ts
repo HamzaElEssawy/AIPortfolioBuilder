@@ -1461,6 +1461,28 @@ What would be most helpful for your current career goals?`;
       
       const caseStudy = await storage.createCaseStudy(validatedData);
       
+      // Handle temporary image if provided
+      const { tempImageId } = req.body;
+      if (tempImageId && tempImages.has(tempImageId)) {
+        const tempImage = tempImages.get(tempImageId);
+        if (tempImage) {
+          try {
+            await storage.createPortfolioImage({
+              section: "case-study",
+              imageUrl: `/uploads/${tempImage.file.filename}`,
+              altText: tempImage.altText,
+              orderIndex: 0,
+              isActive: true,
+              caseStudyId: caseStudy.id,
+            });
+            tempImages.delete(tempImageId);
+            console.log("Temporary image associated with case study:", caseStudy.id);
+          } catch (imageError) {
+            console.error("Error associating temporary image:", imageError);
+          }
+        }
+      }
+      
       // Clear all case study related caches
       cache.deletePattern(".*case-studies.*");
       
@@ -1873,7 +1895,46 @@ What would be most helpful for your current career goals?`;
     }
   });
 
-  // Case study image upload
+  // Temporary image storage for case study creation
+  const tempImages = new Map<string, { file: any, altText: string, timestamp: number }>();
+
+  // Temporary image upload for case study creation
+  app.post("/api/admin/portfolio-images/case-study/temp", isAdmin, upload.single("image"), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: "No image file provided" });
+      }
+
+      const { altText = "Case study image" } = req.body;
+      const tempId = `temp_${Date.now()}_${Math.round(Math.random() * 1E9)}`;
+      
+      // Store temporarily with cleanup after 1 hour
+      tempImages.set(tempId, {
+        file: req.file,
+        altText,
+        timestamp: Date.now()
+      });
+
+      // Clean up old temp images (older than 1 hour)
+      for (const [key, value] of tempImages.entries()) {
+        if (Date.now() - value.timestamp > 3600000) { // 1 hour
+          tempImages.delete(key);
+        }
+      }
+
+      res.json({ 
+        tempId,
+        imageUrl: `/uploads/${req.file.filename}`,
+        altText,
+        message: "Image uploaded temporarily" 
+      });
+    } catch (error) {
+      console.error("Error uploading temporary case study image:", error);
+      res.status(500).json({ message: "Failed to upload temporary image" });
+    }
+  });
+
+  // Case study image upload (existing case studies)
   app.post("/api/admin/portfolio-images/case-study/:id", isAdmin, upload.single("image"), async (req, res) => {
     try {
       const caseStudyId = parseInt(req.params.id);
