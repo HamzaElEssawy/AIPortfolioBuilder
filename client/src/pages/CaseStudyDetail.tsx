@@ -21,6 +21,8 @@ interface CaseStudy {
   featured: boolean;
   displayOrder: number;
   imageUrl?: string;
+  imageFile?: string;
+  externalUrl?: string;
   clientName?: string;
   projectDuration?: string;
   teamSize?: string;

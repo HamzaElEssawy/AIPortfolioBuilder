@@ -2,9 +2,9 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Calendar, Users, Clock, Home } from "lucide-react";
+import { ArrowRight, Calendar, Users, Clock, ExternalLink } from "lucide-react";
 import { Link } from "wouter";
-import Navigation from "@/components/Navigation";
+import CaseStudyNavigation from "@/components/CaseStudyNavigation";
 
 interface CaseStudy {
   id: number;
@@ -20,6 +20,8 @@ interface CaseStudy {
   featured: boolean;
   displayOrder: number;
   imageUrl?: string;
+  imageFile?: string;
+  externalUrl?: string;
   clientName?: string;
   projectDuration?: string;
   teamSize?: string;
@@ -47,7 +49,7 @@ export default function CaseStudies() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-blue-900">
-      <Navigation />
+      <CaseStudyNavigation />
       <div className="container mx-auto px-6 py-16">
         {/* Header Section */}
         <div className="text-center mb-16">
@@ -168,16 +170,28 @@ export default function CaseStudies() {
                   </div>
                 )}
 
-                {/* Read More Button */}
-                <Link href={`/case-study/${caseStudy.slug}`}>
-                  <Button 
-                    className="w-full group-hover:bg-blue-700 transition-colors duration-300"
-                    variant="default"
-                  >
-                    Read Full Case Study
-                    <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
-                  </Button>
-                </Link>
+                {/* Action Buttons */}
+                <div className="flex gap-2">
+                  <Link href={`/case-study/${caseStudy.slug}`} className="flex-1">
+                    <Button 
+                      className="w-full group-hover:bg-blue-700 transition-colors duration-300"
+                      variant="default"
+                    >
+                      Read Full Case Study
+                      <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
+                    </Button>
+                  </Link>
+                  {caseStudy.externalUrl && (
+                    <Button 
+                      variant="outline"
+                      size="sm"
+                      className="px-3 border-blue-600 text-blue-600 hover:bg-blue-50"
+                      onClick={() => window.open(caseStudy.externalUrl, '_blank')}
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                    </Button>
+                  )}
+                </div>
               </CardContent>
             </Card>
           ))}
