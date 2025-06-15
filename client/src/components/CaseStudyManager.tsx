@@ -18,7 +18,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import CaseStudyTextEditor from "@/components/CaseStudyTextEditor";
-import CaseStudyImageManager from "@/components/CaseStudyImageManager";
+import SimpleCaseStudyImageUpload from "@/components/SimpleCaseStudyImageUpload";
 
 interface CaseStudy {
   id: number;
@@ -385,17 +385,17 @@ export default function CaseStudyManager() {
 
               <div className="space-y-4">
 
-                {/* Case Study Images */}
+                {/* Case Study Image */}
                 {editingId ? (
-                  <CaseStudyImageManager 
+                  <SimpleCaseStudyImageUpload 
                     caseStudyId={editingId} 
                     caseStudyTitle={formData.title} 
                   />
                 ) : (
                   <div className="p-4 bg-blue-50 rounded-lg">
-                    <p className="text-sm text-blue-700 font-medium">📸 Case Study Images</p>
+                    <p className="text-sm text-blue-700 font-medium">📸 Case Study Image</p>
                     <p className="text-xs text-blue-600 mt-1">
-                      Save the case study first to manage images.
+                      Save the case study first to add an image.
                     </p>
                   </div>
                 )}

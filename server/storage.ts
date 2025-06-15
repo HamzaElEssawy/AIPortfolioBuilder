@@ -664,6 +664,11 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createCaseStudyImage(insertImage: Omit<InsertPortfolioImage, 'section'> & { caseStudyId: number }): Promise<PortfolioImage> {
+    // Enforce single image per case study - delete existing images first
+    await db
+      .delete(portfolioImages)
+      .where(eq(portfolioImages.caseStudyId, insertImage.caseStudyId));
+    
     const [image] = await db
       .insert(portfolioImages)
       .values({
