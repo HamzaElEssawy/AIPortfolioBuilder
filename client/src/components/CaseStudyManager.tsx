@@ -118,8 +118,12 @@ export default function CaseStudyManager() {
     mutationFn: async ({ id, data }: { id: number; data: CaseStudyFormData }) => {
       const payload = {
         ...data,
-        metrics: data.metrics.split(",").map(m => m.trim()).filter(Boolean),
-        technologies: data.technologies.split(",").map(t => t.trim()).filter(Boolean),
+        metrics: typeof data.metrics === 'string' 
+          ? data.metrics.split(",").map(m => m.trim()).filter(Boolean)
+          : data.metrics,
+        technologies: typeof data.technologies === 'string'
+          ? data.technologies.split(",").map(t => t.trim()).filter(Boolean)
+          : data.technologies,
       };
       return apiRequest(`/api/admin/case-studies/${id}`, "PUT", payload);
     },
