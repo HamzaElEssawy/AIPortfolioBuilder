@@ -126,6 +126,61 @@ export default function Timeline() {
 
   const sortedEntries = entries.sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
 
+  // Calculate dynamic metrics from timeline entries
+  const calculateYearsExperience = () => {
+    if (entries.length === 0) return 0;
+    
+    let totalYears = 0;
+    entries.forEach(entry => {
+      const yearText = entry.year.toLowerCase();
+      if (yearText.includes('present')) {
+        // For "2023-Present" entries, calculate from start year to current year
+        const startYear = parseInt(yearText.match(/(\d{4})/)?.[1] || '2024');
+        totalYears += new Date().getFullYear() - startYear + 1;
+      } else if (yearText.includes('-')) {
+        // For "2020-2023" entries, calculate the range
+        const years = yearText.match(/(\d{4})/g);
+        if (years && years.length >= 2) {
+          totalYears += parseInt(years[1]) - parseInt(years[0]) + 1;
+        }
+      } else {
+        // For single year entries, count as 1 year
+        totalYears += 1;
+      }
+    });
+    return totalYears;
+  };
+
+  const calculateValueCreated = () => {
+    let totalValue = 0;
+    entries.forEach(entry => {
+      if (entry.impactMetrics) {
+        // Extract monetary values from impact metrics
+        Object.values(entry.impactMetrics).forEach(value => {
+          if (typeof value === 'string') {
+            const numericValue = value.toLowerCase().replace(/[^0-9.]/g, '');
+            if (numericValue && (value.includes('$') || value.includes('m') || value.includes('k'))) {
+              let amount = parseFloat(numericValue);
+              if (value.toLowerCase().includes('m')) amount *= 1000000;
+              if (value.toLowerCase().includes('k')) amount *= 1000;
+              totalValue += amount;
+            }
+          }
+        });
+      }
+    });
+    return totalValue;
+  };
+
+  const yearsExperience = calculateYearsExperience();
+  const valueCreated = calculateValueCreated();
+  
+  const formatValue = (value: number) => {
+    if (value >= 1000000) return `$${(value / 1000000).toFixed(0)}M+`;
+    if (value >= 1000) return `$${(value / 1000).toFixed(0)}K+`;
+    return `$${value.toFixed(0)}+`;
+  };
+
   return (
     <section id="timeline" className="relative py-20 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-blue-900 dark:to-indigo-900 overflow-hidden">
       {/* Enhanced Background Elements */}
@@ -174,11 +229,11 @@ export default function Timeline() {
             </Badge>
             <Badge className="bg-blue-500 text-white px-4 py-2 flex items-center gap-2 text-lg">
               <Trophy className="h-5 w-5" />
-              15+ Years Experience
+              {yearsExperience}+ Years Experience
             </Badge>
             <Badge className="bg-cyan-500 text-white px-4 py-2 flex items-center gap-2 text-lg">
               <Target className="h-5 w-5" />
-              $50M+ Value Created
+              {valueCreated > 0 ? formatValue(valueCreated) : '$2M+'} Value Created
             </Badge>
           </div>
         </div>
