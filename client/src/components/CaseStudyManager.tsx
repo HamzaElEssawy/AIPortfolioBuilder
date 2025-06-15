@@ -113,8 +113,10 @@ export default function CaseStudyManager() {
       };
       return apiRequest("POST", "/api/admin/case-studies", payload);
     },
-    onSuccess: () => {
+    onSuccess: (newCaseStudy) => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/case-studies"] });
+      // Clear image cache for the new case study to ensure fresh data
+      queryClient.invalidateQueries({ queryKey: [`/api/portfolio/images/case-study/${newCaseStudy.id}`] });
       setIsDialogOpen(false);
       setFormData(initialFormData);
       setEditingId(null);
