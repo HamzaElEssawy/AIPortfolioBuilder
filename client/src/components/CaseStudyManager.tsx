@@ -172,9 +172,9 @@ export default function CaseStudyManager() {
     mutationFn: async ({ id, featured }: { id: number; featured: boolean }) => {
       return apiRequest(`/api/admin/case-studies/${id}/featured`, "PATCH", { featured });
     },
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/case-studies"] });
-      toast({ title: featured ? "Case study marked as featured" : "Case study removed from featured" });
+      toast({ title: variables.featured ? "Case study marked as featured" : "Case study removed from featured" });
     },
     onError: (error: any) => {
       console.error("Toggle featured error:", error);
