@@ -1407,23 +1407,31 @@ What would be most helpful for your current career goals?`;
           .replace(/\s+/g, '-')
           .replace(/-+/g, '-')
           .trim();
+        console.log("Generated slug:", processedData.slug);
       }
       
       // Generate image URL if imageFile is provided
       if (processedData.imageFile && !processedData.imageUrl) {
         processedData.imageUrl = `/uploads/${processedData.imageFile}`;
+        console.log("Generated imageUrl:", processedData.imageUrl);
       }
       
       console.log("Creating case study:", processedData);
+      console.log("Slug before validation:", processedData.slug);
+      console.log("ImageUrl before validation:", processedData.imageUrl);
       
       const validatedData = insertCaseStudySchema.parse(processedData);
+      console.log("Validated data:", validatedData);
+      
       const caseStudy = await storage.createCaseStudy(validatedData);
       
       console.log("Case study created successfully:", caseStudy.id);
+      console.log("Returned case study:", caseStudy);
       res.json(caseStudy);
     } catch (error) {
       console.error("Error creating case study:", error);
       if (error instanceof z.ZodError) {
+        console.log("Validation errors:", error.errors);
         res.status(400).json({ message: "Validation error", errors: error.errors });
       } else {
         res.status(500).json({ message: "Failed to create case study" });

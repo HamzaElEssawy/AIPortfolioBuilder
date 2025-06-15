@@ -189,10 +189,33 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createCaseStudy(insertCaseStudy: InsertCaseStudy): Promise<CaseStudy> {
+    // Generate slug if not provided
+    let processedData = { ...insertCaseStudy };
+    
+    if (!processedData.slug && processedData.title) {
+      processedData.slug = processedData.title
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .trim();
+      console.log("Storage: Generated slug:", processedData.slug);
+    }
+    
+    // Generate image URL if imageFile is provided
+    if (processedData.imageFile && !processedData.imageUrl) {
+      processedData.imageUrl = `/uploads/${processedData.imageFile}`;
+      console.log("Storage: Generated imageUrl:", processedData.imageUrl);
+    }
+    
+    console.log("Storage: Creating case study with processed data:", processedData);
+    
     const [study] = await db
       .insert(caseStudies)
-      .values(insertCaseStudy as any)
+      .values(processedData as any)
       .returning();
+    
+    console.log("Storage: Case study created:", study);
     return study;
   }
 
