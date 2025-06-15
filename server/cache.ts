@@ -124,6 +124,13 @@ class CacheManager {
     }
     
     logger.info('Cache pattern delete', { pattern, deleted });
+    
+    // Clear all cache to ensure immediate invalidation
+    if (deleted > 0) {
+      this.clear();
+      logger.info('Cache completely cleared for immediate invalidation');
+    }
+    
     return deleted;
   }
 

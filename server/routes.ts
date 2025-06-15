@@ -1425,12 +1425,8 @@ What would be most helpful for your current career goals?`;
       
       const caseStudy = await storage.createCaseStudy(validatedData);
       
-      // Clear relevant caches after creation
-      cache.delete("route:/case-studies:{}");
-      cache.delete("route:/api/admin/case-studies:{}");
-      cache.delete("route:/case-studies/featured:{}");
-      cache.delete("route:/api/portfolio/case-studies/featured:{}");
-      cache.delete("route:/api/portfolio/case-studies:{}");
+      // Clear all case study related caches
+      cache.deletePattern(".*case-studies.*");
       
       console.log("Case study created successfully:", caseStudy.id);
       console.log("Returned case study:", caseStudy);
@@ -1477,15 +1473,8 @@ What would be most helpful for your current career goals?`;
       const validatedData = insertCaseStudySchema.parse(processedData);
       const caseStudy = await storage.updateCaseStudy(id, validatedData);
       
-      // Clear relevant caches after update
-      cache.delete("route:/case-studies:{}");
-      cache.delete("route:/api/admin/case-studies:{}");
-      cache.delete("route:/case-studies/featured:{}");
-      cache.delete("route:/api/portfolio/case-studies/featured:{}");
-      if (caseStudy.slug) {
-        cache.delete(`route:/case-studies/${caseStudy.slug}:{}`);
-        cache.delete(`route:/api/portfolio/case-studies/${caseStudy.slug}:{}`);
-      }
+      // Clear all case study related caches
+      cache.deletePattern(".*case-studies.*");
       
       console.log("Case study updated successfully:", caseStudy.id);
       res.json(caseStudy);
@@ -1511,16 +1500,8 @@ What would be most helpful for your current career goals?`;
       
       await storage.deleteCaseStudy(id);
       
-      // Clear relevant caches after deletion
-      cache.delete("route:/case-studies:{}");
-      cache.delete("route:/api/admin/case-studies:{}");
-      cache.delete("route:/case-studies/featured:{}");
-      cache.delete("route:/api/portfolio/case-studies/featured:{}");
-      cache.delete("route:/api/portfolio/case-studies:{}");
-      if (caseStudy?.slug) {
-        cache.delete(`route:/case-studies/${caseStudy.slug}:{}`);
-        cache.delete(`route:/api/portfolio/case-studies/${caseStudy.slug}:{}`);
-      }
+      // Clear all case study related caches
+      cache.deletePattern(".*case-studies.*");
       
       res.json({ message: "Case study deleted successfully" });
     } catch (error) {
