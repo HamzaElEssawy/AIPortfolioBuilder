@@ -386,26 +386,62 @@ export default function CaseStudyManager() {
               <div className="space-y-4">
 
                 {/* Case Study Image */}
-                {editingId ? (
-                  <SimpleCaseStudyImageUpload 
-                    caseStudyId={editingId} 
-                    caseStudyTitle={formData.title} 
-                  />
-                ) : (
-                  <div className="p-4 bg-blue-50 rounded-lg border-2 border-dashed border-blue-200">
-                    <div className="text-center">
-                      <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 002 2v12a2 2 0 002 2z" />
-                        </svg>
-                      </div>
-                      <p className="text-sm text-blue-700 font-medium mb-1">Case Study Image</p>
-                      <p className="text-xs text-blue-600">
-                        Create the case study first, then you can add an image by editing it.
-                      </p>
-                    </div>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 002 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <Label className="text-sm font-medium text-gray-700">Case Study Image</Label>
+                    <span className="text-xs text-gray-500">(One image per case study)</span>
                   </div>
-                )}
+                  
+                  {editingId ? (
+                    <SimpleCaseStudyImageUpload 
+                      caseStudyId={editingId} 
+                      caseStudyTitle={formData.title} 
+                    />
+                  ) : (
+                    <div className="border border-gray-200 rounded-lg p-4 space-y-4">
+                      <div>
+                        <Label className="text-sm text-gray-700 mb-2 block">Select Image</Label>
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            disabled
+                            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 disabled:opacity-50"
+                          />
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <Label className="text-sm text-gray-700 mb-2 block">Alt Text (Optional)</Label>
+                        <Input
+                          placeholder="Describe the image..."
+                          disabled
+                          className="disabled:opacity-50"
+                        />
+                      </div>
+                      
+                      <Button 
+                        type="button" 
+                        disabled 
+                        className="w-full disabled:opacity-50"
+                      >
+                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                        </svg>
+                        Upload Image
+                      </Button>
+                      
+                      <div className="text-center py-2">
+                        <p className="text-xs text-blue-600 bg-blue-50 px-3 py-1 rounded-full inline-block">
+                          Create the case study first, then you can add an image by editing it.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
 
                 <div>
                   <Label htmlFor="externalUrl">Project/Company Link</Label>
