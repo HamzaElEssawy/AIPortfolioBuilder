@@ -191,17 +191,27 @@ export class DatabaseStorage implements IStorage {
   async createCaseStudy(insertCaseStudy: InsertCaseStudy): Promise<CaseStudy> {
     const [study] = await db
       .insert(caseStudies)
-      .values(insertCaseStudy)
+      .values(insertCaseStudy as any)
       .returning();
     return study;
   }
 
   async updateCaseStudy(id: number, updateData: Partial<InsertCaseStudy>): Promise<CaseStudy> {
+    // Remove undefined values and ensure proper data types
+    const cleanData = Object.fromEntries(
+      Object.entries(updateData).filter(([_, value]) => value !== undefined)
+    );
+    
     const [study] = await db
       .update(caseStudies)
-      .set({ ...updateData, updatedAt: new Date() })
+      .set({ ...cleanData, updatedAt: new Date() })
       .where(eq(caseStudies.id, id))
       .returning();
+    
+    if (!study) {
+      throw new Error(`Case study with ID ${id} not found`);
+    }
+    
     return study;
   }
 

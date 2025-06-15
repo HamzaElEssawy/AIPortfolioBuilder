@@ -419,11 +419,35 @@ What would be most helpful for your current career goals?`;
   app.put("/api/admin/case-studies/:id", isAdmin, async (req, res) => {
     try {
       const { id } = req.params;
-      const caseStudy = await storage.updateCaseStudy(parseInt(id), req.body);
+      const caseStudyId = parseInt(id);
+      
+      if (isNaN(caseStudyId)) {
+        return res.status(400).json({ message: "Invalid case study ID" });
+      }
+
+      console.log("Updating case study:", { id: caseStudyId, data: req.body });
+      
+      // Process form data to handle arrays properly
+      const processedData = {
+        ...req.body,
+        metrics: Array.isArray(req.body.metrics) ? req.body.metrics : 
+                 typeof req.body.metrics === 'string' ? req.body.metrics.split(',').map((m: string) => m.trim()).filter(Boolean) : [],
+        technologies: Array.isArray(req.body.technologies) ? req.body.technologies : 
+                      typeof req.body.technologies === 'string' ? req.body.technologies.split(',').map((t: string) => t.trim()).filter(Boolean) : [],
+      };
+
+      const caseStudy = await storage.updateCaseStudy(caseStudyId, processedData);
+      
+      if (!caseStudy) {
+        return res.status(404).json({ message: "Case study not found" });
+      }
+      
+      console.log("Case study updated successfully:", caseStudy.id);
       res.json(caseStudy);
     } catch (error) {
       console.error("Error updating case study:", error);
-      res.status(500).json({ message: "Failed to update case study" });
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      res.status(500).json({ message: "Failed to update case study", error: errorMessage });
     }
   });
 

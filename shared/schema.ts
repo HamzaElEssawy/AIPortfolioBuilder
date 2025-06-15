@@ -215,6 +215,10 @@ export const insertCaseStudySchema = createInsertSchema(caseStudies).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
+}).extend({
+  metrics: z.array(z.string()).default([]),
+  technologies: z.array(z.string()).default([]),
+  slug: z.string().optional(),
 });
 
 export const insertMediaAssetSchema = createInsertSchema(mediaAssets).omit({
