@@ -20,6 +20,7 @@ interface CacheStats {
 class CacheManager {
   private static instance: CacheManager;
   private cache: Map<string, CacheEntry> = new Map();
+  private disabledPatterns: Set<string> = new Set();
   private stats = {
     hits: 0,
     misses: 0
@@ -116,7 +117,11 @@ class CacheManager {
     const regex = new RegExp(pattern);
     let deleted = 0;
     
-    for (const key of this.cache.keys()) {
+    // Add pattern to disabled list temporarily
+    this.disabledPatterns.add(pattern);
+    
+    // Clear matching cache entries
+    for (const key of Array.from(this.cache.keys())) {
       if (regex.test(key)) {
         this.cache.delete(key);
         deleted++;
@@ -125,13 +130,23 @@ class CacheManager {
     
     logger.info('Cache pattern delete', { pattern, deleted });
     
-    // Clear all cache to ensure immediate invalidation
-    if (deleted > 0) {
-      this.clear();
-      logger.info('Cache completely cleared for immediate invalidation');
-    }
+    // Re-enable pattern after 2 seconds to allow fresh data loading
+    setTimeout(() => {
+      this.disabledPatterns.delete(pattern);
+      logger.info('Cache pattern re-enabled', { pattern });
+    }, 2000);
     
     return deleted;
+  }
+
+  isPatternDisabled(key: string): boolean {
+    for (const pattern of this.disabledPatterns) {
+      const regex = new RegExp(pattern);
+      if (regex.test(key)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private cleanExpired(): void {
@@ -240,7 +255,20 @@ export function cacheMiddleware(ttlSeconds: number = 300) {
       return next();
     }
 
+    // Skip caching if cache-bypass header is present
+    if (req.headers['x-cache-bypass']) {
+      logger.debug('Cache bypassed by header', { path: req.path });
+      return next();
+    }
+
     const cacheKey = `route:${req.path}:${JSON.stringify(req.query)}`;
+    
+    // Check if caching is disabled for this pattern
+    if (cache.isPatternDisabled(cacheKey)) {
+      logger.debug('Route cache disabled by pattern', { path: req.path });
+      return next();
+    }
+    
     const cached = cache.get(cacheKey);
     
     if (cached) {
