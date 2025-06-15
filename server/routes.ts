@@ -1504,7 +1504,22 @@ What would be most helpful for your current career goals?`;
       if (isNaN(id)) {
         return res.status(400).json({ message: "Invalid case study ID" });
       }
+      
+      // Get case study before deletion for cache invalidation
+      const caseStudy = await storage.getCaseStudy(id);
+      
       await storage.deleteCaseStudy(id);
+      
+      // Clear relevant caches after deletion
+      cache.delete("route:/case-studies:{}");
+      cache.delete("route:/api/admin/case-studies:{}");
+      cache.delete("route:/case-studies/featured:{}");
+      cache.delete("route:/api/portfolio/case-studies/featured:{}");
+      if (caseStudy?.slug) {
+        cache.delete(`route:/case-studies/${caseStudy.slug}:{}`);
+        cache.delete(`route:/api/portfolio/case-studies/${caseStudy.slug}:{}`);
+      }
+      
       res.json({ message: "Case study deleted successfully" });
     } catch (error) {
       console.error("Error deleting case study:", error);
@@ -1520,6 +1535,13 @@ What would be most helpful for your current career goals?`;
       }
       const { featured } = req.body;
       const caseStudy = await storage.updateCaseStudyFeatured(id, featured);
+      
+      // Clear featured list caches after toggle
+      cache.delete("route:/case-studies/featured:{}");
+      cache.delete("route:/api/portfolio/case-studies/featured:{}");
+      cache.delete("route:/case-studies:{}");
+      cache.delete("route:/api/admin/case-studies:{}");
+      
       res.json(caseStudy);
     } catch (error) {
       console.error("Error updating case study featured status:", error);
