@@ -87,11 +87,30 @@ export const experienceEntries = pgTable("experience_entries", {
   id: serial("id").primaryKey(),
   year: text("year").notNull(),
   title: text("title").notNull(),
-  organization: text("organization").notNull(),
+  company: text("company").notNull(), // Changed from organization to match frontend
+  location: text("location"),
   description: text("description"),
   highlight: boolean("highlight").default(false),
   orderIndex: integer("order_index").default(0),
   color: text("color").default("bg-gray-400"),
+  
+  // New fields for timeline enhancement
+  level: text("level").default("Expert"),
+  experiencePoints: text("experience_points").default("1000 XP"),
+  
+  // Impact metrics as JSON
+  impactMetrics: jsonb("impact_metrics").$type<{
+    users?: string;
+    funding?: string;
+    teamSize?: string;
+    growth?: string;
+    marketShare?: string;
+    revenue?: string;
+  }>(),
+  
+  // Achievements as array
+  achievements: text("achievements").array().default([]),
+  
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
