@@ -658,15 +658,12 @@ export class DatabaseStorage implements IStorage {
     const images = await db
       .select()
       .from(portfolioImages)
-      .where(and(
-        eq(portfolioImages.section, 'case-study'),
-        eq(portfolioImages.caseStudyId, caseStudyId)
-      ))
+      .where(eq(portfolioImages.caseStudyId, caseStudyId))
       .orderBy(portfolioImages.orderIndex);
     return images;
   }
 
-  async createCaseStudyImage(insertImage: InsertPortfolioImage & { caseStudyId: number }): Promise<PortfolioImage> {
+  async createCaseStudyImage(insertImage: Omit<InsertPortfolioImage, 'section'> & { caseStudyId: number }): Promise<PortfolioImage> {
     const [image] = await db
       .insert(portfolioImages)
       .values({

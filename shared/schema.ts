@@ -220,8 +220,6 @@ export const insertCaseStudySchema = createInsertSchema(caseStudies).omit({
   metrics: z.array(z.string()).default([]),
   technologies: z.array(z.string()).default([]),
   slug: z.string().min(1),
-  imageUrl: z.string().optional(),
-  imageFile: z.string().optional(),
 });
 
 export const insertMediaAssetSchema = createInsertSchema(mediaAssets).omit({

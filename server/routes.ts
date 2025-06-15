@@ -1410,11 +1410,9 @@ What would be most helpful for your current career goals?`;
         console.log("Generated slug:", processedData.slug);
       }
       
-      // Generate image URL if imageFile is provided
-      if (processedData.imageFile && !processedData.imageUrl) {
-        processedData.imageUrl = `/uploads/${processedData.imageFile}`;
-        console.log("Generated imageUrl:", processedData.imageUrl);
-      }
+      // Remove image fields - using separate image system
+      delete processedData.imageFile;
+      delete processedData.imageUrl;
       
       console.log("Creating case study:", processedData);
       console.log("Slug before validation:", processedData.slug);
@@ -1462,10 +1460,9 @@ What would be most helpful for your current career goals?`;
           .trim();
       }
       
-      // Generate image URL if imageFile is provided
-      if (processedData.imageFile && !processedData.imageUrl) {
-        processedData.imageUrl = `/uploads/${processedData.imageFile}`;
-      }
+      // Remove image fields - using separate image system
+      delete processedData.imageFile;
+      delete processedData.imageUrl;
       
       console.log("Updating case study:", { id, data: processedData });
       
@@ -1830,6 +1827,8 @@ What would be most helpful for your current career goals?`;
       res.status(500).json({ message: "Failed to fetch portfolio images" });
     }
   });
+
+
 
   // Portfolio status management
   app.get("/api/admin/portfolio-status", isAdmin, async (req, res) => {
