@@ -117,11 +117,28 @@ export default function CaseStudyManager() {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/case-studies"] });
       // Clear image cache for the new case study to ensure fresh data
       queryClient.invalidateQueries({ queryKey: [`/api/portfolio/images/case-study/${newCaseStudy.id}`] });
-      setIsDialogOpen(false);
-      setFormData(initialFormData);
-      setEditingId(null);
+      
+      // Switch to edit mode to show the created case study with its associated image
+      setEditingId(newCaseStudy.id);
+      setFormData({
+        title: newCaseStudy.title || "",
+        subtitle: newCaseStudy.subtitle || "",
+        challenge: newCaseStudy.challenge || "",
+        approach: newCaseStudy.approach || "",
+        solution: newCaseStudy.solution || "",
+        impact: newCaseStudy.impact || "",
+        metrics: Array.isArray(newCaseStudy.metrics) ? newCaseStudy.metrics.join(", ") : "",
+        technologies: Array.isArray(newCaseStudy.technologies) ? newCaseStudy.technologies.join(", ") : "",
+        status: newCaseStudy.status || "draft",
+        featured: newCaseStudy.featured || false,
+        externalUrl: newCaseStudy.externalUrl || "",
+        clientName: newCaseStudy.clientName || "",
+        projectDuration: newCaseStudy.projectDuration || "",
+        teamSize: newCaseStudy.teamSize || "",
+        slug: newCaseStudy.slug || "",
+      });
       setTempImageData(null);
-      toast({ title: "Case study created successfully" });
+      toast({ title: "Case study created successfully - now viewing in edit mode" });
     },
     onError: (error: any) => {
       console.error("Create mutation error:", error);
