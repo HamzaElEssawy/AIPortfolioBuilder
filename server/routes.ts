@@ -1,4 +1,5 @@
 import type { Express } from "express";
+import express from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertContactSubmissionSchema } from "@shared/schema";
@@ -54,6 +55,16 @@ const isAdmin = (req: any, res: any, next: any) => {
 };
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Serve uploaded files
+  app.use('/uploads', (req: any, res: any, next: any) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    next();
+  });
+  
+  // Static file serving for uploads
+  const { static: serveStatic } = await import('express');
+  app.use('/uploads', serveStatic('uploads'));
+  
   // Session configuration for admin
   app.use(session({
     secret: process.env.SESSION_SECRET || 'your-secret-key',
