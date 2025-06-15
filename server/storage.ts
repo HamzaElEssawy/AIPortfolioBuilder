@@ -652,6 +652,34 @@ export class DatabaseStorage implements IStorage {
   async deletePortfolioImage(id: number): Promise<void> {
     await db.delete(portfolioImages).where(eq(portfolioImages.id, id));
   }
+
+  // Case study images - using portfolioImages table with case study reference
+  async getCaseStudyImages(caseStudyId: number): Promise<PortfolioImage[]> {
+    const images = await db
+      .select()
+      .from(portfolioImages)
+      .where(and(
+        eq(portfolioImages.section, 'case-study'),
+        eq(portfolioImages.caseStudyId, caseStudyId)
+      ))
+      .orderBy(portfolioImages.orderIndex);
+    return images;
+  }
+
+  async createCaseStudyImage(insertImage: InsertPortfolioImage & { caseStudyId: number }): Promise<PortfolioImage> {
+    const [image] = await db
+      .insert(portfolioImages)
+      .values({
+        ...insertImage,
+        section: 'case-study',
+      })
+      .returning();
+    return image;
+  }
+
+  async deleteCaseStudyImage(id: number): Promise<void> {
+    await db.delete(portfolioImages).where(eq(portfolioImages.id, id));
+  }
 }
 
 export const storage = new DatabaseStorage();

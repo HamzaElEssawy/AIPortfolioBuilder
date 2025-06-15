@@ -162,12 +162,13 @@ export const portfolioStatus = pgTable("portfolio_status", {
 
 export const portfolioImages = pgTable("portfolio_images", {
   id: serial("id").primaryKey(),
-  section: text("section").notNull(), // 'hero', 'about', 'profile'
+  section: text("section").notNull(), // 'hero', 'about', 'profile', 'case-study'
   imageUrl: text("image_url").notNull(),
   altText: text("alt_text").notNull(),
   caption: text("caption"),
   orderIndex: integer("order_index").default(0),
   isActive: boolean("is_active").default(true),
+  caseStudyId: integer("case_study_id").references(() => caseStudies.id, { onDelete: "cascade" }),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
