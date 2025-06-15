@@ -1395,8 +1395,31 @@ What would be most helpful for your current career goals?`;
   app.post("/api/admin/case-studies", isAdmin, async (req, res) => {
     try {
       const { insertCaseStudySchema } = await import("@shared/schema");
-      const validatedData = insertCaseStudySchema.parse(req.body);
+      
+      // Process and enhance the data before validation
+      const processedData = { ...req.body };
+      
+      // Generate slug if not provided
+      if (!processedData.slug && processedData.title) {
+        processedData.slug = processedData.title
+          .toLowerCase()
+          .replace(/[^a-z0-9\s-]/g, '')
+          .replace(/\s+/g, '-')
+          .replace(/-+/g, '-')
+          .trim();
+      }
+      
+      // Generate image URL if imageFile is provided
+      if (processedData.imageFile && !processedData.imageUrl) {
+        processedData.imageUrl = `/uploads/${processedData.imageFile}`;
+      }
+      
+      console.log("Creating case study:", processedData);
+      
+      const validatedData = insertCaseStudySchema.parse(processedData);
       const caseStudy = await storage.createCaseStudy(validatedData);
+      
+      console.log("Case study created successfully:", caseStudy.id);
       res.json(caseStudy);
     } catch (error) {
       console.error("Error creating case study:", error);
@@ -1414,9 +1437,32 @@ What would be most helpful for your current career goals?`;
       if (isNaN(id)) {
         return res.status(400).json({ message: "Invalid case study ID" });
       }
+      
+      // Process and enhance the data before validation
+      const processedData = { ...req.body };
+      
+      // Generate slug if not provided
+      if (!processedData.slug && processedData.title) {
+        processedData.slug = processedData.title
+          .toLowerCase()
+          .replace(/[^a-z0-9\s-]/g, '')
+          .replace(/\s+/g, '-')
+          .replace(/-+/g, '-')
+          .trim();
+      }
+      
+      // Generate image URL if imageFile is provided
+      if (processedData.imageFile && !processedData.imageUrl) {
+        processedData.imageUrl = `/uploads/${processedData.imageFile}`;
+      }
+      
+      console.log("Updating case study:", { id, data: processedData });
+      
       const { insertCaseStudySchema } = await import("@shared/schema");
-      const validatedData = insertCaseStudySchema.parse(req.body);
+      const validatedData = insertCaseStudySchema.parse(processedData);
       const caseStudy = await storage.updateCaseStudy(id, validatedData);
+      
+      console.log("Case study updated successfully:", caseStudy.id);
       res.json(caseStudy);
     } catch (error) {
       console.error("Error updating case study:", error);
