@@ -444,28 +444,7 @@ What would be most helpful for your current career goals?`;
     }
   });
 
-  app.post("/api/admin/case-studies", isAdmin, async (req, res) => {
-    try {
-      console.log("Creating case study:", req.body);
-      
-      // Process form data to handle arrays properly
-      const processedData = {
-        ...req.body,
-        metrics: Array.isArray(req.body.metrics) ? req.body.metrics : 
-                 typeof req.body.metrics === 'string' ? req.body.metrics.split(',').map((m: string) => m.trim()).filter(Boolean) : [],
-        technologies: Array.isArray(req.body.technologies) ? req.body.technologies : 
-                      typeof req.body.technologies === 'string' ? req.body.technologies.split(',').map((t: string) => t.trim()).filter(Boolean) : [],
-      };
-      
-      const caseStudy = await storage.createCaseStudy(processedData);
-      console.log("Case study created successfully:", caseStudy.id);
-      res.status(201).json(caseStudy);
-    } catch (error) {
-      console.error("Error creating case study:", error);
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      res.status(500).json({ message: "Failed to create case study", error: errorMessage });
-    }
-  });
+
 
   app.put("/api/admin/case-studies/:id", isAdmin, async (req, res) => {
     try {
@@ -1467,6 +1446,7 @@ What would be most helpful for your current career goals?`;
       
       const caseStudy = await storage.createCaseStudy(validatedData);
       console.log("Case study created successfully:", caseStudy.id);
+      console.log("About to start temp image processing...");
       
       // Handle temporary image if provided - IMMEDIATE EXECUTION
       console.log("=== TEMP IMAGE PROCESSING START ===");
