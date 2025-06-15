@@ -17,12 +17,13 @@ const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
-// Admin authentication middleware - temporarily bypassed for testing
+// Admin authentication middleware
 const isAdmin = (req: any, res: any, next: any) => {
-  // Auto-login for development/testing
-  req.session = req.session || {};
-  req.session.isAdmin = true;
-  next();
+  if (req.session?.isAdmin) {
+    next();
+  } else {
+    res.status(401).json({ message: "Admin access required" });
+  }
 };
 
 export async function registerRoutes(app: Express): Promise<Server> {
