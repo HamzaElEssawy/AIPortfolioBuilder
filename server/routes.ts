@@ -1430,6 +1430,7 @@ What would be most helpful for your current career goals?`;
       cache.delete("route:/api/admin/case-studies:{}");
       cache.delete("route:/case-studies/featured:{}");
       cache.delete("route:/api/portfolio/case-studies/featured:{}");
+      cache.delete("route:/api/portfolio/case-studies:{}");
       
       console.log("Case study created successfully:", caseStudy.id);
       console.log("Returned case study:", caseStudy);
@@ -1515,6 +1516,7 @@ What would be most helpful for your current career goals?`;
       cache.delete("route:/api/admin/case-studies:{}");
       cache.delete("route:/case-studies/featured:{}");
       cache.delete("route:/api/portfolio/case-studies/featured:{}");
+      cache.delete("route:/api/portfolio/case-studies:{}");
       if (caseStudy?.slug) {
         cache.delete(`route:/case-studies/${caseStudy.slug}:{}`);
         cache.delete(`route:/api/portfolio/case-studies/${caseStudy.slug}:{}`);
