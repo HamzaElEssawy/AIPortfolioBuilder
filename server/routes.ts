@@ -1054,6 +1054,15 @@ What would be most helpful for your current career goals?`;
       const { insertExperienceEntrySchema } = await import("@shared/schema");
       const validatedData = insertExperienceEntrySchema.parse(req.body);
       const entry = await storage.createExperienceEntry(validatedData);
+      
+      // Invalidate timeline caches
+      cache.deletePattern('route:/timeline');
+      cache.deletePattern('route:/api/portfolio/timeline');
+      cache.deletePattern('portfolio:timeline');
+      cache.delete('content:timeline');
+      
+      console.log('Timeline cache invalidated after experience creation');
+      
       res.json(entry);
     } catch (error) {
       console.error("Error creating experience entry:", error);
@@ -1068,6 +1077,15 @@ What would be most helpful for your current career goals?`;
         return res.status(400).json({ message: "Invalid entry ID" });
       }
       const entry = await storage.updateExperienceEntry(id, req.body);
+      
+      // Invalidate timeline caches
+      cache.deletePattern('route:/timeline');
+      cache.deletePattern('route:/api/portfolio/timeline');
+      cache.deletePattern('portfolio:timeline');
+      cache.delete('content:timeline');
+      
+      console.log('Timeline cache invalidated after experience update', { entryId: id });
+      
       res.json(entry);
     } catch (error) {
       console.error("Error updating experience entry:", error);
@@ -1082,6 +1100,15 @@ What would be most helpful for your current career goals?`;
         return res.status(400).json({ message: "Invalid entry ID" });
       }
       await storage.deleteExperienceEntry(id);
+      
+      // Invalidate timeline caches
+      cache.deletePattern('route:/timeline');
+      cache.deletePattern('route:/api/portfolio/timeline');
+      cache.deletePattern('portfolio:timeline');
+      cache.delete('content:timeline');
+      
+      console.log('Timeline cache invalidated after experience deletion', { entryId: id });
+      
       res.json({ message: "Experience entry deleted successfully" });
     } catch (error) {
       console.error("Error deleting experience entry:", error);
