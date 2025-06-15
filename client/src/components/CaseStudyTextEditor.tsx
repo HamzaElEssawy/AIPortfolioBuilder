@@ -144,15 +144,58 @@ export default function CaseStudyTextEditor({
           {label}
         </label>
       )}
+      
+      {/* Formatting Toolbar */}
+      <div className="flex items-center gap-1 p-2 bg-gray-50 dark:bg-gray-800 border border-input rounded-t-md">
+        <button
+          type="button"
+          className="px-2 py-1 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
+          onMouseDown={(e) => {
+            e.preventDefault();
+            document.execCommand('bold', false);
+            setTimeout(handleContentChange, 0);
+          }}
+        >
+          <strong>B</strong>
+        </button>
+        <button
+          type="button"
+          className="px-2 py-1 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-700 rounded italic"
+          onMouseDown={(e) => {
+            e.preventDefault();
+            document.execCommand('italic', false);
+            setTimeout(handleContentChange, 0);
+          }}
+        >
+          I
+        </button>
+        <button
+          type="button"
+          className="px-2 py-1 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-700 rounded underline"
+          onMouseDown={(e) => {
+            e.preventDefault();
+            document.execCommand('underline', false);
+            setTimeout(handleContentChange, 0);
+          }}
+        >
+          U
+        </button>
+        <div className="h-4 w-px bg-gray-300 dark:bg-gray-600 mx-1" />
+        <span className="text-xs text-gray-500 dark:text-gray-400">
+          Ctrl+B Bold, Ctrl+I Italic, Ctrl+U Underline
+        </span>
+      </div>
+
       <div
         ref={editorRef}
         contentEditable
         suppressContentEditableWarning
         className={cn(
-          "w-full px-3 py-2 text-sm bg-background border border-input rounded-md",
+          "w-full px-3 py-3 text-sm bg-background border border-input rounded-b-md border-t-0",
           "focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent",
           "min-h-[80px] max-h-[400px] overflow-y-auto",
           "prose prose-sm max-w-none dark:prose-invert",
+          "leading-relaxed",
           className
         )}
         style={{ minHeight: height }}

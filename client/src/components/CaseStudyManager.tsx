@@ -392,11 +392,18 @@ export default function CaseStudyManager() {
                     caseStudyTitle={formData.title} 
                   />
                 ) : (
-                  <div className="p-4 bg-blue-50 rounded-lg">
-                    <p className="text-sm text-blue-700 font-medium">📸 Case Study Image</p>
-                    <p className="text-xs text-blue-600 mt-1">
-                      Create the case study first, then you can add an image by editing it.
-                    </p>
+                  <div className="p-4 bg-blue-50 rounded-lg border-2 border-dashed border-blue-200">
+                    <div className="text-center">
+                      <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 002 2v12a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                      <p className="text-sm text-blue-700 font-medium mb-1">Case Study Image</p>
+                      <p className="text-xs text-blue-600">
+                        Create the case study first, then you can add an image by editing it.
+                      </p>
+                    </div>
                   </div>
                 )}
 

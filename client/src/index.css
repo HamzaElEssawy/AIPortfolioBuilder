@@ -248,6 +248,50 @@
   .hover\:bg-warm-orange:hover {
     background-color: hsl(var(--warm-orange));
   }
+
+  /* Rich Text Editor Styling */
+  [contenteditable="true"] {
+    outline: none;
+    caret-color: var(--foreground);
+  }
+
+  [contenteditable="true"]:empty:before {
+    content: attr(data-placeholder);
+    color: hsl(var(--muted-foreground));
+    pointer-events: none;
+    opacity: 0.7;
+  }
+
+  [contenteditable="true"]:focus:empty:before {
+    opacity: 0.5;
+  }
+
+  /* Rich text formatting within editors */
+  [contenteditable="true"] strong,
+  [contenteditable="true"] b {
+    font-weight: 600;
+  }
+
+  [contenteditable="true"] em,
+  [contenteditable="true"] i {
+    font-style: italic;
+  }
+
+  [contenteditable="true"] u {
+    text-decoration: underline;
+  }
+
+  [contenteditable="true"] p {
+    margin: 0.5em 0;
+  }
+
+  [contenteditable="true"] p:first-child {
+    margin-top: 0;
+  }
+
+  [contenteditable="true"] p:last-child {
+    margin-bottom: 0;
+  }
   
   .hover\:text-navy:hover {
     color: hsl(var(--navy));
