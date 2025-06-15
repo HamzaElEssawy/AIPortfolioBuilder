@@ -35,8 +35,8 @@ export default function SimpleCaseStudyImageUpload({ caseStudyId, caseStudyTitle
 
   const uploadMutation = useMutation({
     mutationFn: async (data: FormData) => {
-      if (isCreateMode || !caseStudyId) {
-        throw new Error("Please create the case study first, then add an image by editing it.");
+      if (!caseStudyId) {
+        throw new Error("Case study ID is required for image upload.");
       }
       const response = await fetch(`/api/admin/portfolio-images/case-study/${caseStudyId}`, {
         method: "POST",
