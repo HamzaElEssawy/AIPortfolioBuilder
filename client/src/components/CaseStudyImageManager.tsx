@@ -64,9 +64,7 @@ export default function CaseStudyImageManager({ caseStudyId, caseStudyTitle }: C
 
   const deleteMutation = useMutation({
     mutationFn: async (imageId: number) => {
-      return apiRequest(`/api/admin/portfolio-images/${imageId}`, {
-        method: "DELETE",
-      });
+      return apiRequest(`/api/admin/portfolio-images/${imageId}`, "DELETE");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/portfolio/images/case-study/${caseStudyId}`] });
@@ -86,10 +84,7 @@ export default function CaseStudyImageManager({ caseStudyId, caseStudyTitle }: C
 
   const toggleVisibilityMutation = useMutation({
     mutationFn: async ({ imageId, isActive }: { imageId: number; isActive: boolean }) => {
-      return apiRequest(`/api/admin/portfolio-images/${imageId}`, {
-        method: "PATCH",
-        body: JSON.stringify({ isActive }),
-      });
+      return apiRequest(`/api/admin/portfolio-images/${imageId}`, "PATCH", { isActive });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/portfolio/images/case-study/${caseStudyId}`] });

@@ -11,6 +11,33 @@ import { dbContentManager } from "./contentStorage";
 import { cacheSync, cacheSyncMiddleware } from "./cacheSync";
 import { cache, cacheMiddleware } from "./cache";
 import { db } from "./db";
+import multer from "multer";
+import path from "path";
+import fs from "fs";
+
+// Configure multer for file uploads
+const uploadDir = "uploads";
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => cb(null, uploadDir),
+    filename: (req, file, cb) => {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+    }
+  }),
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed'));
+    }
+  }
+});
 
 // Initialize Anthropic client
 const anthropic = new Anthropic({
@@ -1828,7 +1855,66 @@ What would be most helpful for your current career goals?`;
     }
   });
 
+  // Case study image upload
+  app.post("/api/admin/portfolio-images/case-study/:id", isAdmin, upload.single("image"), async (req, res) => {
+    try {
+      const caseStudyId = parseInt(req.params.id);
+      if (isNaN(caseStudyId)) {
+        return res.status(400).json({ message: "Invalid case study ID" });
+      }
 
+      if (!req.file) {
+        return res.status(400).json({ message: "No image file provided" });
+      }
+
+      const { altText = `Case study ${caseStudyId} image`, caption } = req.body;
+      const imageUrl = `/uploads/${req.file.filename}`;
+
+      const image = await storage.createPortfolioImage({
+        section: "case-study",
+        imageUrl,
+        altText,
+        caption,
+        orderIndex: 0,
+        isActive: true,
+        caseStudyId,
+      });
+
+      // Clear case study related caches
+      cache.deletePattern(".*case-studies.*");
+      cache.deletePattern(".*case-study.*");
+
+      res.json(image);
+    } catch (error) {
+      console.error("Error uploading case study image:", error);
+      res.status(500).json({ message: "Failed to upload case study image" });
+    }
+  });
+
+  // Get case study images
+  app.get("/api/portfolio/images/case-study/:id", async (req, res) => {
+    try {
+      const cacheKey = `images/case-study/${req.params.id}`;
+      const cached = cache.get(cacheKey);
+      if (cached) {
+        return res.json(cached);
+      }
+
+      const caseStudyId = parseInt(req.params.id);
+      if (isNaN(caseStudyId)) {
+        return res.status(400).json({ message: "Invalid case study ID" });
+      }
+      
+      const images = await storage.getPortfolioImages("case-study");
+      const caseStudyImages = images.filter(img => img.caseStudyId === caseStudyId);
+      
+      cache.set(cacheKey, caseStudyImages, 300);
+      res.json(caseStudyImages);
+    } catch (error) {
+      console.error("Error fetching case study images:", error);
+      res.status(500).json({ message: "Failed to fetch case study images" });
+    }
+  });
 
   // Portfolio status management
   app.get("/api/admin/portfolio-status", isAdmin, async (req, res) => {
