@@ -1458,11 +1458,15 @@ What would be most helpful for your current career goals?`;
       
       // Extract tempImageId before validation (since it's not part of the schema)
       const { tempImageId } = req.body;
+      console.log("Extracted tempImageId from request:", tempImageId);
       
       const validatedData = insertCaseStudySchema.parse(processedData);
       console.log("Validated data:", validatedData);
       
       const caseStudy = await storage.createCaseStudy(validatedData);
+      console.log("Case study created successfully:", caseStudy.id);
+      
+      // Handle temporary image if provided
       console.log("Processing temporary image:", { 
         tempImageId, 
         hasTempImages: tempImages.has(tempImageId),
