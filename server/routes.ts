@@ -1410,6 +1410,9 @@ What would be most helpful for your current career goals?`;
   });
 
   app.post("/api/admin/case-studies", isAdmin, async (req, res) => {
+    console.log("ENDPOINT REACHED: /api/admin/case-studies");
+    console.log("Method:", req.method);
+    console.log("Headers:", req.headers);
     try {
       console.log("=== CASE STUDY CREATION START ===");
       console.log("Request body received:", req.body);
