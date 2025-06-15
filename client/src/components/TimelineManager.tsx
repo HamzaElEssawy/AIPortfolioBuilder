@@ -108,10 +108,26 @@ export default function TimelineManager() {
 
   const createMutation = useMutation({
     mutationFn: async (data: InsertExperienceEntry) => {
-      return apiRequest("/api/admin/experience", {
-        method: "POST",
-        body: JSON.stringify(data),
-      });
+      console.log("Creating timeline entry:", data);
+      try {
+        const response = await fetch("/api/admin/experience", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`HTTP ${response.status}: ${errorText}`);
+        }
+        
+        return response.json();
+      } catch (error) {
+        console.error("Create mutation error:", error);
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/experience"] });
@@ -121,9 +137,10 @@ export default function TimelineManager() {
       setIsDialogOpen(false);
     },
     onError: (error: any) => {
+      console.error("Timeline create error:", error);
       toast({ 
         title: "Error creating timeline entry", 
-        description: error.message,
+        description: error.message || "Unknown error occurred",
         variant: "destructive" 
       });
     },
@@ -131,10 +148,26 @@ export default function TimelineManager() {
 
   const updateMutation = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: Partial<InsertExperienceEntry> }) => {
-      return apiRequest(`/api/admin/experience/${id}`, {
-        method: "PUT",
-        body: JSON.stringify(data),
-      });
+      console.log("Updating timeline entry:", { id, data });
+      try {
+        const response = await fetch(`/api/admin/experience/${id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`HTTP ${response.status}: ${errorText}`);
+        }
+        
+        return response.json();
+      } catch (error) {
+        console.error("Update mutation error:", error);
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/experience"] });
@@ -145,9 +178,10 @@ export default function TimelineManager() {
       setEditingEntry(null);
     },
     onError: (error: any) => {
+      console.error("Timeline update error:", error);
       toast({ 
         title: "Error updating timeline entry", 
-        description: error.message,
+        description: error.message || "Unknown error occurred",
         variant: "destructive" 
       });
     },
@@ -155,9 +189,25 @@ export default function TimelineManager() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
-      return apiRequest(`/api/admin/experience/${id}`, {
-        method: "DELETE",
-      });
+      console.log("Deleting timeline entry:", id);
+      try {
+        const response = await fetch(`/api/admin/experience/${id}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`HTTP ${response.status}: ${errorText}`);
+        }
+        
+        return response.ok;
+      } catch (error) {
+        console.error("Delete mutation error:", error);
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/experience"] });
@@ -165,9 +215,10 @@ export default function TimelineManager() {
       toast({ title: "Timeline entry deleted successfully!" });
     },
     onError: (error: any) => {
+      console.error("Timeline delete error:", error);
       toast({ 
         title: "Error deleting timeline entry", 
-        description: error.message,
+        description: error.message || "Unknown error occurred",
         variant: "destructive" 
       });
     },
@@ -208,23 +259,59 @@ export default function TimelineManager() {
     setIsDialogOpen(true);
   };
 
+  const validateForm = (): string | null => {
+    if (!formData.year.trim()) return "Year/Period is required";
+    if (!formData.title.trim()) return "Job Title is required";
+    if (!formData.company.trim()) return "Company is required";
+    
+    // Validate impact metrics format
+    for (const [key, value] of Object.entries(formData.impactMetrics)) {
+      if (value && typeof value !== 'string') {
+        return `Impact metric ${key} must be a text value`;
+      }
+    }
+    
+    return null;
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Validate form
+    const validationError = validateForm();
+    if (validationError) {
+      toast({
+        title: "Validation Error",
+        description: validationError,
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    // Clean up empty impact metrics
+    const cleanImpactMetrics: Record<string, string> = {};
+    Object.entries(formData.impactMetrics).forEach(([key, value]) => {
+      if (value && value.trim()) {
+        cleanImpactMetrics[key] = value.trim();
+      }
+    });
+    
     const submitData: InsertExperienceEntry = {
-      year: formData.year,
-      title: formData.title,
-      company: formData.company,
-      location: formData.location || null,
-      description: formData.description || null,
+      year: formData.year.trim(),
+      title: formData.title.trim(),
+      company: formData.company.trim(),
+      location: formData.location?.trim() || null,
+      description: formData.description?.trim() || null,
       level: formData.level,
       experiencePoints: formData.experiencePoints,
-      impactMetrics: Object.keys(formData.impactMetrics).length > 0 ? formData.impactMetrics : null,
-      achievements: formData.achievements.length > 0 ? formData.achievements : [],
+      impactMetrics: Object.keys(cleanImpactMetrics).length > 0 ? cleanImpactMetrics : null,
+      achievements: formData.achievements.filter(a => a.trim()),
       highlight: formData.highlight,
       orderIndex: formData.orderIndex,
       color: "bg-purple-500"
     };
+
+    console.log("Submitting timeline data:", submitData);
 
     if (editingEntry) {
       updateMutation.mutate({ id: editingEntry.id, data: submitData });
