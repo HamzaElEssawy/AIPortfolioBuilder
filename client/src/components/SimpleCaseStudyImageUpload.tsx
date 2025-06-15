@@ -33,9 +33,17 @@ export default function SimpleCaseStudyImageUpload({
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  // Clear temp image data and refresh query when switching from create to edit mode
+  useEffect(() => {
+    if (!isCreateMode && caseStudyId) {
+      setTempImageData(null);
+      queryClient.invalidateQueries({ queryKey: [`/api/portfolio/images/case-study/${caseStudyId}`] });
+    }
+  }, [isCreateMode, caseStudyId, queryClient]);
+
   const { data: images = [], isLoading } = useQuery<CaseStudyImage[]>({
     queryKey: [`/api/portfolio/images/case-study/${caseStudyId}`],
-    enabled: !isCreateMode && caseStudyId !== null,
+    enabled: caseStudyId !== null && caseStudyId !== undefined,
   });
 
   const currentImage = images.length > 0 ? images[0] : null;

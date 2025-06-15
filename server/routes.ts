@@ -1463,10 +1463,23 @@ What would be most helpful for your current career goals?`;
       
       // Handle temporary image if provided
       const { tempImageId } = req.body;
+      console.log("Processing temporary image:", { 
+        tempImageId, 
+        hasTempImages: tempImages.has(tempImageId),
+        totalTempImages: tempImages.size,
+        tempImageKeys: Array.from(tempImages.keys())
+      });
       if (tempImageId && tempImages.has(tempImageId)) {
         const tempImage = tempImages.get(tempImageId);
+        console.log("Found temporary image:", tempImage);
         if (tempImage) {
           try {
+            console.log("Creating portfolio image with:", {
+              section: "case-study",
+              imageUrl: `/uploads/${tempImage.file.filename}`,
+              altText: tempImage.altText,
+              caseStudyId: caseStudy.id,
+            });
             await storage.createPortfolioImage({
               section: "case-study",
               imageUrl: `/uploads/${tempImage.file.filename}`,
@@ -1481,6 +1494,8 @@ What would be most helpful for your current career goals?`;
             console.error("Error associating temporary image:", imageError);
           }
         }
+      } else {
+        console.log("No temporary image to process or image not found");
       }
       
       // Clear all case study related caches
