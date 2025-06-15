@@ -1456,13 +1456,13 @@ What would be most helpful for your current career goals?`;
       console.log("Slug before validation:", processedData.slug);
       console.log("ImageUrl before validation:", processedData.imageUrl);
       
+      // Extract tempImageId before validation (since it's not part of the schema)
+      const { tempImageId } = req.body;
+      
       const validatedData = insertCaseStudySchema.parse(processedData);
       console.log("Validated data:", validatedData);
       
       const caseStudy = await storage.createCaseStudy(validatedData);
-      
-      // Handle temporary image if provided
-      const { tempImageId } = req.body;
       console.log("Processing temporary image:", { 
         tempImageId, 
         hasTempImages: tempImages.has(tempImageId),
