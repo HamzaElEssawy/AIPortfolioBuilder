@@ -408,11 +408,24 @@ What would be most helpful for your current career goals?`;
 
   app.post("/api/admin/case-studies", isAdmin, async (req, res) => {
     try {
-      const caseStudy = await storage.createCaseStudy(req.body);
+      console.log("Creating case study:", req.body);
+      
+      // Process form data to handle arrays properly
+      const processedData = {
+        ...req.body,
+        metrics: Array.isArray(req.body.metrics) ? req.body.metrics : 
+                 typeof req.body.metrics === 'string' ? req.body.metrics.split(',').map((m: string) => m.trim()).filter(Boolean) : [],
+        technologies: Array.isArray(req.body.technologies) ? req.body.technologies : 
+                      typeof req.body.technologies === 'string' ? req.body.technologies.split(',').map((t: string) => t.trim()).filter(Boolean) : [],
+      };
+      
+      const caseStudy = await storage.createCaseStudy(processedData);
+      console.log("Case study created successfully:", caseStudy.id);
       res.status(201).json(caseStudy);
     } catch (error) {
       console.error("Error creating case study:", error);
-      res.status(500).json({ message: "Failed to create case study" });
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      res.status(500).json({ message: "Failed to create case study", error: errorMessage });
     }
   });
 
@@ -459,6 +472,47 @@ What would be most helpful for your current career goals?`;
     } catch (error) {
       console.error("Error deleting case study:", error);
       res.status(500).json({ message: "Failed to delete case study" });
+    }
+  });
+
+  // Toggle featured status
+  app.patch("/api/admin/case-studies/:id/featured", isAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { featured } = req.body;
+      const caseStudyId = parseInt(id);
+      
+      if (isNaN(caseStudyId)) {
+        return res.status(400).json({ message: "Invalid case study ID" });
+      }
+
+      const caseStudy = await storage.updateCaseStudy(caseStudyId, { featured });
+      res.json(caseStudy);
+    } catch (error) {
+      console.error("Error toggling featured status:", error);
+      res.status(500).json({ message: "Failed to update featured status" });
+    }
+  });
+
+  // Reorder case studies
+  app.patch("/api/admin/case-studies/reorder", isAdmin, async (req, res) => {
+    try {
+      const { studies } = req.body;
+      
+      if (!Array.isArray(studies)) {
+        return res.status(400).json({ message: "Invalid studies array" });
+      }
+
+      // Update each case study's display order
+      const promises = studies.map(({ id, displayOrder }) => 
+        storage.updateCaseStudy(id, { displayOrder })
+      );
+      
+      await Promise.all(promises);
+      res.json({ message: "Case studies reordered successfully" });
+    } catch (error) {
+      console.error("Error reordering case studies:", error);
+      res.status(500).json({ message: "Failed to reorder case studies" });
     }
   });
 

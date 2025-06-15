@@ -95,10 +95,20 @@ export default function CaseStudyManager() {
 
   const createMutation = useMutation({
     mutationFn: async (data: CaseStudyFormData) => {
+      // Validate required fields
+      if (!data.title || !data.challenge || !data.approach || !data.solution || !data.impact) {
+        throw new Error("All required fields must be filled");
+      }
+
       const payload = {
         ...data,
-        metrics: data.metrics.split(",").map(m => m.trim()).filter(Boolean),
-        technologies: data.technologies.split(",").map(t => t.trim()).filter(Boolean),
+        metrics: typeof data.metrics === 'string' 
+          ? data.metrics.split(",").map(m => m.trim()).filter(Boolean)
+          : data.metrics,
+        technologies: typeof data.technologies === 'string'
+          ? data.technologies.split(",").map(t => t.trim()).filter(Boolean)
+          : data.technologies,
+        slug: data.slug || generateSlug(data.title),
       };
       return apiRequest("/api/admin/case-studies", "POST", payload);
     },
@@ -109,8 +119,10 @@ export default function CaseStudyManager() {
       setEditingId(null);
       toast({ title: "Case study created successfully" });
     },
-    onError: () => {
-      toast({ title: "Failed to create case study", variant: "destructive" });
+    onError: (error: any) => {
+      console.error("Create mutation error:", error);
+      const errorMessage = error?.message || "Failed to create case study";
+      toast({ title: errorMessage, variant: "destructive" });
     },
   });
 
@@ -134,8 +146,10 @@ export default function CaseStudyManager() {
       setEditingId(null);
       toast({ title: "Case study updated successfully" });
     },
-    onError: () => {
-      toast({ title: "Failed to update case study", variant: "destructive" });
+    onError: (error: any) => {
+      console.error("Update mutation error:", error);
+      const errorMessage = error?.response?.data?.error || error?.message || "Failed to update case study";
+      toast({ title: errorMessage, variant: "destructive" });
     },
   });
 
@@ -147,8 +161,10 @@ export default function CaseStudyManager() {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/case-studies"] });
       toast({ title: "Case study deleted successfully" });
     },
-    onError: () => {
-      toast({ title: "Failed to delete case study", variant: "destructive" });
+    onError: (error: any) => {
+      console.error("Delete mutation error:", error);
+      const errorMessage = error?.response?.data?.message || error?.message || "Failed to delete case study";
+      toast({ title: errorMessage, variant: "destructive" });
     },
   });
 
@@ -158,6 +174,12 @@ export default function CaseStudyManager() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/case-studies"] });
+      toast({ title: featured ? "Case study marked as featured" : "Case study removed from featured" });
+    },
+    onError: (error: any) => {
+      console.error("Toggle featured error:", error);
+      const errorMessage = error?.response?.data?.message || error?.message || "Failed to update featured status";
+      toast({ title: errorMessage, variant: "destructive" });
     },
   });
 
@@ -167,6 +189,12 @@ export default function CaseStudyManager() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/case-studies"] });
+      toast({ title: "Case studies reordered successfully" });
+    },
+    onError: (error: any) => {
+      console.error("Reorder error:", error);
+      const errorMessage = error?.response?.data?.message || error?.message || "Failed to reorder case studies";
+      toast({ title: errorMessage, variant: "destructive" });
     },
   });
 
