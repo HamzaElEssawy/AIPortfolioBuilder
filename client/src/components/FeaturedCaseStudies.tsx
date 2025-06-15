@@ -21,7 +21,6 @@ interface CaseStudy {
   imageUrl?: string;
   imageFile?: string;
   externalUrl?: string;
-  imageUrl?: string;
   clientName?: string;
   projectDuration?: string;
   teamSize?: string;
