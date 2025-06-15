@@ -212,19 +212,13 @@ export default function SimpleCaseStudyImageUpload({ caseStudyId, caseStudyTitle
           <Button
             type="button"
             onClick={handleButtonClick}
-            disabled={isCreateMode || !selectedFile || uploadMutation.isPending}
-            className={`w-full ${isCreateMode ? 'disabled:opacity-50' : ''}`}
+            disabled={!selectedFile || uploadMutation.isPending}
+            className="w-full"
           >
             <Upload className="w-4 h-4 mr-2" />
             {uploadMutation.isPending ? "Uploading..." : "Upload Image"}
           </Button>
-          {isCreateMode && (
-            <div className="text-center py-2">
-              <p className="text-xs text-blue-600 bg-blue-50 px-3 py-1 rounded-full inline-block">
-                Create the case study first, then you can add an image by editing it.
-              </p>
-            </div>
-          )}
+
         </form>
       )}
     </div>
