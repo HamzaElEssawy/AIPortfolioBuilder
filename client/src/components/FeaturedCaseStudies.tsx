@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Star, Users, Clock, TrendingUp } from "lucide-react";
+import { ArrowRight, Star, Users, Clock, TrendingUp, ExternalLink } from "lucide-react";
 import { Link } from "wouter";
 
 interface CaseStudy {
@@ -18,6 +18,9 @@ interface CaseStudy {
   status: string;
   featured: boolean;
   displayOrder: number;
+  imageUrl?: string;
+  imageFile?: string;
+  externalUrl?: string;
   imageUrl?: string;
   clientName?: string;
   projectDuration?: string;
@@ -179,15 +182,27 @@ export default function FeaturedCaseStudies() {
                   </div>
                 )}
 
-                {/* Read More Button */}
-                <Link href={`/case-study/${caseStudy.slug}`}>
-                  <Button 
-                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white group-hover:scale-105 transition-all duration-300"
-                  >
-                    Read Full Case Study
-                    <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
-                  </Button>
-                </Link>
+                {/* Action Buttons */}
+                <div className="flex gap-2">
+                  <Link href={`/case-study/${caseStudy.slug}`} className="flex-1">
+                    <Button 
+                      className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white group-hover:scale-105 transition-all duration-300"
+                    >
+                      Read Full Case Study
+                      <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
+                    </Button>
+                  </Link>
+                  {caseStudy.externalUrl && (
+                    <Button 
+                      variant="outline"
+                      size="sm"
+                      className="px-3 border-blue-600 text-blue-600 hover:bg-blue-50 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-blue-900/20"
+                      onClick={() => window.open(caseStudy.externalUrl, '_blank')}
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                    </Button>
+                  )}
+                </div>
               </CardContent>
             </Card>
           ))}

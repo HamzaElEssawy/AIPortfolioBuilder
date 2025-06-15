@@ -353,27 +353,83 @@ export default function CaseStudyManager() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="imageFile">Case Study Image</Label>
-                  <Input
-                    id="imageFile"
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        // In a real implementation, this would upload to your storage service
-                        const fileName = file.name;
-                        setFormData(prev => ({ ...prev, imageFile: fileName }));
-                      }
-                    }}
-                    className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">
-                    Upload an image from your computer (JPG, PNG, WebP)
-                  </p>
+              <div className="space-y-4">
+                {/* Current Image Display */}
+                {(formData.imageFile || formData.imageUrl) && (
+                  <div>
+                    <Label>Current Image</Label>
+                    <div className="mt-2 p-4 border rounded-lg bg-gray-50">
+                      {formData.imageFile ? (
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm text-gray-600">Uploaded: {formData.imageFile}</span>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setFormData(prev => ({ ...prev, imageFile: "" }))}
+                          >
+                            Remove
+                          </Button>
+                        </div>
+                      ) : formData.imageUrl ? (
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm text-gray-600">URL: {formData.imageUrl}</span>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setFormData(prev => ({ ...prev, imageUrl: "" }))}
+                          >
+                            Remove
+                          </Button>
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="imageFile">Upload New Image</Label>
+                    <Input
+                      id="imageFile"
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const fileName = file.name;
+                          setFormData(prev => ({ 
+                            ...prev, 
+                            imageFile: fileName,
+                            imageUrl: "" // Clear URL when uploading file
+                          }));
+                        }
+                      }}
+                      className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      Upload a new image from your computer (JPG, PNG, WebP)
+                    </p>
+                  </div>
+                  <div>
+                    <Label htmlFor="imageUrl">Or Use Image URL</Label>
+                    <Input
+                      id="imageUrl"
+                      value={formData.imageUrl}
+                      onChange={(e) => setFormData(prev => ({ 
+                        ...prev, 
+                        imageUrl: e.target.value,
+                        imageFile: e.target.value ? "" : prev.imageFile // Clear file when adding URL
+                      }))}
+                      placeholder="https://example.com/image.jpg"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      Alternative: paste an image URL instead of uploading
+                    </p>
+                  </div>
                 </div>
+
                 <div>
                   <Label htmlFor="externalUrl">Project/Company Link</Label>
                   <Input
@@ -383,26 +439,10 @@ export default function CaseStudyManager() {
                     placeholder="https://company.com/product"
                   />
                   <p className="text-xs text-gray-500 mt-1">
-                    Link to the product, company, or live project (optional)
+                    Link to the live product, company website, or related project (optional)
                   </p>
                 </div>
               </div>
-
-              {/* Legacy Image URL field for existing cases */}
-              {formData.imageUrl && (
-                <div>
-                  <Label htmlFor="imageUrl">Current Image URL</Label>
-                  <Input
-                    id="imageUrl"
-                    value={formData.imageUrl}
-                    onChange={(e) => setFormData(prev => ({ ...prev, imageUrl: e.target.value }))}
-                    placeholder="https://example.com/image.jpg"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">
-                    Legacy image URL - use file upload above for new images
-                  </p>
-                </div>
-              )}
 
               <div>
                 <Label htmlFor="challenge">Challenge *</Label>

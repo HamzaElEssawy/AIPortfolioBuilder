@@ -123,16 +123,34 @@ export default function CaseStudyDetail() {
               </div>
             )}
           </div>
+
+          {/* External Link Button */}
+          {caseStudy.externalUrl && (
+            <div className="mt-6">
+              <Button
+                onClick={() => window.open(caseStudy.externalUrl, '_blank')}
+                className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white"
+              >
+                <ExternalLink className="w-4 h-4 mr-2" />
+                View Live Project
+              </Button>
+            </div>
+          )}
         </div>
 
         {/* Hero Image */}
-        {caseStudy.imageUrl && (
+        {(caseStudy.imageUrl || caseStudy.imageFile) && (
           <div className="w-full max-w-4xl mx-auto mb-12">
             <div className="rounded-xl overflow-hidden shadow-2xl">
               <img
-                src={caseStudy.imageUrl}
+                src={caseStudy.imageUrl || `/uploads/${caseStudy.imageFile}`}
                 alt={caseStudy.title}
                 className="w-full h-64 md:h-96 object-cover"
+                onError={(e) => {
+                  // Fallback to a placeholder if image fails to load
+                  const target = e.target as HTMLImageElement;
+                  target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCAwIDgwMCA0MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI4MDAiIGhlaWdodD0iNDAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik00MDAgMTAwTDQ2MCAyMDBIMzQwTDQwMCAxMDBaIiBmaWxsPSIjOUM5Qzk4Ii8+CjxjaXJjbGUgY3g9IjYwMCIgY3k9IjE1MCIgcj0iMzAiIGZpbGw9IiM5QzlDOTgiLz4KPHRleHQgeD0iNDAwIiB5PSIzMDAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2QjcyODAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCI+Q2FzZSBTdHVkeSBJbWFnZTwvdGV4dD4KPC9zdmc+';
+                }}
               />
             </div>
           </div>
