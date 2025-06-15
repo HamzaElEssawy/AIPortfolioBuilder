@@ -1468,41 +1468,56 @@ What would be most helpful for your current career goals?`;
       const caseStudy = await storage.createCaseStudy(validatedData);
       console.log("Case study created successfully:", caseStudy.id);
       
-      // Handle temporary image if provided
-      console.log("Processing temporary image:", { 
-        tempImageId, 
-        hasTempImages: tempImages.has(tempImageId),
-        totalTempImages: tempImages.size,
-        tempImageKeys: Array.from(tempImages.keys())
-      });
-      if (tempImageId && tempImages.has(tempImageId)) {
-        const tempImage = tempImages.get(tempImageId);
-        console.log("Found temporary image:", tempImage);
-        if (tempImage) {
-          try {
-            console.log("Creating portfolio image with:", {
-              section: "case-study",
-              imageUrl: `/uploads/${tempImage.file.filename}`,
-              altText: tempImage.altText,
-              caseStudyId: caseStudy.id,
-            });
-            await storage.createPortfolioImage({
-              section: "case-study",
-              imageUrl: `/uploads/${tempImage.file.filename}`,
-              altText: tempImage.altText,
-              orderIndex: 0,
-              isActive: true,
-              caseStudyId: caseStudy.id,
-            });
-            tempImages.delete(tempImageId);
-            console.log("Temporary image associated with case study:", caseStudy.id);
-          } catch (imageError) {
-            console.error("Error associating temporary image:", imageError);
+      // Handle temporary image if provided - IMMEDIATE EXECUTION
+      console.log("=== TEMP IMAGE PROCESSING START ===");
+      console.log("TempImageId received:", tempImageId);
+      console.log("TempImages map size:", tempImages.size);
+      console.log("TempImages keys:", Array.from(tempImages.keys()));
+      console.log("Has tempImageId:", tempImages.has(tempImageId));
+      
+      if (tempImageId) {
+        console.log("Processing tempImageId:", tempImageId);
+        
+        if (tempImages.has(tempImageId)) {
+          const tempImage = tempImages.get(tempImageId);
+          console.log("Found temporary image data:", tempImage);
+          
+          if (tempImage && tempImage.file) {
+            try {
+              const imageData = {
+                section: "case-study",
+                imageUrl: `/uploads/${tempImage.file.filename}`,
+                altText: tempImage.altText,
+                orderIndex: 0,
+                isActive: true,
+                caseStudyId: caseStudy.id,
+              };
+              
+              console.log("Creating portfolio image with data:", imageData);
+              
+              const createdImage = await storage.createPortfolioImage(imageData);
+              console.log("Portfolio image created successfully:", createdImage);
+              
+              // Clean up temporary image
+              tempImages.delete(tempImageId);
+              console.log("Temporary image cleaned up");
+              
+            } catch (imageError) {
+              console.error("Error creating portfolio image:", imageError);
+              console.error("Error stack:", imageError.stack);
+            }
+          } else {
+            console.log("Invalid temporary image data:", tempImage);
           }
+        } else {
+          console.log("Temporary image not found in storage");
+          console.log("Available temp images:", Array.from(tempImages.keys()));
         }
       } else {
-        console.log("No temporary image to process or image not found");
+        console.log("No tempImageId provided");
       }
+      
+      console.log("=== TEMP IMAGE PROCESSING END ===");
       
       // Clear all case study related caches
       cache.deletePattern(".*case-studies.*");
