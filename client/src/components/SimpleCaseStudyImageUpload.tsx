@@ -189,33 +189,60 @@ export default function SimpleCaseStudyImageUpload({
         <span className="text-xs text-gray-500">(One image per case study)</span>
       </div>
 
-      {currentImage ? (
+      {(currentImage || tempImageData) ? (
         <div className="space-y-3">
           <div className="relative">
             <img
-              src={currentImage.imageUrl}
-              alt={currentImage.altText}
+              src={currentImage?.imageUrl || tempImageData?.imageUrl || ''}
+              alt={currentImage?.altText || tempImageData?.altText || 'Case study image'}
               className="w-full max-w-md h-48 object-cover rounded-lg border"
             />
+            {tempImageData && (
+              <div className="absolute top-2 right-2 bg-blue-600 text-white text-xs px-2 py-1 rounded">
+                Ready for upload
+              </div>
+            )}
           </div>
           <div className="flex items-center justify-between">
             <div className="text-sm text-gray-600">
-              <p className="font-medium">{currentImage.altText}</p>
-              {currentImage.caption && (
+              <p className="font-medium">{currentImage?.altText || tempImageData?.altText}</p>
+              {currentImage?.caption && (
                 <p className="text-xs text-gray-500">{currentImage.caption}</p>
               )}
+              {tempImageData && (
+                <p className="text-xs text-blue-600">Image ready - create case study to save</p>
+              )}
             </div>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={handleDelete}
-              disabled={deleteMutation.isPending}
-              className="text-red-600 hover:text-red-700"
-            >
-              <Trash2 className="w-3 h-3 mr-1" />
-              Remove
-            </Button>
+            {currentImage && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleDelete}
+                disabled={deleteMutation.isPending}
+                className="text-red-600 hover:text-red-700"
+              >
+                <Trash2 className="w-3 h-3 mr-1" />
+                Remove
+              </Button>
+            )}
+            {tempImageData && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setTempImageData(null);
+                  if (onTempImageUploaded) {
+                    onTempImageUploaded(null as any);
+                  }
+                }}
+                className="text-red-600 hover:text-red-700"
+              >
+                <Trash2 className="w-3 h-3 mr-1" />
+                Remove
+              </Button>
+            )}
           </div>
         </div>
       ) : (

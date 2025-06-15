@@ -118,6 +118,7 @@ export default function CaseStudyManager() {
       setIsDialogOpen(false);
       setFormData(initialFormData);
       setEditingId(null);
+      setTempImageData(null);
       toast({ title: "Case study created successfully" });
     },
     onError: (error: any) => {
@@ -392,6 +393,7 @@ export default function CaseStudyManager() {
                   caseStudyId={editingId} 
                   caseStudyTitle={formData.title}
                   isCreateMode={!editingId}
+                  onTempImageUploaded={setTempImageData}
                 />
 
                 <div>
