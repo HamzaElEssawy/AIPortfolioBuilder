@@ -17,7 +17,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import UltimateTextEditor from "@/components/UltimateTextEditor";
+import CaseStudyTextEditor from "@/components/CaseStudyTextEditor";
 
 interface CaseStudy {
   id: number;
@@ -478,7 +478,7 @@ export default function CaseStudyManager() {
               </div>
 
               <div>
-                <UltimateTextEditor
+                <CaseStudyTextEditor
                   label="Challenge *"
                   value={formData.challenge}
                   onChange={(content) => setFormData(prev => ({ ...prev, challenge: content }))}
@@ -488,7 +488,7 @@ export default function CaseStudyManager() {
               </div>
 
               <div>
-                <UltimateTextEditor
+                <CaseStudyTextEditor
                   label="Approach *"
                   value={formData.approach}
                   onChange={(content) => setFormData(prev => ({ ...prev, approach: content }))}
@@ -498,7 +498,7 @@ export default function CaseStudyManager() {
               </div>
 
               <div>
-                <UltimateTextEditor
+                <CaseStudyTextEditor
                   label="Solution *"
                   value={formData.solution}
                   onChange={(content) => setFormData(prev => ({ ...prev, solution: content }))}
@@ -508,7 +508,7 @@ export default function CaseStudyManager() {
               </div>
 
               <div>
-                <UltimateTextEditor
+                <CaseStudyTextEditor
                   label="Impact *"
                   value={formData.impact}
                   onChange={(content) => setFormData(prev => ({ ...prev, impact: content }))}
