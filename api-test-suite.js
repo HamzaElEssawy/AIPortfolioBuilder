@@ -5,7 +5,7 @@
 
 class AIAssistantAPITester {
   constructor() {
-    this.baseUrl = 'http://localhost:5173';
+    this.baseUrl = 'http://localhost:5000';
     this.cookies = null;
     this.testResults = {
       auth: false,
