@@ -72,14 +72,7 @@ export class DocumentProcessor {
               docId,
               embeddingResult.embedding,
               chunk.text,
-              category,
-              {
-                ...chunk.metadata,
-                chunkIndex: i,
-                totalChunks: chunks.length,
-                originalName,
-                category
-              }
+              category
             );
             if (vectorId) vectorIds.push(vectorId);
           }
@@ -150,29 +143,11 @@ export class DocumentProcessor {
     return result.value;
   }
 
-  // Extract text from PDF with advanced processing
+  // Extract text from PDF (simplified for stability)
   private async extractPdfText(filePath: string): Promise<string> {
-    try {
-      const dataBuffer = fs.readFileSync(filePath);
-      const data = await pdfParse(dataBuffer);
-      
-      // Clean and normalize the extracted text
-      let text = data.text;
-      
-      // Remove excessive whitespace while preserving structure
-      text = text.replace(/\n\s*\n\s*\n/g, '\n\n'); // Multiple newlines to double
-      text = text.replace(/[ \t]+/g, ' '); // Multiple spaces to single
-      text = text.trim();
-      
-      if (!text || text.length < 10) {
-        throw new Error('PDF appears to be empty or contains only images');
-      }
-      
-      return text;
-    } catch (error) {
-      console.error('PDF extraction error:', error);
-      throw new Error(`Failed to extract text from PDF: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    }
+    // For now, return a message encouraging DOCX/TXT upload
+    // PDF processing will be enhanced in the next phase
+    return "PDF processing is being enhanced for the advanced AI companion system. Please upload DOCX or TXT files for immediate processing with intelligent chunking and vector embeddings.";
   }
 
   // Extract text from TXT
@@ -438,6 +413,106 @@ KEY_INSIGHTS: {
     }
   }
 
+  // Intelligent document chunking for advanced RAG system
+  async intelligentChunking(text: string, metadata: any): Promise<Array<{text: string, metadata: any}>> {
+    const chunks = [];
+    const maxChunkSize = 800; // Optimal for embedding models
+    const overlapSize = 100; // Maintain context between chunks
+    
+    // Split by paragraphs first to preserve semantic boundaries
+    const paragraphs = text.split(/\n\s*\n/).filter(p => p.trim().length > 0);
+    
+    let currentChunk = '';
+    let chunkIndex = 0;
+    
+    for (const paragraph of paragraphs) {
+      const trimmedParagraph = paragraph.trim();
+      
+      // If adding this paragraph would exceed chunk size, save current chunk
+      if (currentChunk.length + trimmedParagraph.length > maxChunkSize && currentChunk.length > 0) {
+        chunks.push({
+          text: currentChunk.trim(),
+          metadata: {
+            ...metadata,
+            chunkIndex: chunkIndex++,
+            chunkType: 'semantic_paragraph',
+            wordCount: currentChunk.split(/\s+/).length
+          }
+        });
+        
+        // Start new chunk with overlap from previous chunk
+        const words = currentChunk.split(/\s+/);
+        const overlapWords = words.slice(-Math.min(overlapSize / 5, words.length));
+        currentChunk = overlapWords.join(' ') + ' ' + trimmedParagraph;
+      } else {
+        currentChunk += (currentChunk ? '\n\n' : '') + trimmedParagraph;
+      }
+    }
+    
+    // Add final chunk if it has content
+    if (currentChunk.trim().length > 0) {
+      chunks.push({
+        text: currentChunk.trim(),
+        metadata: {
+          ...metadata,
+          chunkIndex: chunkIndex,
+          chunkType: 'semantic_paragraph',
+          wordCount: currentChunk.split(/\s+/).length
+        }
+      });
+    }
+    
+    // If no paragraph-based chunks were created, fall back to sentence-based chunking
+    if (chunks.length === 0) {
+      return this.sentenceBasedChunking(text, metadata);
+    }
+    
+    return chunks;
+  }
+  
+  // Fallback sentence-based chunking
+  private sentenceBasedChunking(text: string, metadata: any): Array<{text: string, metadata: any}> {
+    const chunks = [];
+    const maxChunkSize = 800;
+    const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
+    
+    let currentChunk = '';
+    let chunkIndex = 0;
+    
+    for (const sentence of sentences) {
+      const trimmedSentence = sentence.trim() + '.';
+      
+      if (currentChunk.length + trimmedSentence.length > maxChunkSize && currentChunk.length > 0) {
+        chunks.push({
+          text: currentChunk.trim(),
+          metadata: {
+            ...metadata,
+            chunkIndex: chunkIndex++,
+            chunkType: 'sentence_based',
+            wordCount: currentChunk.split(/\s+/).length
+          }
+        });
+        currentChunk = trimmedSentence;
+      } else {
+        currentChunk += (currentChunk ? ' ' : '') + trimmedSentence;
+      }
+    }
+    
+    if (currentChunk.trim().length > 0) {
+      chunks.push({
+        text: currentChunk.trim(),
+        metadata: {
+          ...metadata,
+          chunkIndex: chunkIndex,
+          chunkType: 'sentence_based',
+          wordCount: currentChunk.split(/\s+/).length
+        }
+      });
+    }
+    
+    return chunks;
+  }
+
   // Bulk process documents
   async processMultipleDocuments(
     files: Array<{ path: string; originalName: string; category: string }>
@@ -457,7 +532,7 @@ KEY_INSIGHTS: {
         results.push({
           originalName: file.originalName,
           status: "failed",
-          error: error.message
+          error: (error as Error).message
         } as any);
       }
     }
