@@ -99,7 +99,7 @@ export default function EnhancedAIAssistant() {
         attachedDocuments: selectedDocuments,
         conversationHistory: messages.slice(-10)
       });
-      return response.json();
+      return response;
     },
     onSuccess: (data) => {
       const assistantMessage: Message = {
@@ -143,10 +143,16 @@ export default function EnhancedAIAssistant() {
     },
     onSuccess: (data) => {
       toast({
-        title: "Documents Uploaded",
-        description: `${data.uploadedCount} of ${data.totalFiles} documents processed successfully`,
+        title: "Upload Complete",
+        description: `${data.uploadedCount} documents successfully added to knowledge base`,
       });
       queryClient.invalidateQueries({ queryKey: ['/api/admin/knowledge-base/documents'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/knowledge-base/categories'] });
+      
+      // Clear the file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     },
     onError: () => {
       toast({
@@ -161,7 +167,7 @@ export default function EnhancedAIAssistant() {
   const initializeMutation = useMutation({
     mutationFn: async () => {
       const response = await apiRequest("POST", "/api/admin/knowledge-base/initialize");
-      return response.json();
+      return response;
     },
     onSuccess: () => {
       toast({
@@ -430,7 +436,14 @@ export default function EnhancedAIAssistant() {
                 disabled={!inputMessage.trim() || chatMutation.isPending}
                 className="px-6"
               >
-                <Send className="h-4 w-4" />
+                {chatMutation.isPending ? (
+                  <div className="flex items-center gap-2">
+                    <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></div>
+                    <span className="text-sm">Thinking...</span>
+                  </div>
+                ) : (
+                  <Send className="h-4 w-4" />
+                )}
               </Button>
             </div>
           </div>
@@ -519,9 +532,19 @@ export default function EnhancedAIAssistant() {
                 <div className="flex items-center justify-between mb-2">
                   <h4 className="font-medium">Documents ({filteredDocuments.length})</h4>
                   {selectedDocuments.length > 0 && (
-                    <Badge variant="secondary" className="text-xs">
-                      {selectedDocuments.length} selected
-                    </Badge>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="secondary" className="text-xs">
+                        {selectedDocuments.length} selected
+                      </Badge>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 px-2 text-xs"
+                        onClick={() => setSelectedDocuments([])}
+                      >
+                        Clear All
+                      </Button>
+                    </div>
                   )}
                 </div>
                 
@@ -532,8 +555,8 @@ export default function EnhancedAIAssistant() {
                         key={doc.id}
                         className={`p-3 border rounded-lg transition-colors ${
                           selectedDocuments.includes(doc.id)
-                            ? 'border-blue-500 bg-blue-50'
-                            : 'border-gray-200 hover:border-gray-300'
+                            ? 'border-blue-500 bg-blue-50 ring-1 ring-blue-200'
+                            : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                         }`}
                       >
                         <div className="flex items-start justify-between">
