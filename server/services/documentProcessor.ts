@@ -1,7 +1,6 @@
 import fs from "fs";
 import path from "path";
 import mammoth from "mammoth";
-// PDF parsing temporarily disabled for stability
 import { db } from "../db";
 import { knowledgeBaseDocuments, documentCategories } from "@shared/schema";
 import { eq } from "drizzle-orm";
@@ -54,23 +53,40 @@ export class DocumentProcessor {
           category
         );
 
-        // Generate vector embeddings for the content
-        console.log("Generating vector embeddings for document:", docId);
-        const embeddingResult = await vectorEmbeddingService.generateEmbedding(contentText);
-        
-        let vectorId = null;
-        if (embeddingResult.success) {
-          // Store the embedding in vector database
-          vectorId = await vectorEmbeddingService.storeEmbedding(
-            docId,
-            embeddingResult.embedding,
-            contentText,
-            category
-          );
-          console.log("Vector embedding stored with ID:", vectorId);
-        } else {
-          console.warn("Vector embedding failed:", embeddingResult.error);
+        // Advanced document chunking for better RAG performance
+        console.log("Processing document with intelligent chunking:", docId);
+        const chunks = await this.intelligentChunking(contentText, {
+          category,
+          originalName,
+          summary: summary || "No summary available"
+        });
+
+        // Generate embeddings for each chunk
+        const vectorIds = [];
+        for (let i = 0; i < chunks.length; i++) {
+          const chunk = chunks[i];
+          const embeddingResult = await vectorEmbeddingService.generateEmbedding(chunk.text);
+          
+          if (embeddingResult.success) {
+            const vectorId = await vectorEmbeddingService.storeEmbedding(
+              docId,
+              embeddingResult.embedding,
+              chunk.text,
+              category,
+              {
+                ...chunk.metadata,
+                chunkIndex: i,
+                totalChunks: chunks.length,
+                originalName,
+                category
+              }
+            );
+            if (vectorId) vectorIds.push(vectorId);
+          }
         }
+
+        const vectorId = vectorIds.length > 0 ? vectorIds[0] : null;
+        console.log(`Processed ${chunks.length} chunks, stored ${vectorIds.length} embeddings`);
 
         // Update document with processed content and vector ID
         await db.update(knowledgeBaseDocuments)
@@ -134,9 +150,29 @@ export class DocumentProcessor {
     return result.value;
   }
 
-  // Extract text from PDF
+  // Extract text from PDF with advanced processing
   private async extractPdfText(filePath: string): Promise<string> {
-    return "PDF parsing is temporarily unavailable for system stability. Please upload DOCX or TXT files for document analysis.";
+    try {
+      const dataBuffer = fs.readFileSync(filePath);
+      const data = await pdfParse(dataBuffer);
+      
+      // Clean and normalize the extracted text
+      let text = data.text;
+      
+      // Remove excessive whitespace while preserving structure
+      text = text.replace(/\n\s*\n\s*\n/g, '\n\n'); // Multiple newlines to double
+      text = text.replace(/[ \t]+/g, ' '); // Multiple spaces to single
+      text = text.trim();
+      
+      if (!text || text.length < 10) {
+        throw new Error('PDF appears to be empty or contains only images');
+      }
+      
+      return text;
+    } catch (error) {
+      console.error('PDF extraction error:', error);
+      throw new Error(`Failed to extract text from PDF: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
   }
 
   // Extract text from TXT
