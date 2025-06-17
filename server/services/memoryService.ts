@@ -52,14 +52,14 @@ export class MemoryService {
         // Boost score for keyword matches
         queryWords.forEach(word => {
           if (memoryContent.includes(word)) {
-            relevanceScore += 2;
+            relevanceScore = (relevanceScore || 0) + 2;
           }
         });
         
         // Boost score for context tag matches
         memory.contextTags?.forEach(tag => {
           if (queryWords.includes(tag.toLowerCase())) {
-            relevanceScore += 3;
+            relevanceScore = (relevanceScore || 0) + 3;
           }
         });
         
@@ -68,7 +68,7 @@ export class MemoryService {
 
       // Update last accessed for retrieved memories
       const topMemories = scoredMemories
-        .sort((a, b) => b.relevanceScore - a.relevanceScore)
+        .sort((a, b) => (b.relevanceScore || 0) - (a.relevanceScore || 0))
         .slice(0, limit);
 
       // Update access timestamps
@@ -184,7 +184,7 @@ export class MemoryService {
 
       if (memories.length === 0) return "";
 
-      const summaryParts = [];
+      const summaryParts: string[] = [];
       
       // Group by memory type
       const grouped = memories.reduce((acc, memory) => {

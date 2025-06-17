@@ -151,7 +151,7 @@ export class DocumentProcessor {
 Document content:
 ${content}
 
-${categoryRules?.aiPrompts?.analysisPrompt || "Focus on career development, skills, achievements, and actionable insights."}
+${(categoryRules?.aiPrompts as any)?.analysisPrompt || "Focus on career development, skills, achievements, and actionable insights."}
 
 Provide response in this format:
 SUMMARY: [2-3 sentence summary]
