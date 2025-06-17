@@ -71,7 +71,7 @@ export default function EnhancedAIAssistant() {
     queryKey: ['/api/admin/knowledge-base/documents'],
     queryFn: async () => {
       const response = await apiRequest("GET", "/api/admin/knowledge-base/documents");
-      return response.json();
+      return response;
     }
   });
 
@@ -80,7 +80,7 @@ export default function EnhancedAIAssistant() {
     queryKey: ['/api/admin/knowledge-base/categories'],
     queryFn: async () => {
       const response = await apiRequest("GET", "/api/admin/knowledge-base/categories");
-      return response.json();
+      return response;
     }
   });
 
