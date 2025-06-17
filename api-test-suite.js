@@ -37,13 +37,19 @@ class AIAssistantAPITester {
 
   async request(endpoint, options = {}) {
     const url = `${this.baseUrl}${endpoint}`;
+    const headers = {
+      ...(this.cookies && { 'Cookie': this.cookies }),
+      ...options.headers
+    };
+
+    // Only add Content-Type for non-FormData requests
+    if (!(options.body instanceof FormData)) {
+      headers['Content-Type'] = 'application/json';
+    }
+
     const config = {
       ...options,
-      headers: {
-        'Content-Type': 'application/json',
-        ...(this.cookies && { 'Cookie': this.cookies }),
-        ...options.headers
-      }
+      headers
     };
 
     const response = await fetch(url, config);

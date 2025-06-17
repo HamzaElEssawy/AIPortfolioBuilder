@@ -92,16 +92,41 @@ const isAdmin = (req: any, res: any, next: any) => {
 };
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Serve uploaded files
+  app.use('/uploads', (req: any, res: any, next: any) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    next();
+  });
   
-  // CRITICAL: Handle upload endpoints BEFORE any JSON parsing middleware
-  // Upload and process documents - handle multipart before any other middleware
-  app.post("/api/admin/knowledge-base/upload", documentUpload.array('files', 10), async (req, res) => {
-    try {
-      // Check admin authentication manually since we bypass middleware
-      if (!req.session?.isAdmin) {
-        return res.status(401).json({ message: "Admin access required" });
-      }
+  // Static file serving for uploads
+  const { static: serveStatic } = await import('express');
+  app.use('/uploads', serveStatic('uploads'));
+  
+  // Session configuration for admin
+  app.use(session({
+    secret: process.env.SESSION_SECRET || 'your-secret-key',
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 } // 24 hours
+  }));
 
+  // Document upload endpoint with detailed session debugging
+  app.post("/api/admin/knowledge-base/upload", documentUpload.array('files', 10), (req, res, next) => {
+    console.log('Upload endpoint - Session debug:', {
+      sessionExists: !!req.session,
+      isAdmin: req.session?.isAdmin,
+      sessionId: req.sessionID,
+      cookies: req.headers.cookie
+    });
+    
+    if (!req.session?.isAdmin) {
+      console.log('Upload rejected - not admin authenticated');
+      return res.status(401).json({ message: "Admin access required" });
+    }
+    
+    next();
+  }, async (req, res) => {
+    try {
       const files = req.files as Express.Multer.File[];
       const { category = "general" } = req.body;
 
@@ -140,23 +165,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to upload files to knowledge base" });
     }
   });
-  // Serve uploaded files
-  app.use('/uploads', (req: any, res: any, next: any) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    next();
-  });
-  
-  // Static file serving for uploads
-  const { static: serveStatic } = await import('express');
-  app.use('/uploads', serveStatic('uploads'));
-  
-  // Session configuration for admin
-  app.use(session({
-    secret: process.env.SESSION_SECRET || 'your-secret-key',
-    resave: false,
-    saveUninitialized: false,
-    cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 } // 24 hours
-  }));
 
   // Admin login endpoint
   app.post("/api/admin/login", async (req, res) => {
