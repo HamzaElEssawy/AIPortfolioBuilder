@@ -48,11 +48,19 @@ export default function KnowledgeBaseManager() {
   // Fetch knowledge base statistics
   const { data: stats, isLoading: loadingStats } = useQuery<KnowledgeBaseStats>({
     queryKey: ["/api/admin/knowledge-base/stats"],
+    queryFn: async () => {
+      const response = await apiRequest("GET", "/api/admin/knowledge-base/stats");
+      return response;
+    }
   });
 
   // Fetch documents
   const { data: documents = [], isLoading: loadingDocuments } = useQuery<Document[]>({
     queryKey: ["/api/admin/knowledge-base/documents"],
+    queryFn: async () => {
+      const response = await apiRequest("GET", "/api/admin/knowledge-base/documents");
+      return response;
+    }
   });
 
   // Upload mutation
