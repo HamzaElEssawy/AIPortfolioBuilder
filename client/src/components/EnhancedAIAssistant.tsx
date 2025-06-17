@@ -485,46 +485,110 @@ export default function EnhancedAIAssistant() {
 
               <Separator />
 
+              {/* Search and Filter */}
+              <div className="space-y-2">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                  <Input
+                    placeholder="Search documents..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+                
+                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Filter by category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Categories</SelectItem>
+                    {categories.map((category: any) => (
+                      <SelectItem key={category.id} value={category.name}>
+                        {category.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <Separator />
+
               {/* Documents List */}
               <div>
-                <h4 className="font-medium mb-2">Documents ({documents.length})</h4>
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="font-medium">Documents ({filteredDocuments.length})</h4>
+                  {selectedDocuments.length > 0 && (
+                    <Badge variant="secondary" className="text-xs">
+                      {selectedDocuments.length} selected
+                    </Badge>
+                  )}
+                </div>
+                
                 <ScrollArea className="h-64">
                   <div className="space-y-2">
-                    {documents.map((doc: KnowledgeDocument) => (
+                    {filteredDocuments.map((doc: KnowledgeDocument) => (
                       <div
                         key={doc.id}
-                        className={`p-2 border rounded cursor-pointer transition-colors ${
+                        className={`p-3 border rounded-lg transition-colors ${
                           selectedDocuments.includes(doc.id)
                             ? 'border-blue-500 bg-blue-50'
                             : 'border-gray-200 hover:border-gray-300'
                         }`}
-                        onClick={() => handleDocumentSelect(doc.id)}
                       >
-                        <div className="flex items-center justify-between">
-                          <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between">
+                          <div 
+                            className="flex-1 min-w-0 cursor-pointer"
+                            onClick={() => handleDocumentSelect(doc.id)}
+                          >
                             <div className="text-sm font-medium truncate">
                               {doc.originalName}
                             </div>
-                            <div className="text-xs text-gray-500">
-                              {doc.category}
+                            <div className="text-xs text-gray-500 mt-1">
+                              {doc.category} • {new Date(doc.uploadedAt).toLocaleDateString()}
                             </div>
+                            {doc.summary && (
+                              <div className="text-xs text-gray-600 mt-1 line-clamp-2">
+                                {doc.summary}
+                              </div>
+                            )}
                           </div>
                           
-                          <Badge
-                            className={`text-xs ml-2 ${getStatusColor(doc.status)}`}
-                            variant="secondary"
-                          >
-                            {doc.status}
-                          </Badge>
-                        </div>
-                        
-                        {doc.summary && (
-                          <div className="text-xs text-gray-600 mt-1 line-clamp-2">
-                            {doc.summary}
+                          <div className="flex items-center gap-1 ml-2">
+                            <Badge
+                              className={`text-xs ${getStatusColor(doc.status)}`}
+                              variant="secondary"
+                            >
+                              {doc.status}
+                            </Badge>
+                            
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-6 w-6 p-0 hover:bg-red-100"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteDocument(doc.id);
+                              }}
+                              disabled={deleteMutation.isPending}
+                            >
+                              <Trash2 className="h-3 w-3 text-red-600" />
+                            </Button>
                           </div>
-                        )}
+                        </div>
                       </div>
                     ))}
+                    
+                    {filteredDocuments.length === 0 && (
+                      <div className="text-center py-8 text-gray-500">
+                        <FileText className="h-8 w-8 mx-auto mb-2 text-gray-300" />
+                        <p className="text-sm">
+                          {searchQuery || selectedCategory !== "all" 
+                            ? "No documents match your filters" 
+                            : "No documents uploaded yet"}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </ScrollArea>
               </div>
