@@ -34,6 +34,7 @@ if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
+// General file upload for images
 const upload = multer({
   storage: multer.diskStorage({
     destination: (req, file, cb) => cb(null, uploadDir),
@@ -48,6 +49,30 @@ const upload = multer({
       cb(null, true);
     } else {
       cb(new Error('Only image files are allowed'));
+    }
+  }
+});
+
+// Document upload for knowledge base
+const documentUpload = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => cb(null, uploadDir),
+    filename: (req, file, cb) => {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+    }
+  }),
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = [
+      'application/pdf',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'text/plain'
+    ];
+    if (allowedTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only PDF, DOCX, and TXT files are allowed'));
     }
   }
 });
@@ -658,7 +683,7 @@ What would be most helpful for your current career goals?`;
   // Enhanced Knowledge Base Management Endpoints
   
   // Upload and process documents
-  app.post("/api/admin/knowledge-base/upload", isAdmin, upload.array('documents', 10), async (req, res) => {
+  app.post("/api/admin/knowledge-base/upload", isAdmin, documentUpload.array('documents', 10), async (req, res) => {
     try {
       const files = req.files as Express.Multer.File[];
       const { category = "general" } = req.body;
