@@ -323,17 +323,17 @@ Format the response as structured JSON with sections for technicalDetails, visua
       const sessionId = await conversationManager.startSession("admin", sessionType || "career_assistant");
       
       // Process message with full context
-      const response = await conversationManager.processMessage(
+      const responseMessage = await conversationManager.processMessage(
         sessionId, 
         message, 
         attachedDocuments || []
       );
       
       res.json({ 
-        response: response.content,
-        sessionId: response.sessionId,
-        modelUsed: response.modelUsed,
-        contextUsed: response.contextUsed
+        response: responseMessage.content,
+        sessionId: responseMessage.sessionId,
+        modelUsed: responseMessage.modelUsed,
+        contextUsed: responseMessage.contextUsed
       });
     } catch (error) {
       console.error("AI Assistant error:", error);

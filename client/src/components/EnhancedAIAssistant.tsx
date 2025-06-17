@@ -128,7 +128,11 @@ export default function EnhancedAIAssistant() {
       const response = await fetch("/api/admin/knowledge-base/upload", {
         method: "POST",
         body: formData,
+        credentials: "include",
       });
+      if (!response.ok) {
+        throw new Error(`Upload failed: ${response.status}`);
+      }
       return response.json();
     },
     onSuccess: (data) => {
