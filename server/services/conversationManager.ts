@@ -145,12 +145,36 @@ export class ConversationManager {
         .where(eq(userProfile.userId, sessionData.userId))
         .limit(1);
 
+      // Get relevant documents from knowledge base using vector search
+      let relevantDocuments = [];
+      try {
+        const { vectorEmbeddingService } = await import("./vectorEmbeddingService");
+        
+        // Get last few messages to understand current context
+        const recentMessages = await db.select()
+          .from(conversationMemory)
+          .where(eq(conversationMemory.sessionId, sessionId))
+          .orderBy(desc(conversationMemory.createdAt))
+          .limit(3);
+          
+        const contextQuery = recentMessages
+          .map(m => m.content)
+          .join(" ")
+          .slice(0, 500); // Limit query length
+          
+        if (contextQuery.trim()) {
+          relevantDocuments = await vectorEmbeddingService.findSimilarDocuments(contextQuery, 3);
+        }
+      } catch (error) {
+        console.warn("Vector search failed:", error);
+      }
+
       return {
         sessionId,
         userId: sessionData.userId,
         sessionType: sessionData.sessionType,
         recentMemories,
-        relevantDocuments: [],
+        relevantDocuments,
         userProfile: profile[0] || null
       };
     } catch (error) {
