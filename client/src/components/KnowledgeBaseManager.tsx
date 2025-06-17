@@ -21,10 +21,12 @@ import { apiRequest } from "@/lib/queryClient";
 interface Document {
   id: number;
   filename: string;
-  category: 'interview' | 'resume' | 'career-plan' | 'job-description';
+  originalName: string;
+  category: string;
   size: number;
+  status: 'processing' | 'embedded' | 'failed' | 'error';
   uploadedAt: string;
-  status: 'processing' | 'embedded' | 'error';
+  summary?: string;
   vectorId?: string;
 }
 

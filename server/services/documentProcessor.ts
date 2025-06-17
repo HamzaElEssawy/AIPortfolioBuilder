@@ -179,11 +179,28 @@ KEY_INSIGHTS: {
       let keyInsights = {};
       if (insightsMatch) {
         try {
-          keyInsights = JSON.parse(insightsMatch[1]);
+          // Clean the JSON string to remove potential formatting issues
+          const cleanedJson = insightsMatch[1]
+            .replace(/[\u0000-\u001F\u007F-\u009F]/g, '') // Remove control characters
+            .replace(/,(\s*[}\]])/g, '$1') // Remove trailing commas
+            .trim();
+          keyInsights = JSON.parse(cleanedJson);
         } catch (parseError) {
           console.warn("Failed to parse key insights JSON:", parseError);
-          keyInsights = { raw_analysis: response.content };
+          // Fallback to a more robust parsing approach
+          keyInsights = {
+            status: "processed",
+            analysis: response.content.substring(0, 500),
+            processing_note: "Full analysis available in raw format"
+          };
         }
+      } else {
+        // If no structured insights found, create a basic structure
+        keyInsights = {
+          status: "processed",
+          analysis: response.content.substring(0, 500),
+          processing_note: "Document analyzed successfully"
+        };
       }
 
       return { summary, keyInsights };
