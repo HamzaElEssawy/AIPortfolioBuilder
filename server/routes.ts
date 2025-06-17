@@ -740,7 +740,20 @@ What would be most helpful for your current career goals?`;
       
       const documents = await query.limit(parseInt(limit as string));
       
-      res.json(documents);
+      // Transform the data to match frontend interface
+      const transformedDocuments = documents.map(doc => ({
+        id: doc.id,
+        filename: doc.filename,
+        originalName: doc.originalName,
+        category: doc.category,
+        size: doc.size,
+        status: doc.status,
+        uploadedAt: doc.uploadedAt,
+        summary: doc.summary,
+        vectorId: doc.vectorId
+      }));
+      
+      res.json(transformedDocuments);
     } catch (error) {
       console.error("Error fetching documents:", error);
       res.status(500).json({ message: "Failed to fetch documents" });

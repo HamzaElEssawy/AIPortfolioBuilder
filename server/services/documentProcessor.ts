@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import mammoth from "mammoth";
+import pdfParse from "pdf-parse";
 import { db } from "../db";
 import { knowledgeBaseDocuments, documentCategories } from "@shared/schema";
 import { eq } from "drizzle-orm";
@@ -95,8 +96,7 @@ export class DocumentProcessor {
   private async extractText(filePath: string, contentType: string): Promise<string> {
     switch (contentType) {
       case "pdf":
-        // PDF support temporarily disabled - placeholder for future implementation
-        return "PDF content extraction will be available soon. Please upload DOCX or TXT files for now.";
+        return await this.extractPdfText(filePath);
       
       case "docx":
         return await this.extractDocxText(filePath);
