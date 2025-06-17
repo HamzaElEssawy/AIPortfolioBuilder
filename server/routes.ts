@@ -15,6 +15,17 @@ import { db } from "./db";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+import { aiService } from "./services/aiService";
+import { documentProcessor } from "./services/documentProcessor";
+import { conversationManager } from "./services/conversationManager";
+import { 
+  insertKnowledgeBaseDocumentSchema,
+  insertUserProfileSchema,
+  knowledgeBaseDocuments,
+  documentCategories,
+  conversationSessions,
+  userProfile 
+} from "@shared/schema";
 
 // Configure multer for file uploads
 const uploadDir = "uploads";
@@ -220,54 +231,33 @@ Format the response as structured JSON with sections for technicalDetails, visua
     }
   });
 
-  // AI Assistant endpoint (admin only)
+  // Enhanced AI Assistant endpoint with knowledge base integration
   app.post("/api/admin/ai-assistant", isAdmin, async (req, res) => {
     try {
-      const { message, conversationHistory } = req.body;
+      const { message, conversationHistory, attachedDocuments, sessionType } = req.body;
       
-      // Enhanced knowledge base context about Hamza's career
-      const knowledgeBaseContext = `You are an AI Career Assistant for Hamza El Essawy, an AI Product Leader and entrepreneur based in Kuala Lumpur, Malaysia. 
-
-HAMZA'S BACKGROUND:
-- AI Product Leader & Entrepreneur (2024-Present): Leading AI product strategy across multiple ventures, mentoring 15+ founders
-- Founder & Product Leader of AI Compliance Startup (2023-2024): Secured $110K+ funding, built platform reducing manual review by 50%
-- Senior Product Manager at Tapway Enterprise AI Platform (2021-2023): Scaled to 10+ enterprise clients, grew team from 8 to 20 engineers
-- AI Product Manager in MENA Fintech (2020-2021): Implemented RAG AI achieving 70% query automation, reduced costs by 35%
-- Product Manager AI/ML in Dubai Fintech (2018-2020): Built foundational expertise in fintech sector
-
-EXPERTISE AREAS:
-- AI/ML product development and strategy
-- Enterprise software scaling
-- Cross-cultural team management
-- Fundraising and startup growth
-- Compliance and risk management systems
-- Multilingual AI systems (15 languages)
-
-CAREER GOALS:
-- Strategic AI leadership roles in established tech companies
-- Continued entrepreneurship in AI compliance and automation
-- Mentoring and advisory positions for AI startups
-- Speaking engagements on AI product management
-
-When providing career advice, reference his actual experience and achievements. Help with resume optimization, interview preparation, career strategy, and portfolio enhancement. Be specific and actionable in your recommendations.`;
-
-      // Prepare conversation context
-      const messages = [
-        { role: "system", content: knowledgeBaseContext },
-        ...conversationHistory.map((msg: any) => ({
-          role: msg.role === 'user' ? 'user' : 'assistant',
-          content: msg.content
-        })),
-        { role: "user", content: message }
-      ];
-
-      // Generate response using real Claude API
-      const response = await generateRealClaudeResponse(message, conversationHistory);
+      // Start or resume conversation session
+      const sessionId = await conversationManager.startSession("admin", sessionType || "career_assistant");
       
-      res.json({ response });
+      // Process message with full context
+      const response = await conversationManager.processMessage(
+        sessionId, 
+        message, 
+        attachedDocuments || []
+      );
+      
+      res.json({ 
+        response: response.content,
+        sessionId: response.sessionId,
+        modelUsed: response.modelUsed,
+        contextUsed: response.contextUsed
+      });
     } catch (error) {
       console.error("AI Assistant error:", error);
-      res.status(500).json({ message: "AI Assistant temporarily unavailable" });
+      res.status(500).json({ 
+        message: "AI Assistant temporarily unavailable. Please try again later.",
+        error: process.env.NODE_ENV === 'development' ? (error as Error).message : undefined
+      });
     }
   });
 
@@ -664,22 +654,43 @@ What would be most helpful for your current career goals?`;
     }
   });
 
-  app.post("/api/admin/knowledge-base/upload", isAdmin, async (req, res) => {
+  // Enhanced Knowledge Base Management Endpoints
+  
+  // Upload and process documents
+  app.post("/api/admin/knowledge-base/upload", isAdmin, upload.array('documents', 10), async (req, res) => {
     try {
-      // In a real implementation, this would:
-      // 1. Process uploaded files
-      // 2. Extract text content
-      // 3. Generate vector embeddings
-      // 4. Store in vector database
-      // 5. Update Claude's knowledge base context
-      
-      // Mock successful upload response
-      const uploadedCount = req.body ? 1 : 0; // Simplified for demo
-      
-      res.json({ 
-        success: true, 
-        uploadedCount,
-        message: "Files uploaded successfully and embeddings are being processed" 
+      const files = req.files as Express.Multer.File[];
+      const { category = "general" } = req.body;
+
+      if (!files || files.length === 0) {
+        return res.status(400).json({ message: "No files uploaded" });
+      }
+
+      const processedFiles = [];
+      for (const file of files) {
+        try {
+          const result = await documentProcessor.processDocument(
+            file.path,
+            file.originalname,
+            category
+          );
+          processedFiles.push(result);
+        } catch (error) {
+          console.error(`Failed to process ${file.originalname}:`, error);
+          processedFiles.push({
+            originalName: file.originalname,
+            status: "failed",
+            error: (error as Error).message
+          });
+        }
+      }
+
+      res.json({
+        success: true,
+        uploadedCount: processedFiles.filter(f => f.status === "embedded").length,
+        totalFiles: files.length,
+        results: processedFiles,
+        message: "Documents processed successfully"
       });
     } catch (error) {
       console.error("Error uploading to KB:", error);
@@ -687,14 +698,157 @@ What would be most helpful for your current career goals?`;
     }
   });
 
+  // Get all knowledge base documents
+  app.get("/api/admin/knowledge-base/documents", isAdmin, async (req, res) => {
+    try {
+      const { category, status, limit = 50 } = req.query;
+      
+      let query = db.select().from(knowledgeBaseDocuments);
+      
+      if (category) {
+        query = query.where(eq(knowledgeBaseDocuments.category, category as string));
+      }
+      if (status) {
+        query = query.where(eq(knowledgeBaseDocuments.status, status as string));
+      }
+      
+      const documents = await query.limit(parseInt(limit as string));
+      
+      res.json(documents);
+    } catch (error) {
+      console.error("Error fetching documents:", error);
+      res.status(500).json({ message: "Failed to fetch documents" });
+    }
+  });
+
+  // Get document categories
+  app.get("/api/admin/knowledge-base/categories", isAdmin, async (req, res) => {
+    try {
+      const categories = await documentProcessor.getCategories();
+      res.json(categories);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      res.status(500).json({ message: "Failed to fetch categories" });
+    }
+  });
+
+  // Analyze specific document
+  app.post("/api/admin/knowledge-base/documents/:id/analyze", isAdmin, async (req, res) => {
+    try {
+      const documentId = parseInt(req.params.id);
+      const { analysisType = "general_analysis" } = req.body;
+      
+      const result = await aiService.analyzeDocument(documentId, analysisType);
+      res.json(result);
+    } catch (error) {
+      console.error("Error analyzing document:", error);
+      res.status(500).json({ message: "Failed to analyze document" });
+    }
+  });
+
+  // Delete document
   app.delete("/api/admin/knowledge-base/documents/:id", isAdmin, async (req, res) => {
     try {
       const documentId = parseInt(req.params.id);
-      // In real implementation: remove document and its embeddings
+      await documentProcessor.deleteDocument(documentId);
       res.json({ success: true, message: "Document deleted successfully" });
     } catch (error) {
       console.error("Error deleting document:", error);
       res.status(500).json({ message: "Failed to delete document" });
+    }
+  });
+
+  // Get conversation sessions
+  app.get("/api/admin/ai-assistant/sessions", isAdmin, async (req, res) => {
+    try {
+      const sessions = await db.select()
+        .from(conversationSessions)
+        .orderBy(desc(conversationSessions.lastActivity))
+        .limit(20);
+      
+      res.json(sessions);
+    } catch (error) {
+      console.error("Error fetching sessions:", error);
+      res.status(500).json({ message: "Failed to fetch conversation sessions" });
+    }
+  });
+
+  // Get conversation history
+  app.get("/api/admin/ai-assistant/sessions/:id/history", isAdmin, async (req, res) => {
+    try {
+      const sessionId = parseInt(req.params.id);
+      const { limit = 50 } = req.query;
+      
+      const history = await conversationManager.getConversationHistory(
+        sessionId, 
+        parseInt(limit as string)
+      );
+      
+      res.json(history);
+    } catch (error) {
+      console.error("Error fetching conversation history:", error);
+      res.status(500).json({ message: "Failed to fetch conversation history" });
+    }
+  });
+
+  // User Profile Management
+  app.get("/api/admin/user-profile", isAdmin, async (req, res) => {
+    try {
+      const profile = await db.select()
+        .from(userProfile)
+        .where(eq(userProfile.userId, "admin"))
+        .limit(1);
+      
+      res.json(profile[0] || null);
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+      res.status(500).json({ message: "Failed to fetch user profile" });
+    }
+  });
+
+  app.post("/api/admin/user-profile", isAdmin, async (req, res) => {
+    try {
+      const profileData = insertUserProfileSchema.parse(req.body);
+      
+      // Check if profile exists
+      const existing = await db.select()
+        .from(userProfile)
+        .where(eq(userProfile.userId, "admin"))
+        .limit(1);
+      
+      if (existing.length > 0) {
+        // Update existing profile
+        const updated = await db.update(userProfile)
+          .set({ ...profileData, lastUpdated: new Date() })
+          .where(eq(userProfile.userId, "admin"))
+          .returning();
+        
+        res.json(updated[0]);
+      } else {
+        // Create new profile
+        const created = await db.insert(userProfile)
+          .values({ ...profileData, userId: "admin" })
+          .returning();
+        
+        res.json(created[0]);
+      }
+    } catch (error) {
+      console.error("Error saving user profile:", error);
+      res.status(500).json({ message: "Failed to save user profile" });
+    }
+  });
+
+  // Initialize document categories on startup
+  app.post("/api/admin/knowledge-base/initialize", isAdmin, async (req, res) => {
+    try {
+      await documentProcessor.initializeCategories();
+      res.json({ 
+        success: true, 
+        message: "Knowledge base categories initialized successfully" 
+      });
+    } catch (error) {
+      console.error("Error initializing categories:", error);
+      res.status(500).json({ message: "Failed to initialize categories" });
     }
   });
 
