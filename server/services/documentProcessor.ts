@@ -5,6 +5,7 @@ import { db } from "../db";
 import { knowledgeBaseDocuments, documentCategories } from "@shared/schema";
 import { eq } from "drizzle-orm";
 import { aiService } from "./aiService";
+import { vectorEmbeddingService } from "./vectorEmbeddingService";
 
 export interface ProcessedDocument {
   id: number;
@@ -191,7 +192,7 @@ KEY_INSIGHTS: {
       console.error("Error generating summary and insights:", error);
       return {
         summary: "Document uploaded successfully. Analysis pending.",
-        keyInsights: { status: "analysis_failed", error: error.message }
+        keyInsights: { status: "analysis_failed", error: error instanceof Error ? error.message : 'Unknown error' }
       };
     }
   }
