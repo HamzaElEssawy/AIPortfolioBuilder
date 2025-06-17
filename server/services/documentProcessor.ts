@@ -54,13 +54,32 @@ export class DocumentProcessor {
           category
         );
 
-        // Update document with processed content
+        // Generate vector embeddings for the content
+        console.log("Generating vector embeddings for document:", docId);
+        const embeddingResult = await vectorEmbeddingService.generateEmbedding(contentText);
+        
+        let vectorId = null;
+        if (embeddingResult.success) {
+          // Store the embedding in vector database
+          vectorId = await vectorEmbeddingService.storeEmbedding(
+            docId,
+            embeddingResult.embedding,
+            contentText,
+            category
+          );
+          console.log("Vector embedding stored with ID:", vectorId);
+        } else {
+          console.warn("Vector embedding failed:", embeddingResult.error);
+        }
+
+        // Update document with processed content and vector ID
         await db.update(knowledgeBaseDocuments)
           .set({
             contentText,
             summary,
             keyInsights,
-            status: "embedded",
+            vectorId,
+            status: vectorId ? "embedded" : "processed",
             processedAt: new Date()
           })
           .where(eq(knowledgeBaseDocuments.id, docId));

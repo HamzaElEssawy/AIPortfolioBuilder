@@ -60,6 +60,28 @@ export class VectorEmbeddingService {
   }
 
   /**
+   * Store embedding for a document
+   */
+  async storeEmbedding(
+    documentId: number, 
+    embedding: number[], 
+    content: string, 
+    category: string
+  ): Promise<string> {
+    try {
+      // Store embedding as JSON string in vectorId field
+      const vectorId = JSON.stringify(embedding);
+      
+      console.log(`Storing embedding for document ${documentId}, embedding length: ${embedding.length}`);
+      
+      return vectorId;
+    } catch (error) {
+      console.error('Error storing embedding:', error);
+      throw new Error(`Failed to store embedding: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
+
+  /**
    * Generate and store embeddings for a document
    */
   async generateDocumentEmbedding(documentId: number): Promise<boolean> {
