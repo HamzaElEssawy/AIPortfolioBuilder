@@ -75,8 +75,22 @@ app.use(limiter);
 app.use('/api/', apiLimiter);
 app.use('/api/admin/login', authLimiter);
 
-app.use(express.json({ limit: "50mb" }));
-app.use(express.urlencoded({ extended: false }));
+// JSON parsing - skip for multipart form data
+app.use('/api', (req, res, next) => {
+  const contentType = req.get('Content-Type') || '';
+  if (contentType.includes('multipart/form-data')) {
+    return next();
+  }
+  express.json({ limit: "50mb" })(req, res, next);
+});
+
+app.use('/api', (req, res, next) => {
+  const contentType = req.get('Content-Type') || '';
+  if (contentType.includes('multipart/form-data')) {
+    return next();
+  }
+  express.urlencoded({ extended: false })(req, res, next);
+});
 
 app.use((req, res, next) => {
   const start = Date.now();

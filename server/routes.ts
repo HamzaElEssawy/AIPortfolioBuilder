@@ -682,8 +682,8 @@ What would be most helpful for your current career goals?`;
 
   // Enhanced Knowledge Base Management Endpoints
   
-  // Upload and process documents
-  app.post("/api/admin/knowledge-base/upload", isAdmin, documentUpload.array('files', 10), async (req, res) => {
+  // Upload and process documents - handle multipart before JSON parsing
+  app.post("/api/admin/knowledge-base/upload", documentUpload.array('files', 10), isAdmin, async (req, res) => {
     try {
       const files = req.files as Express.Multer.File[];
       const { category = "general" } = req.body;
