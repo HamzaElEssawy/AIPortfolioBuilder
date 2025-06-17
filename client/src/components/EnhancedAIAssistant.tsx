@@ -183,7 +183,7 @@ export default function EnhancedAIAssistant() {
 
     const formData = new FormData();
     Array.from(files).forEach(file => {
-      formData.append('documents', file);
+      formData.append('files', file);
     });
     formData.append('category', 'general'); // Default category
 
