@@ -149,9 +149,7 @@ export default function EnhancedAIAssistant() {
   // Initialize categories mutation
   const initializeMutation = useMutation({
     mutationFn: async () => {
-      await apiRequest('/api/admin/knowledge-base/initialize-categories', {
-        method: 'POST'
-      });
+      await apiRequest('/api/admin/knowledge-base/initialize-categories', 'POST');
     },
     onSuccess: () => {
       toast({
@@ -408,10 +406,42 @@ export default function EnhancedAIAssistant() {
       {showKnowledgeBase && (
         <Card className="w-80 flex flex-col">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Brain className="h-5 w-5" />
-              Knowledge Base
+            <CardTitle className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Brain className="h-5 w-5 text-blue-600" />
+                Knowledge Base
+              </div>
+              <div className="flex items-center gap-1">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span className="text-xs font-normal text-green-600">Enhanced Features Active</span>
+              </div>
             </CardTitle>
+            
+            {/* Feature Status Indicator */}
+            <div className="bg-gradient-to-r from-blue-50 to-green-50 border border-blue-200 rounded-lg p-3 mt-2">
+              <div className="flex items-center gap-2 text-sm">
+                <Search className="h-4 w-4 text-blue-600" />
+                <span className="font-medium text-blue-800">Advanced Features:</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2 mt-2 text-xs text-gray-700">
+                <div className="flex items-center gap-1">
+                  <div className="w-1 h-1 bg-green-500 rounded-full"></div>
+                  Real-time Search
+                </div>
+                <div className="flex items-center gap-1">
+                  <div className="w-1 h-1 bg-green-500 rounded-full"></div>
+                  Category Filtering
+                </div>
+                <div className="flex items-center gap-1">
+                  <div className="w-1 h-1 bg-green-500 rounded-full"></div>
+                  Document Selection
+                </div>
+                <div className="flex items-center gap-1">
+                  <div className="w-1 h-1 bg-green-500 rounded-full"></div>
+                  Quick Delete
+                </div>
+              </div>
+            </div>
           </CardHeader>
           
           <CardContent className="flex-1 p-4">
@@ -514,10 +544,10 @@ export default function EnhancedAIAssistant() {
                     {filteredDocuments.map((doc: KnowledgeDocument) => (
                       <div
                         key={doc.id}
-                        className={`p-3 border rounded-lg transition-colors ${
+                        className={`p-3 border-2 rounded-lg transition-all duration-200 ${
                           selectedDocuments.includes(doc.id)
-                            ? 'border-blue-500 bg-blue-50 ring-1 ring-blue-200'
-                            : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                            ? 'border-blue-500 bg-gradient-to-r from-blue-50 to-indigo-50 ring-2 ring-blue-300 shadow-md'
+                            : 'border-gray-200 hover:border-blue-300 hover:bg-gray-50 hover:shadow-sm'
                         }`}
                       >
                         <div className="flex items-start justify-between">
