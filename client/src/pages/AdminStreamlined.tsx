@@ -19,6 +19,7 @@ import PortfolioImageManager from "@/components/PortfolioImageManager";
 import SEOManager from "@/components/SEOManager";
 import SystemMonitor from "@/components/SystemMonitor";
 import AIAssistant from "@/components/AIAssistant";
+import EnhancedAIAssistant from "@/components/EnhancedAIAssistant";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { BulkOperations, ItemSelection, exportToCSV } from "@/components/BulkOperations";
 import { useConfirmationDialog } from "@/components/ConfirmationDialog";
@@ -399,12 +400,12 @@ export default function AdminStreamlined() {
             </div>
           </TabsContent>
 
-          {/* AI Assistant */}
+          {/* Enhanced AI Assistant */}
           <TabsContent value="ai-assistant" className="space-y-6">
             <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <h2 className="text-xl font-bold text-navy mb-4">AI Career Assistant</h2>
-              <p className="text-gray-600 mb-6">Get personalized career advice and portfolio insights</p>
-              <AIAssistant />
+              <h2 className="text-xl font-bold text-navy mb-4">Enhanced AI Career Assistant</h2>
+              <p className="text-gray-600 mb-6">Get personalized career advice with knowledge base integration and document analysis</p>
+              <EnhancedAIAssistant />
             </div>
           </TabsContent>
         </Tabs>

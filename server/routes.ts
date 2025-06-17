@@ -26,6 +26,7 @@ import {
   conversationSessions,
   userProfile 
 } from "@shared/schema";
+import { eq, desc } from "drizzle-orm";
 
 // Configure multer for file uploads
 const uploadDir = "uploads";
