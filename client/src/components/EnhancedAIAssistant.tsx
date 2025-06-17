@@ -72,10 +72,7 @@ export default function EnhancedAIAssistant() {
   // Chat mutation
   const chatMutation = useMutation({
     mutationFn: async (data: any) => {
-      const response = await apiRequest('/api/admin/ai-assistant', {
-        method: 'POST',
-        body: JSON.stringify(data)
-      });
+      const response = await apiRequest('/api/admin/ai-assistant', 'POST', data);
       return response;
     },
     onSuccess: (data) => {
@@ -131,9 +128,7 @@ export default function EnhancedAIAssistant() {
   // Delete mutation
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
-      await apiRequest(`/api/admin/knowledge-base/documents/${id}`, {
-        method: 'DELETE'
-      });
+      await apiRequest(`/api/admin/knowledge-base/documents/${id}`, 'DELETE');
     },
     onSuccess: () => {
       toast({
@@ -449,30 +444,46 @@ export default function EnhancedAIAssistant() {
               <Separator />
 
               {/* Search and Filter */}
-              <div className="space-y-2">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                  <Input
-                    placeholder="Search documents..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10"
-                  />
+              <div className="space-y-3">
+                <div>
+                  <label className="text-sm font-medium text-gray-700 mb-2 block">Search Documents</label>
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-500 h-4 w-4" />
+                    <Input
+                      placeholder="Search by name, category, or content..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="pl-10 border-blue-200 focus:border-blue-500 focus:ring-blue-500"
+                    />
+                  </div>
+                  {searchQuery && (
+                    <div className="text-xs text-blue-600 mt-1">
+                      Searching: "{searchQuery}"
+                    </div>
+                  )}
                 </div>
                 
-                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Filter by category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Categories</SelectItem>
-                    {categories.map((category: any) => (
-                      <SelectItem key={category.id} value={category.name}>
-                        {category.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <div>
+                  <label className="text-sm font-medium text-gray-700 mb-2 block">Filter by Category</label>
+                  <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                    <SelectTrigger className="w-full border-blue-200 focus:border-blue-500">
+                      <SelectValue placeholder="All Categories" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">🔍 All Categories</SelectItem>
+                      {categories.map((category: any) => (
+                        <SelectItem key={category.id} value={category.name}>
+                          📁 {category.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {selectedCategory !== "all" && (
+                    <div className="text-xs text-blue-600 mt-1">
+                      Filtered by: {selectedCategory}
+                    </div>
+                  )}
+                </div>
               </div>
 
               <Separator />
@@ -538,14 +549,15 @@ export default function EnhancedAIAssistant() {
                             <Button
                               variant="ghost"
                               size="sm"
-                              className="h-6 w-6 p-0 hover:bg-red-100"
+                              className="h-8 w-8 p-0 hover:bg-red-100 border border-red-200 hover:border-red-300 transition-all duration-200"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handleDeleteDocument(doc.id);
                               }}
                               disabled={deleteMutation.isPending}
+                              title="Delete document"
                             >
-                              <Trash2 className="h-3 w-3 text-red-600" />
+                              <Trash2 className="h-4 w-4 text-red-500 hover:text-red-700" />
                             </Button>
                           </div>
                         </div>
