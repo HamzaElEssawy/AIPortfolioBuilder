@@ -683,7 +683,19 @@ What would be most helpful for your current career goals?`;
 
   app.get("/api/admin/knowledge-base/documents", isAdmin, async (req, res) => {
     try {
-      const documents = await storage.getKnowledgeBaseDocuments();
+      const documents = await db.select({
+        id: knowledgeBaseDocuments.id,
+        filename: knowledgeBaseDocuments.filename,
+        originalName: knowledgeBaseDocuments.originalName,
+        category: knowledgeBaseDocuments.category,
+        size: knowledgeBaseDocuments.size,
+        status: knowledgeBaseDocuments.status,
+        uploadedAt: knowledgeBaseDocuments.uploadedAt,
+        summary: knowledgeBaseDocuments.summary,
+        vectorId: knowledgeBaseDocuments.vectorId
+      }).from(knowledgeBaseDocuments)
+        .orderBy(desc(knowledgeBaseDocuments.uploadedAt));
+      
       res.json(documents);
     } catch (error) {
       console.error("Error fetching documents:", error);
