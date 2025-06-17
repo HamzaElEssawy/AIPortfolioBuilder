@@ -86,7 +86,7 @@ export class DocumentProcessor {
 
     } catch (error) {
       console.error("Document processing error:", error);
-      throw new Error(`Failed to process document: ${error.message}`);
+      throw new Error(`Failed to process document: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
