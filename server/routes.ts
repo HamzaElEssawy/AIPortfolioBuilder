@@ -683,7 +683,7 @@ What would be most helpful for your current career goals?`;
   // Enhanced Knowledge Base Management Endpoints
   
   // Upload and process documents
-  app.post("/api/admin/knowledge-base/upload", isAdmin, documentUpload.array('documents', 10), async (req, res) => {
+  app.post("/api/admin/knowledge-base/upload", isAdmin, documentUpload.array('files', 10), async (req, res) => {
     try {
       const files = req.files as Express.Multer.File[];
       const { category = "general" } = req.body;
@@ -713,7 +713,7 @@ What would be most helpful for your current career goals?`;
 
       res.json({
         success: true,
-        uploadedCount: processedFiles.filter(f => f.status === "embedded").length,
+        uploadedDocuments: processedFiles.filter(f => f.status === "embedded" || f.status === "processed"),
         totalFiles: files.length,
         results: processedFiles,
         message: "Documents processed successfully"

@@ -10,12 +10,33 @@ import {
 } from "@shared/schema";
 import { eq, desc, and } from "drizzle-orm";
 
-// Initialize AI clients
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
+// Initialize AI clients with proper error handling
+let anthropic: Anthropic | null = null;
+let genAI: GoogleGenerativeAI | null = null;
 
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_API_KEY || "");
+try {
+  if (process.env.ANTHROPIC_API_KEY) {
+    anthropic = new Anthropic({
+      apiKey: process.env.ANTHROPIC_API_KEY,
+    });
+    console.log("Claude/Anthropic API initialized successfully");
+  } else {
+    console.warn("ANTHROPIC_API_KEY not found - Claude unavailable");
+  }
+} catch (error) {
+  console.error("Failed to initialize Anthropic:", error);
+}
+
+try {
+  if (process.env.GEMINI_API_KEY) {
+    genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    console.log("Gemini API initialized successfully");
+  } else {
+    console.warn("GEMINI_API_KEY not found - Gemini unavailable");
+  }
+} catch (error) {
+  console.error("Failed to initialize Gemini:", error);
+}
 
 export interface ConversationContext {
   sessionId?: number;
@@ -62,6 +83,10 @@ export class AIService {
     message: string, 
     context: ConversationContext
   ): Promise<AIResponse> {
+    if (!anthropic) {
+      throw new Error("Claude API not initialized - missing ANTHROPIC_API_KEY");
+    }
+
     const systemPrompt = await this.buildSystemPrompt(context);
     const contextualMessage = await this.buildContextualMessage(message, context);
 
@@ -89,6 +114,10 @@ export class AIService {
     message: string, 
     context: ConversationContext
   ): Promise<AIResponse> {
+    if (!genAI) {
+      throw new Error("Gemini API not initialized - missing GEMINI_API_KEY");
+    }
+
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
     const systemPrompt = await this.buildSystemPrompt(context);
     const contextualMessage = await this.buildContextualMessage(message, context);
