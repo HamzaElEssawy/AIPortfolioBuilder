@@ -729,16 +729,16 @@ What would be most helpful for your current career goals?`;
     try {
       const { category, status, limit = 50 } = req.query;
       
-      let query = db.select().from(knowledgeBaseDocuments);
+      let queryBuilder = db.select().from(knowledgeBaseDocuments);
       
       if (category) {
-        query = query.where(eq(knowledgeBaseDocuments.category, category as string));
+        queryBuilder = queryBuilder.where(eq(knowledgeBaseDocuments.category, category as string));
       }
       if (status) {
-        query = query.where(eq(knowledgeBaseDocuments.status, status as string));
+        queryBuilder = queryBuilder.where(eq(knowledgeBaseDocuments.status, status as string));
       }
       
-      const documents = await query.limit(parseInt(limit as string));
+      const documents = await queryBuilder.limit(parseInt(limit as string));
       
       // Transform the data to match frontend interface
       const transformedDocuments = documents.map(doc => ({
