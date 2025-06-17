@@ -18,11 +18,15 @@ import {
   FileText, 
   Upload,
   Brain,
+  Search,
+  Trash2,
+  Edit,
+  MoreVertical,
+  Filter,
   Clock,
   MessageSquare,
   Settings,
-  Download,
-  Trash2
+  Download
 } from "lucide-react";
 
 interface Message {
@@ -60,6 +64,8 @@ export default function EnhancedAIAssistant() {
   const [selectedDocuments, setSelectedDocuments] = useState<number[]>([]);
   const [currentSessionId, setCurrentSessionId] = useState<number | null>(null);
   const [showKnowledgeBase, setShowKnowledgeBase] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -166,6 +172,28 @@ export default function EnhancedAIAssistant() {
     }
   });
 
+  // Delete Document mutation
+  const deleteMutation = useMutation({
+    mutationFn: async (documentId: number) => {
+      const response = await apiRequest("DELETE", `/api/admin/knowledge-base/documents/${documentId}`);
+      return response;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Document Deleted",
+        description: "Document has been removed from the knowledge base.",
+      });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/knowledge-base/documents'] });
+    },
+    onError: () => {
+      toast({
+        title: "Delete Failed",
+        description: "Could not delete document. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleSendMessage = () => {
     if (!inputMessage.trim()) return;
 
@@ -218,6 +246,23 @@ export default function EnhancedAIAssistant() {
       default: return 'bg-gray-100 text-gray-800';
     }
   };
+
+  const handleDeleteDocument = (documentId: number) => {
+    if (confirm("Are you sure you want to delete this document?")) {
+      deleteMutation.mutate(documentId);
+    }
+  };
+
+  // Filter documents based on search and category
+  const filteredDocuments = documents.filter((doc: KnowledgeDocument) => {
+    const matchesSearch = doc.originalName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         doc.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         (doc.summary && doc.summary.toLowerCase().includes(searchQuery.toLowerCase()));
+    
+    const matchesCategory = selectedCategory === "all" || doc.category === selectedCategory;
+    
+    return matchesSearch && matchesCategory;
+  });
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
