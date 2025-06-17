@@ -92,6 +92,54 @@ const isAdmin = (req: any, res: any, next: any) => {
 };
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  
+  // CRITICAL: Handle upload endpoints BEFORE any JSON parsing middleware
+  // Upload and process documents - handle multipart before any other middleware
+  app.post("/api/admin/knowledge-base/upload", documentUpload.array('files', 10), async (req, res) => {
+    try {
+      // Check admin authentication manually since we bypass middleware
+      if (!req.session?.isAdmin) {
+        return res.status(401).json({ message: "Admin access required" });
+      }
+
+      const files = req.files as Express.Multer.File[];
+      const { category = "general" } = req.body;
+
+      if (!files || files.length === 0) {
+        return res.status(400).json({ message: "No files uploaded" });
+      }
+
+      const processedFiles = [];
+      for (const file of files) {
+        try {
+          const result = await documentProcessor.processDocument(
+            file.path,
+            file.originalname,
+            category
+          );
+          processedFiles.push(result);
+        } catch (error) {
+          console.error(`Failed to process ${file.originalname}:`, error);
+          processedFiles.push({
+            originalName: file.originalname,
+            status: "failed",
+            error: (error as Error).message
+          });
+        }
+      }
+
+      res.json({
+        success: true,
+        uploadedDocuments: processedFiles.filter(f => f.status === "embedded" || f.status === "processed"),
+        totalFiles: files.length,
+        results: processedFiles,
+        message: "Documents processed successfully"
+      });
+    } catch (error) {
+      console.error("Error uploading to KB:", error);
+      res.status(500).json({ message: "Failed to upload files to knowledge base" });
+    }
+  });
   // Serve uploaded files
   app.use('/uploads', (req: any, res: any, next: any) => {
     res.header('Access-Control-Allow-Origin', '*');
@@ -681,48 +729,6 @@ What would be most helpful for your current career goals?`;
   });
 
   // Enhanced Knowledge Base Management Endpoints
-  
-  // Upload and process documents - handle multipart before JSON parsing
-  app.post("/api/admin/knowledge-base/upload", documentUpload.array('files', 10), isAdmin, async (req, res) => {
-    try {
-      const files = req.files as Express.Multer.File[];
-      const { category = "general" } = req.body;
-
-      if (!files || files.length === 0) {
-        return res.status(400).json({ message: "No files uploaded" });
-      }
-
-      const processedFiles = [];
-      for (const file of files) {
-        try {
-          const result = await documentProcessor.processDocument(
-            file.path,
-            file.originalname,
-            category
-          );
-          processedFiles.push(result);
-        } catch (error) {
-          console.error(`Failed to process ${file.originalname}:`, error);
-          processedFiles.push({
-            originalName: file.originalname,
-            status: "failed",
-            error: (error as Error).message
-          });
-        }
-      }
-
-      res.json({
-        success: true,
-        uploadedDocuments: processedFiles.filter(f => f.status === "embedded" || f.status === "processed"),
-        totalFiles: files.length,
-        results: processedFiles,
-        message: "Documents processed successfully"
-      });
-    } catch (error) {
-      console.error("Error uploading to KB:", error);
-      res.status(500).json({ message: "Failed to upload files to knowledge base" });
-    }
-  });
 
   // Get all knowledge base documents
   app.get("/api/admin/knowledge-base/documents", isAdmin, async (req, res) => {

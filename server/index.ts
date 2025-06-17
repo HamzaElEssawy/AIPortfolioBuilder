@@ -75,20 +75,27 @@ app.use(limiter);
 app.use('/api/', apiLimiter);
 app.use('/api/admin/login', authLimiter);
 
-// JSON parsing - skip for multipart form data
-app.use('/api', (req, res, next) => {
-  const contentType = req.get('Content-Type') || '';
-  if (contentType.includes('multipart/form-data')) {
+// Body parsing middleware - bypass for file uploads
+app.use((req, res, next) => {
+  // Skip body parsing entirely for upload endpoints
+  if (req.path === '/api/admin/knowledge-base/upload' || 
+      req.path === '/api/admin/temp-image' ||
+      req.path.includes('/upload')) {
     return next();
   }
+  
+  // Apply JSON parsing for non-upload routes
   express.json({ limit: "50mb" })(req, res, next);
 });
 
-app.use('/api', (req, res, next) => {
-  const contentType = req.get('Content-Type') || '';
-  if (contentType.includes('multipart/form-data')) {
+app.use((req, res, next) => {
+  // Skip URL encoding for upload endpoints
+  if (req.path === '/api/admin/knowledge-base/upload' || 
+      req.path === '/api/admin/temp-image' ||
+      req.path.includes('/upload')) {
     return next();
   }
+  
   express.urlencoded({ extended: false })(req, res, next);
 });
 
@@ -123,6 +130,7 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // Register routes BEFORE any other middleware to handle uploads first
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
