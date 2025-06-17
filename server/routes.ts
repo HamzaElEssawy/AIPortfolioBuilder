@@ -18,6 +18,7 @@ import fs from "fs";
 import { aiService } from "./services/aiService";
 import { documentProcessor } from "./services/documentProcessor";
 import { conversationManager } from "./services/conversationManager";
+import { memoryService } from "./services/memoryService";
 import { 
   insertKnowledgeBaseDocumentSchema,
   insertUserProfileSchema,

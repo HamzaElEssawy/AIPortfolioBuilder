@@ -1,0 +1,17 @@
+Hamza El Essawy - AI Product Leader
+    
+Professional Summary:
+- 5+ years experience in AI/ML product development
+- Led cross-functional teams of 10+ engineers and data scientists
+- Built AI-powered solutions serving 1M+ users
+- Expert in machine learning model deployment and scaling
+
+Key Achievements:
+- Launched 3 successful AI products generating $5M+ ARR
+- Reduced model inference latency by 60% through optimization
+- Built recommendation system improving user engagement by 40%
+
+Skills:
+- Python, TensorFlow, PyTorch, Kubernetes
+- Product Strategy, Team Leadership, Stakeholder Management
+- A/B Testing, Data Analytics, User Research
