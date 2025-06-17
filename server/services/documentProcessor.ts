@@ -1,13 +1,7 @@
 import fs from "fs";
 import path from "path";
 import mammoth from "mammoth";
-let pdfParse: any;
-try {
-  pdfParse = require("pdf-parse");
-} catch (error) {
-  console.warn("PDF parsing unavailable:", error);
-  pdfParse = null;
-}
+// PDF parsing temporarily disabled for stability
 import { db } from "../db";
 import { knowledgeBaseDocuments, documentCategories } from "@shared/schema";
 import { eq } from "drizzle-orm";
@@ -123,18 +117,7 @@ export class DocumentProcessor {
 
   // Extract text from PDF
   private async extractPdfText(filePath: string): Promise<string> {
-    if (!pdfParse) {
-      return "PDF parsing is temporarily unavailable. Please upload DOCX or TXT files for now.";
-    }
-    
-    try {
-      const dataBuffer = fs.readFileSync(filePath);
-      const data = await pdfParse(dataBuffer);
-      return data.text;
-    } catch (error) {
-      console.error("PDF extraction error:", error);
-      return "PDF content could not be extracted. Please ensure the PDF is not corrupted or password-protected.";
-    }
+    return "PDF parsing is temporarily unavailable for system stability. Please upload DOCX or TXT files for document analysis.";
   }
 
   // Extract text from TXT

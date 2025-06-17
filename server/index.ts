@@ -48,6 +48,7 @@ const limiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
+  skip: () => process.env.NODE_ENV === 'development'
 });
 
 const apiLimiter = rateLimit({
@@ -56,7 +57,8 @@ const apiLimiter = rateLimit({
   message: {
     error: "Too many API requests from this IP, please try again later.",
     retryAfter: "15 minutes"
-  }
+  },
+  skip: () => process.env.NODE_ENV === 'development'
 });
 
 const authLimiter = rateLimit({
@@ -65,7 +67,8 @@ const authLimiter = rateLimit({
   message: {
     error: "Too many authentication attempts, please try again later.",
     retryAfter: "15 minutes"
-  }
+  },
+  skip: () => process.env.NODE_ENV === 'development'
 });
 
 app.use(limiter);
