@@ -6,8 +6,17 @@ This is a comprehensive full-stack web application that combines a professional 
 
 ## System Architecture
 
+### Monorepo Structure
+- **Package Manager**: pnpm with workspace configuration
+- **Apps Directory**: `apps/` contains all applications and shared packages
+  - `apps/client/` - React frontend application
+  - `apps/api-gateway/` - Express backend server
+  - `apps/shared/` - Shared TypeScript schemas and types
+- **Workspace Config**: `pnpm-workspace.yaml` manages package dependencies across apps
+
 ### Frontend Architecture
 - **Framework**: React 18 with TypeScript
+- **Location**: `apps/client/`
 - **Build Tool**: Vite for fast development and optimized production builds
 - **Routing**: Wouter for lightweight client-side routing
 - **State Management**: TanStack Query for server state management
@@ -17,6 +26,7 @@ This is a comprehensive full-stack web application that combines a professional 
 
 ### Backend Architecture
 - **Runtime**: Node.js with Express.js framework
+- **Location**: `apps/api-gateway/`
 - **Language**: TypeScript with ES modules
 - **Database**: PostgreSQL with Drizzle ORM
 - **Session Management**: Express sessions for admin authentication
@@ -124,6 +134,16 @@ This is a comprehensive full-stack web application that combines a professional 
 Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
+
+- **July 19, 2025**: Restructured project into monorepo architecture
+  - Moved React frontend code from `client/` to `apps/client/`
+  - Moved server code from `server/` to `apps/api-gateway/`
+  - Moved shared schema from `shared/` to `apps/shared/`
+  - Created `pnpm-workspace.yaml` with packages configuration for `apps/*` and `packages/*`
+  - Updated all relative imports throughout codebase to use new monorepo structure
+  - Updated tsconfig.json paths to reference new directory structure
+  - All import statements in server files now use relative paths instead of `@shared` aliases
+  - Server successfully running from new location with proper path resolution
 
 - **July 19, 2025**: Created comprehensive system documentation covering complete architecture flow from frontend to database to third-party integrations
   - Documented all API routes and endpoints with detailed specifications  
