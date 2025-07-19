@@ -17,6 +17,9 @@ import path from "path";
 import fs from "fs";
 import { documentProcessor } from "./services/documentProcessor";
 import { orchestratorClient } from "./services/orchestratorClient";
+import { queueService } from "./src/queueService";
+import { knowledgeBaseDocuments } from "../shared/schema";
+import { eq } from "drizzle-orm";
 import { 
   insertKnowledgeBaseDocumentSchema,
   insertUserProfileSchema,
@@ -113,6 +116,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
   }));
 
   // Document upload endpoint with detailed session debugging
+  // Helper function to determine content type from filename
+  function getContentType(filename: string): string {
+    const ext = path.extname(filename).toLowerCase();
+    switch (ext) {
+      case '.pdf':
+        return 'application/pdf';
+      case '.docx':
+        return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+      case '.txt':
+        return 'text/plain';
+      default:
+        return 'application/octet-stream';
+    }
+  }
+
   app.post("/api/admin/knowledge-base/upload", documentUpload.array('files', 10), (req, res, next) => {
     moduleLogger.debug('Upload endpoint - Session debug:', {
       sessionExists: !!req.session,
@@ -136,18 +154,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "No files uploaded" });
       }
 
-      const processedFiles = [];
+      const queuedFiles = [];
       for (const file of files) {
         try {
-          const result = await documentProcessor.processDocument(
-            file.path,
-            file.originalname,
-            category
-          );
-          processedFiles.push(result);
+          // Create initial database record
+          const fileStats = fs.statSync(file.path);
+          const contentType = getContentType(file.originalname);
+          
+          const document = await db.insert(knowledgeBaseDocuments).values({
+            filename: path.basename(file.path),
+            originalName: file.originalname,
+            contentType,
+            category,
+            size: fileStats.size,
+            status: "queued"
+          }).returning();
+
+          const docId = document[0].id;
+
+          // Queue for async processing
+          const jobId = await queueService.queueDocumentIngestion({
+            path: file.path,
+            docId,
+            category,
+            originalName: file.originalname
+          });
+
+          queuedFiles.push({
+            docId,
+            jobId,
+            originalName: file.originalname,
+            status: "queued",
+            message: "Document queued for processing"
+          });
+
         } catch (error) {
-          moduleLogger.error(`Failed to process ${file.originalname}:`, error);
-          processedFiles.push({
+          moduleLogger.error(`Failed to queue ${file.originalname}:`, error);
+          queuedFiles.push({
             originalName: file.originalname,
             status: "failed",
             error: (error as Error).message
@@ -155,16 +198,72 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
-      res.json({
+      // Return 202 Accepted - processing will happen asynchronously
+      res.status(202).json({
         success: true,
-        uploadedDocuments: processedFiles.filter(f => f.status === "embedded" || f.status === "processed"),
+        message: "Documents queued for processing",
         totalFiles: files.length,
-        results: processedFiles,
-        message: "Documents processed successfully"
+        queuedFiles,
+        note: "Documents will be processed asynchronously. Check status using document IDs."
       });
     } catch (error) {
       moduleLogger.error("Error uploading to KB:", error);
       res.status(500).json({ message: "Failed to upload files to knowledge base" });
+    }
+  });
+
+  // Add routes for monitoring queue status
+  app.get("/api/admin/queue/stats", isAdmin, async (req, res) => {
+    try {
+      const stats = await queueService.getQueueStats();
+      res.json(stats);
+    } catch (error) {
+      moduleLogger.error("Error getting queue stats:", error);
+      res.status(500).json({ message: "Failed to get queue statistics" });
+    }
+  });
+
+  app.get("/api/admin/job/:jobId/status", isAdmin, async (req, res) => {
+    try {
+      const { jobId } = req.params;
+      const status = await queueService.getJobStatus(jobId);
+      res.json(status);
+    } catch (error) {
+      moduleLogger.error("Error getting job status:", error);
+      res.status(500).json({ message: "Failed to get job status" });
+    }
+  });
+
+  app.get("/api/admin/document/:docId/status", isAdmin, async (req, res) => {
+    try {
+      const { docId } = req.params;
+      
+      if (!docId || isNaN(parseInt(docId))) {
+        return res.status(400).json({ message: 'Valid document ID required' });
+      }
+
+      const [document] = await db.select()
+        .from(knowledgeBaseDocuments)
+        .where(eq(knowledgeBaseDocuments.id, parseInt(docId)))
+        .limit(1);
+
+      if (!document) {
+        return res.status(404).json({ message: 'Document not found' });
+      }
+
+      res.json({
+        docId: document.id,
+        originalName: document.originalName,
+        status: document.status,
+        category: document.category,
+        uploadedAt: document.uploadedAt,
+        processedAt: document.processedAt,
+        metadata: document.metadata ? JSON.parse(document.metadata) : null
+      });
+
+    } catch (error) {
+      moduleLogger.error("Error getting document status:", error);
+      res.status(500).json({ message: "Failed to get document status" });
     }
   });
 
