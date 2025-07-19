@@ -134,10 +134,6 @@ app.use((req, res, next) => {
   // Register routes BEFORE any other middleware to handle uploads first
   const server = await registerRoutes(app);
 
-  // Error handling middleware - must be after all routes
-  app.use(notFoundHandler);
-  app.use(errorHandler);
-
   // importantly only setup vite in development and after
   // setting up all the other routes so the catch-all route
   // doesn't interfere with the other routes
@@ -146,6 +142,10 @@ app.use((req, res, next) => {
   } else {
     serveStatic(app);
   }
+
+  // Error handling middleware - must be after all routes including Vite
+  app.use(notFoundHandler);
+  app.use(errorHandler);
 
   // ALWAYS serve the app on port 5000
   // this serves both the API and the client.
