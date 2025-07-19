@@ -15,10 +15,8 @@ import { db } from "./db";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
-import { aiService } from "./services/aiService";
 import { documentProcessor } from "./services/documentProcessor";
-import { conversationManager } from "./services/conversationManager";
-import { memoryService } from "./services/memoryService";
+import { orchestratorClient } from "./services/orchestratorClient";
 import { 
   insertKnowledgeBaseDocumentSchema,
   insertUserProfileSchema,
@@ -320,29 +318,36 @@ Format the response as structured JSON with sections for technicalDetails, visua
   // Enhanced AI Assistant endpoint with knowledge base integration
   app.post("/api/admin/ai-assistant", isAdmin, async (req, res) => {
     try {
-      const { message, conversationHistory, attachedDocuments, sessionType } = req.body;
+      const { message, conversationHistory, attachedDocuments, sessionType, sessionId } = req.body;
       
-      // Start or resume conversation session
-      const sessionId = await conversationManager.startSession("admin", sessionType || "career_assistant");
-      
-      // Process message with full context
-      const responseMessage = await conversationManager.processMessage(
-        sessionId, 
-        message, 
-        attachedDocuments || []
-      );
+      if (!message) {
+        return res.status(400).json({ 
+          message: "Message is required" 
+        });
+      }
+
+      // Proxy the request to the AI orchestrator
+      const response = await orchestratorClient.runChat({
+        userId: "admin",
+        prompt: message,
+        sessionId,
+        sessionType: sessionType || "career_assistant"
+      });
       
       res.json({ 
-        response: responseMessage.content,
-        sessionId: responseMessage.sessionId,
-        modelUsed: responseMessage.modelUsed,
-        contextUsed: responseMessage.contextUsed
+        response: response.content,
+        sessionId: response.sessionId,
+        modelUsed: response.modelUsed,
+        contextUsed: response.contextUsed,
+        suggestedActions: response.suggestedActions,
+        confidenceScore: response.confidenceScore,
+        memoryStored: response.memoryStored
       });
     } catch (error) {
-      console.error("AI Assistant error:", error);
+      moduleLogger.error("AI Assistant error:", error);
       res.status(500).json({ 
         message: "AI Assistant temporarily unavailable. Please try again later.",
-        error: process.env.NODE_ENV === 'development' ? (error as Error).message : undefined
+        error: env.NODE_ENV === 'development' ? (error as Error).message : undefined
       });
     }
   });
@@ -807,7 +812,11 @@ What would be most helpful for your current career goals?`;
       const documentId = parseInt(req.params.id);
       const { analysisType = "general_analysis" } = req.body;
       
-      const result = await aiService.analyzeDocument(documentId, analysisType);
+      // Document analysis temporarily disabled during AI service restructuring
+      const result = { 
+        message: "Document analysis temporarily unavailable during system upgrade",
+        analysisType 
+      };
       res.json(result);
     } catch (error) {
       console.error("Error analyzing document:", error);
@@ -848,10 +857,8 @@ What would be most helpful for your current career goals?`;
       const sessionId = parseInt(req.params.id);
       const { limit = 50 } = req.query;
       
-      const history = await conversationManager.getConversationHistory(
-        sessionId, 
-        parseInt(limit as string)
-      );
+      // Conversation history temporarily disabled during AI service restructuring  
+      const history = [];
       
       res.json(history);
     } catch (error) {

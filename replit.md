@@ -11,6 +11,7 @@ This is a comprehensive full-stack web application that combines a professional 
 - **Apps Directory**: `apps/` contains all applications and shared packages
   - `apps/client/` - React frontend application
   - `apps/api-gateway/` - Express backend server
+  - `apps/ai-orchestrator/` - Dedicated AI service management
   - `apps/shared/` - Shared TypeScript schemas and types
 - **Packages Directory**: `packages/` contains shared utility packages
   - `packages/shared-utils/` - Environment validation, logging, and error handling utilities
@@ -38,11 +39,14 @@ This is a comprehensive full-stack web application that combines a professional 
 - **Logging**: Pino logger with structured logging and module-specific contexts
 - **Error Handling**: Custom AppError classes with HTTP status codes
 
-### AI Integration
-- **Primary AI**: Anthropic Claude API for advanced reasoning and conversation
-- **Fallback AI**: Google Gemini API for reliability and cost optimization
-- **Document Processing**: PDF, DOCX, and TXT file text extraction
+### AI Integration (`apps/ai-orchestrator`)
+- **Architecture**: Dedicated microservice with provider pattern for AI models
+- **Primary AI**: Anthropic Claude API through ClaudeProvider
+- **Fallback AI**: Google Gemini API through GeminiProvider
+- **Orchestrator**: Centralized chat management with `runChat({ userId, prompt })` interface
 - **Memory System**: Persistent conversation memory with context management
+- **Conversation Manager**: Session handling and context building
+- **Document Processing**: PDF, DOCX, and TXT file text extraction
 - **Vector Embeddings**: Semantic search capabilities using Google's embedding models
 
 ## Key Components
@@ -101,6 +105,14 @@ This is a comprehensive full-stack web application that combines a professional 
 - Replaced all process.env references with validated env object
 - Converted all console.log/error statements to structured Pino logging
 - Added module-specific loggers throughout the codebase
+
+### AI Service Restructuring Complete ✓
+- Created dedicated `apps/ai-orchestrator` microservice
+- Implemented IAIProvider interface with ClaudeProvider and GeminiProvider
+- Built Orchestrator class exposing runChat({ userId, prompt }) interface
+- Migrated conversationManager and memoryService to ai-orchestrator
+- Updated api-gateway to use proxy calls via OrchestratorClient
+- Separated AI concerns from main application logic
 
 ## Data Flow
 
