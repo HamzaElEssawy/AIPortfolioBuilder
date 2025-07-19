@@ -29,7 +29,8 @@ import {
   userProfile 
 } from "../shared/schema";
 import { eq, desc } from "drizzle-orm";
-import { env, logger, withModule } from "@shared-utils";
+import { env, logger, withModule, AppError } from "@shared-utils";
+import { asyncHandler } from "./src/middleware/errorHandler";
 
 const moduleLogger = withModule('routes');
 
@@ -213,88 +214,72 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Add routes for monitoring queue status
-  app.get("/api/admin/queue/stats", isAdmin, async (req, res) => {
-    try {
-      const stats = await queueService.getQueueStats();
-      res.json(stats);
-    } catch (error) {
-      moduleLogger.error("Error getting queue stats:", error);
-      res.status(500).json({ message: "Failed to get queue statistics" });
+  app.get("/api/admin/queue/stats", isAdmin, asyncHandler(async (req, res) => {
+    const stats = await queueService.getQueueStats();
+    res.json(stats);
+  }));
+
+  app.get("/api/admin/job/:jobId/status", isAdmin, asyncHandler(async (req, res) => {
+    const { jobId } = req.params;
+    
+    if (!jobId) {
+      throw AppError.badRequest("Job ID is required");
     }
-  });
+    
+    const status = await queueService.getJobStatus(jobId);
+    res.json(status);
+  }));
 
-  app.get("/api/admin/job/:jobId/status", isAdmin, async (req, res) => {
-    try {
-      const { jobId } = req.params;
-      const status = await queueService.getJobStatus(jobId);
-      res.json(status);
-    } catch (error) {
-      moduleLogger.error("Error getting job status:", error);
-      res.status(500).json({ message: "Failed to get job status" });
+  app.get("/api/admin/document/:docId/status", isAdmin, asyncHandler(async (req, res) => {
+    const { docId } = req.params;
+    
+    if (!docId || isNaN(parseInt(docId))) {
+      throw AppError.badRequest('Valid document ID required');
     }
-  });
 
-  app.get("/api/admin/document/:docId/status", isAdmin, async (req, res) => {
-    try {
-      const { docId } = req.params;
-      
-      if (!docId || isNaN(parseInt(docId))) {
-        return res.status(400).json({ message: 'Valid document ID required' });
-      }
+    const [document] = await db.select()
+      .from(knowledgeBaseDocuments)
+      .where(eq(knowledgeBaseDocuments.id, parseInt(docId)))
+      .limit(1);
 
-      const [document] = await db.select()
-        .from(knowledgeBaseDocuments)
-        .where(eq(knowledgeBaseDocuments.id, parseInt(docId)))
-        .limit(1);
-
-      if (!document) {
-        return res.status(404).json({ message: 'Document not found' });
-      }
-
-      res.json({
-        docId: document.id,
-        originalName: document.originalName,
-        status: document.status,
-        category: document.category,
-        uploadedAt: document.uploadedAt,
-        processedAt: document.processedAt,
-        metadata: document.metadata ? JSON.parse(document.metadata) : null
-      });
-
-    } catch (error) {
-      moduleLogger.error("Error getting document status:", error);
-      res.status(500).json({ message: "Failed to get document status" });
+    if (!document) {
+      throw AppError.notFound('Document not found');
     }
-  });
+
+    res.json({
+      docId: document.id,
+      originalName: document.originalName,
+      status: document.status,
+      category: document.category,
+      uploadedAt: document.uploadedAt,
+      processedAt: document.processedAt,
+      metadata: document.metadata ? JSON.parse(document.metadata) : null
+    });
+  }));
 
   // Admin login endpoint
-  app.post("/api/admin/login", async (req, res) => {
-    try {
-      const { username, password } = req.body;
-      
-      // Simple admin credentials (in production, use environment variables)
-      const adminUsername = env.ADMIN_USERNAME;
-      const adminPassword = env.ADMIN_PASSWORD;
-      
-      moduleLogger.debug("Login attempt:", { 
-        received: { username, password: password ? '***' : 'empty' },
-        expected: { username: adminUsername, password: adminPassword ? '***' : 'empty' },
-        match: { username: username === adminUsername, password: password === adminPassword }
-      });
-      
-      if (username === adminUsername && password === adminPassword) {
-        req.session.isAdmin = true;
-        moduleLogger.info("Login successful for:", username);
-        res.json({ success: true, message: "Login successful" });
-      } else {
-        moduleLogger.warn("Login failed - credentials mismatch");
-        res.status(401).json({ message: "Invalid credentials" });
-      }
-    } catch (error) {
-      moduleLogger.error("Admin login error:", error);
-      res.status(500).json({ message: "Login failed" });
+  app.post("/api/admin/login", asyncHandler(async (req, res) => {
+    const { username, password } = req.body;
+    
+    if (!username || !password) {
+      throw AppError.badRequest("Username and password required");
     }
-  });
+    
+    // Simple admin credentials (in production, use environment variables)
+    const adminUsername = env.ADMIN_USERNAME || "admin";
+    const adminPassword = env.ADMIN_PASSWORD || "password";
+    
+    moduleLogger.debug("Login attempt:");
+    
+    if (username === adminUsername && password === adminPassword) {
+      req.session.isAdmin = true;
+      moduleLogger.info("Login successful for:", username);
+      res.json({ success: true, message: "Login successful" });
+    } else {
+      moduleLogger.warn("Login failed - credentials mismatch");
+      throw AppError.unauthorized("Invalid credentials");
+    }
+  }));
 
   // Admin logout endpoint
   app.post("/api/admin/logout", (req, res) => {
@@ -313,27 +298,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get all contact submissions (admin only)
-  app.get("/api/admin/contact-submissions", isAdmin, async (req, res) => {
-    try {
-      const submissions = await storage.getContactSubmissions();
-      res.json(submissions);
-    } catch (error) {
-      console.error("Error fetching submissions:", error);
-      res.status(500).json({ message: "Failed to fetch submissions" });
-    }
-  });
+  app.get("/api/admin/contact-submissions", isAdmin, asyncHandler(async (req, res) => {
+    const submissions = await storage.getContactSubmissions();
+    res.json(submissions);
+  }));
 
   // Delete contact submission (admin only)
-  app.delete("/api/admin/contact-submissions/:id", isAdmin, async (req, res) => {
-    try {
-      const { id } = req.params;
-      await storage.deleteContactSubmission(parseInt(id));
-      res.json({ message: "Submission deleted successfully" });
-    } catch (error) {
-      console.error("Error deleting submission:", error);
-      res.status(500).json({ message: "Failed to delete submission" });
+  app.delete("/api/admin/contact-submissions/:id", isAdmin, asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    
+    if (!id || isNaN(parseInt(id))) {
+      throw AppError.badRequest("Valid submission ID required");
     }
-  });
+    
+    await storage.deleteContactSubmission(parseInt(id));
+    res.json({ message: "Submission deleted successfully" });
+  }));
 
   // Export submissions as CSV (admin only)
   app.get("/api/admin/export-submissions", isAdmin, async (req, res) => {

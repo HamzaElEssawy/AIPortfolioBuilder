@@ -8,6 +8,7 @@ import { performanceMiddleware } from "./performance";
 import { env, logger } from "@shared-utils";
 import { cacheMiddleware } from "./cache";
 import { workflowManager } from "./workflow";
+import { errorHandler, notFoundHandler } from "./src/middleware/errorHandler";
 
 const app = express();
 
@@ -133,13 +134,9 @@ app.use((req, res, next) => {
   // Register routes BEFORE any other middleware to handle uploads first
   const server = await registerRoutes(app);
 
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
-
-    res.status(status).json({ message });
-    throw err;
-  });
+  // Error handling middleware - must be after all routes
+  app.use(notFoundHandler);
+  app.use(errorHandler);
 
   // importantly only setup vite in development and after
   // setting up all the other routes so the catch-all route

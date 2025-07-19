@@ -114,6 +114,22 @@ This is a comprehensive full-stack web application that combines a professional 
 - Updated api-gateway to use proxy calls via OrchestratorClient
 - Separated AI concerns from main application logic
 
+### BullMQ Document Ingestion Pipeline Complete ✓
+- Built async document processing worker with BullMQ queue system
+- Created `apps/ingestion-worker` with text extraction and chunking
+- Implemented `packages/vector-repo` for embedding storage
+- Updated upload routes to return 202 responses and queue processing jobs
+- Added queue monitoring endpoints for job status tracking
+- Graceful Redis fallback when queue service unavailable
+
+### Comprehensive Error Handling System Complete ✓
+- Created standardized error handlers for Express and Fastify frameworks
+- AppError instances return `{ success: false, error: { code, message, details } }` format
+- Generic errors log full stack traces and return 500 with code: 'INTERNAL'
+- Wrapped routes with asyncHandler to catch uncaught exceptions
+- Added error helper functions and validation error factories
+- Implemented structured error logging with request context
+
 ## Data Flow
 
 ### Content Management Flow
