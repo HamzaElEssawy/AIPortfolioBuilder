@@ -3,9 +3,9 @@ import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import compression from "compression";
 import { registerRoutes } from "./routes";
-import { setupVite, serveStatic, log } from "./vite";
+import { setupVite, serveStatic } from "./vite";
 import { performanceMiddleware } from "./performance";
-import { logger } from "./logger";
+import { env, logger } from "@shared-utils";
 import { cacheMiddleware } from "./cache";
 import { workflowManager } from "./workflow";
 
@@ -48,7 +48,7 @@ const limiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
-  skip: () => process.env.NODE_ENV === 'development'
+  skip: () => env.NODE_ENV === 'development'
 });
 
 const apiLimiter = rateLimit({
@@ -58,7 +58,7 @@ const apiLimiter = rateLimit({
     error: "Too many API requests from this IP, please try again later.",
     retryAfter: "15 minutes"
   },
-  skip: () => process.env.NODE_ENV === 'development'
+  skip: () => env.NODE_ENV === 'development'
 });
 
 const authLimiter = rateLimit({
@@ -68,7 +68,7 @@ const authLimiter = rateLimit({
     error: "Too many authentication attempts, please try again later.",
     retryAfter: "15 minutes"
   },
-  skip: () => process.env.NODE_ENV === 'development'
+  skip: () => env.NODE_ENV === 'development'
 });
 
 app.use(limiter);
@@ -122,7 +122,7 @@ app.use((req, res, next) => {
         logLine = logLine.slice(0, 79) + "…";
       }
 
-      log(logLine);
+      logger.info(logLine);
     }
   });
 
@@ -153,12 +153,12 @@ app.use((req, res, next) => {
   // ALWAYS serve the app on port 5000
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
-  const port = 5000;
+  const port = env.PORT;
   server.listen({
     port,
     host: "0.0.0.0",
     reusePort: true,
   }, () => {
-    log(`serving on port ${port}`);
+    logger.info(`serving on port ${port}`);
   });
 })();

@@ -28,6 +28,9 @@ import {
   userProfile 
 } from "../shared/schema";
 import { eq, desc } from "drizzle-orm";
+import { env, logger, withModule } from "@shared-utils";
+
+const moduleLogger = withModule('routes');
 
 // Configure multer for file uploads
 const uploadDir = "uploads";
@@ -80,7 +83,7 @@ const documentUpload = multer({
 
 // Initialize Anthropic client
 const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
+  apiKey: env.ANTHROPIC_API_KEY,
 });
 
 // Admin authentication middleware
@@ -105,7 +108,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Session configuration for admin
   app.use(session({
-    secret: process.env.SESSION_SECRET || 'your-secret-key',
+    secret: env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 } // 24 hours
@@ -113,7 +116,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Document upload endpoint with detailed session debugging
   app.post("/api/admin/knowledge-base/upload", documentUpload.array('files', 10), (req, res, next) => {
-    console.log('Upload endpoint - Session debug:', {
+    moduleLogger.debug('Upload endpoint - Session debug:', {
       sessionExists: !!req.session,
       isAdmin: req.session?.isAdmin,
       sessionId: req.sessionID,
@@ -121,7 +124,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
     
     if (!req.session?.isAdmin) {
-      console.log('Upload rejected - not admin authenticated');
+      moduleLogger.debug('Upload rejected - not admin authenticated');
       return res.status(401).json({ message: "Admin access required" });
     }
     
@@ -145,7 +148,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           );
           processedFiles.push(result);
         } catch (error) {
-          console.error(`Failed to process ${file.originalname}:`, error);
+          moduleLogger.error(`Failed to process ${file.originalname}:`, error);
           processedFiles.push({
             originalName: file.originalname,
             status: "failed",
@@ -162,7 +165,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         message: "Documents processed successfully"
       });
     } catch (error) {
-      console.error("Error uploading to KB:", error);
+      moduleLogger.error("Error uploading to KB:", error);
       res.status(500).json({ message: "Failed to upload files to knowledge base" });
     }
   });
@@ -173,10 +176,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { username, password } = req.body;
       
       // Simple admin credentials (in production, use environment variables)
-      const adminUsername = process.env.ADMIN_USERNAME || "admin";
-      const adminPassword = process.env.ADMIN_PASSWORD || "admin123";
+      const adminUsername = env.ADMIN_USERNAME;
+      const adminPassword = env.ADMIN_PASSWORD;
       
-      console.log("Login attempt:", { 
+      moduleLogger.debug("Login attempt:", { 
         received: { username, password: password ? '***' : 'empty' },
         expected: { username: adminUsername, password: adminPassword ? '***' : 'empty' },
         match: { username: username === adminUsername, password: password === adminPassword }
@@ -184,14 +187,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       if (username === adminUsername && password === adminPassword) {
         req.session.isAdmin = true;
-        console.log("Login successful for:", username);
+        moduleLogger.info("Login successful for:", username);
         res.json({ success: true, message: "Login successful" });
       } else {
-        console.log("Login failed - credentials mismatch");
+        moduleLogger.warn("Login failed - credentials mismatch");
         res.status(401).json({ message: "Invalid credentials" });
       }
     } catch (error) {
-      console.error("Admin login error:", error);
+      moduleLogger.error("Admin login error:", error);
       res.status(500).json({ message: "Login failed" });
     }
   });

@@ -56,7 +56,8 @@ class Logger {
       const logLine = this.formatLogEntry(entry);
       fs.appendFileSync(fileName, logLine);
     } catch (error) {
-      console.error('Failed to write log entry:', error);
+      // Fallback to stderr to avoid circular dependency with shared logger
+      process.stderr.write(`Failed to write log entry: ${error}\n`);
     }
   }
 

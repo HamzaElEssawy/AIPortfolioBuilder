@@ -9,33 +9,36 @@ import {
   aiAnalysisResults 
 } from "../../shared/schema";
 import { eq, desc, and } from "drizzle-orm";
+import { env, logger, withModule } from "@shared-utils";
+
+const moduleLogger = withModule('aiService');
 
 // Initialize AI clients with proper error handling
 let anthropic: Anthropic | null = null;
 let genAI: GoogleGenerativeAI | null = null;
 
 try {
-  if (process.env.ANTHROPIC_API_KEY) {
+  if (env.ANTHROPIC_API_KEY) {
     anthropic = new Anthropic({
-      apiKey: process.env.ANTHROPIC_API_KEY,
+      apiKey: env.ANTHROPIC_API_KEY,
     });
-    console.log("Claude/Anthropic API initialized successfully");
+    moduleLogger.info("Claude/Anthropic API initialized successfully");
   } else {
-    console.warn("ANTHROPIC_API_KEY not found - Claude unavailable");
+    moduleLogger.warn("ANTHROPIC_API_KEY not found - Claude unavailable");
   }
 } catch (error) {
-  console.error("Failed to initialize Anthropic:", error);
+  moduleLogger.error("Failed to initialize Anthropic:", error);
 }
 
 try {
-  if (process.env.GEMINI_API_KEY) {
-    genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    console.log("Gemini API initialized successfully");
+  if (env.GEMINI_API_KEY) {
+    genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY);
+    moduleLogger.info("Gemini API initialized successfully");
   } else {
-    console.warn("GEMINI_API_KEY not found - Gemini unavailable");
+    moduleLogger.warn("GEMINI_API_KEY not found - Gemini unavailable");
   }
 } catch (error) {
-  console.error("Failed to initialize Gemini:", error);
+  moduleLogger.error("Failed to initialize Gemini:", error);
 }
 
 export interface ConversationContext {
@@ -66,13 +69,13 @@ export class AIService {
       // Try Claude first (primary)
       return await this.generateClaudeResponse(message, context);
     } catch (claudeError) {
-      console.warn("Claude API failed, falling back to Gemini:", claudeError);
+      moduleLogger.warn("Claude API failed, falling back to Gemini:", claudeError);
       
       try {
         // Fallback to Gemini
         return await this.generateGeminiResponse(message, context);
       } catch (geminiError) {
-        console.error("Both AI services failed:", { claudeError, geminiError });
+        moduleLogger.error("Both AI services failed:", { claudeError, geminiError });
         throw new Error("AI services temporarily unavailable. Please try again later.");
       }
     }
@@ -216,7 +219,7 @@ COMMUNICATION STYLE:
       
       return profile[0] || null;
     } catch (error) {
-      console.error("Error fetching user profile:", error);
+      moduleLogger.error("Error fetching user profile:", error);
       return null;
     }
   }
@@ -231,7 +234,7 @@ COMMUNICATION STYLE:
       
       return session[0]?.contextSummary || null;
     } catch (error) {
-      console.error("Error fetching session summary:", error);
+      moduleLogger.error("Error fetching session summary:", error);
       return null;
     }
   }
@@ -245,7 +248,7 @@ COMMUNICATION STYLE:
         .orderBy(desc(conversationMemory.importanceScore), desc(conversationMemory.lastAccessed))
         .limit(limit);
     } catch (error) {
-      console.error("Error fetching recent memories:", error);
+      moduleLogger.error("Error fetching recent memories:", error);
       return [];
     }
   }
@@ -282,7 +285,7 @@ COMMUNICATION STYLE:
         .sort((a, b) => b.relevanceScore - a.relevanceScore)
         .slice(0, limit);
     } catch (error) {
-      console.error("Error fetching relevant documents:", error);
+      moduleLogger.error("Error fetching relevant documents:", error);
       return [];
     }
   }
@@ -303,7 +306,7 @@ COMMUNICATION STYLE:
         contextTags: this.extractTags(content)
       });
     } catch (error) {
-      console.error("Error storing memory:", error);
+      moduleLogger.error("Error storing memory:", error);
     }
   }
 

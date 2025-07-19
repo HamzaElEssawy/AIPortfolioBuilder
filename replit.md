@@ -12,6 +12,8 @@ This is a comprehensive full-stack web application that combines a professional 
   - `apps/client/` - React frontend application
   - `apps/api-gateway/` - Express backend server
   - `apps/shared/` - Shared TypeScript schemas and types
+- **Packages Directory**: `packages/` contains shared utility packages
+  - `packages/shared-utils/` - Environment validation, logging, and error handling utilities
 - **Workspace Config**: `pnpm-workspace.yaml` manages package dependencies across apps
 
 ### Frontend Architecture
@@ -32,6 +34,9 @@ This is a comprehensive full-stack web application that combines a professional 
 - **Session Management**: Express sessions for admin authentication
 - **File Upload**: Multer middleware for document and image processing
 - **Security**: Helmet, rate limiting, input validation, and sanitization
+- **Environment**: Zod-validated environment variables for type safety
+- **Logging**: Pino logger with structured logging and module-specific contexts
+- **Error Handling**: Custom AppError classes with HTTP status codes
 
 ### AI Integration
 - **Primary AI**: Anthropic Claude API for advanced reasoning and conversation
@@ -65,6 +70,37 @@ This is a comprehensive full-stack web application that combines a professional 
 - **Career Guidance**: Resume optimization, interview preparation, and strategic planning
 - **Brand Analysis**: Portfolio analysis and content strategy recommendations
 - **Document Intelligence**: Automated insights extraction and summarization
+
+## Shared Utilities (`packages/shared-utils`)
+
+### Environment Validation
+- **Zod Schema**: Validates all environment variables on startup
+- **Type Safety**: Exports typed `env` object with proper defaults
+- **Required Variables**: DATABASE_URL, ANTHROPIC_API_KEY, GEMINI_API_KEY
+- **Optional Variables**: REDIS_URL with fallback defaults
+- **Security**: SESSION_SECRET, ADMIN_USERNAME, ADMIN_PASSWORD with secure defaults
+
+### Logging System
+- **Base Logger**: Pino logger with development/production configurations
+- **Request Scoping**: `withReq(reqId)` for request-specific logging
+- **Module Scoping**: `withModule(moduleName)` for component-specific logging
+- **Structured Output**: JSON format with timestamps and context data
+- **Development Mode**: Pretty-printed logs with colors and formatting
+
+### Error Handling
+- **AppError Class**: Custom error class with statusCode, code, and details
+- **HTTP Status**: Proper status code mapping for API responses
+- **Type Safety**: TypeScript interfaces for consistent error structure
+
+## Recent Changes (July 2025)
+
+### Monorepo Migration Complete ✓
+- Successfully restructured project into monorepo architecture
+- Created `packages/shared-utils` with centralized utilities
+- Updated all apps/api-gateway files to use shared-utils
+- Replaced all process.env references with validated env object
+- Converted all console.log/error statements to structured Pino logging
+- Added module-specific loggers throughout the codebase
 
 ## Data Flow
 
