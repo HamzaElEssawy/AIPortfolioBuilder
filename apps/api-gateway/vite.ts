@@ -21,10 +21,10 @@ export async function setupVite(app: Express, server: Server) {
   const currentDir = path.dirname(new URL(import.meta.url).pathname);
   const vite = await createViteServer({
     configFile: false,
-    root: path.resolve(currentDir, "..", "client"),
+    root: path.resolve(currentDir, "..", "..", "apps", "client"),
     resolve: {
       alias: {
-        "@": path.resolve(currentDir, "..", "client", "src"),
+        "@": path.resolve(currentDir, "..", "..", "apps", "client", "src"),
         "@shared": path.resolve(currentDir, "..", "shared"),
         "@assets": path.resolve(currentDir, "..", "..", "attached_assets"),
       },
@@ -51,7 +51,9 @@ export async function setupVite(app: Express, server: Server) {
     try {
       const clientTemplate = path.resolve(
         currentDir,
+        "..", 
         "..",
+        "apps",
         "client",
         "index.html",
       );

@@ -9,6 +9,7 @@ import AdminLogin from "@/pages/AdminLogin";
 import AdminAuthGuard from "@/components/AdminAuthGuard";
 import CaseStudies from "@/pages/CaseStudies";
 import CaseStudyDetail from "@/pages/CaseStudyDetail";
+import ErrorTranslatorDemo from "@/pages/ErrorTranslatorDemo";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -17,6 +18,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/case-studies" component={CaseStudies} />
       <Route path="/case-study/:slug" component={CaseStudyDetail} />
+      <Route path="/error-translator" component={ErrorTranslatorDemo} />
       <Route path="/admin">
         <AdminAuthGuard>
           <AdminStreamlined />

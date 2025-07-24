@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
+import { Link, useLocation } from "wouter";
 
 export default function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -16,9 +17,16 @@ export default function Navigation() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    element?.scrollIntoView({ behavior: "smooth" });
+  const [location] = useLocation();
+
+  const handleNavigation = (item: any) => {
+    if (item.isLink) {
+      // Don't close menu for links, wouter will handle it
+      return;
+    } else {
+      const element = document.getElementById(item.id);
+      element?.scrollIntoView({ behavior: "smooth" });
+    }
     setIsMobileMenuOpen(false);
   };
 
@@ -27,6 +35,7 @@ export default function Navigation() {
     { label: "Skills", id: "skills" },
     { label: "Timeline", id: "timeline" },
     { label: "Case Studies", id: "featured-case-studies" },
+    { label: "Error Translator", id: "error-translator", isLink: true },
     { label: "Contact", id: "contact" }
   ];
 
@@ -45,7 +54,10 @@ export default function Navigation() {
             className={`text-xl font-bold cursor-pointer transition-colors duration-300 ${
               isScrolled ? "text-navy" : "text-navy"
             }`}
-            onClick={() => scrollToSection("hero")}
+            onClick={() => {
+              const element = document.getElementById("hero");
+              element?.scrollIntoView({ behavior: "smooth" });
+            }}
           >
             Hamza El Essawy
           </div>
@@ -53,18 +65,33 @@ export default function Navigation() {
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-8">
             {navigationItems.map((item) => (
-              <Button
-                key={item.id}
-                variant="ghost"
-                className={`text-base font-medium transition-colors duration-300 hover:text-secondary-green ${
-                  isScrolled 
-                    ? "text-text-charcoal hover:bg-secondary-green/10" 
-                    : "text-text-charcoal hover:bg-white/10"
-                }`}
-                onClick={() => scrollToSection(item.id)}
-              >
-                {item.label}
-              </Button>
+              item.isLink ? (
+                <Link key={item.id} href={`/${item.id}`}>
+                  <Button
+                    variant="ghost"
+                    className={`text-base font-medium transition-colors duration-300 hover:text-secondary-green ${
+                      isScrolled 
+                        ? "text-text-charcoal hover:bg-secondary-green/10" 
+                        : "text-text-charcoal hover:bg-white/10"
+                    }`}
+                  >
+                    {item.label}
+                  </Button>
+                </Link>
+              ) : (
+                <Button
+                  key={item.id}
+                  variant="ghost"
+                  className={`text-base font-medium transition-colors duration-300 hover:text-secondary-green ${
+                    isScrolled 
+                      ? "text-text-charcoal hover:bg-secondary-green/10" 
+                      : "text-text-charcoal hover:bg-white/10"
+                  }`}
+                  onClick={() => handleNavigation(item)}
+                >
+                  {item.label}
+                </Button>
+              )
             ))}
           </div>
 
@@ -88,14 +115,26 @@ export default function Navigation() {
                     Hamza El Essawy
                   </div>
                   {navigationItems.map((item) => (
-                    <Button
-                      key={item.id}
-                      variant="ghost"
-                      className="text-base font-medium text-text-charcoal hover:text-secondary-green hover:bg-secondary-green/10 justify-start"
-                      onClick={() => scrollToSection(item.id)}
-                    >
-                      {item.label}
-                    </Button>
+                    item.isLink ? (
+                      <Link key={item.id} href={`/${item.id}`}>
+                        <Button
+                          variant="ghost"
+                          className="text-base font-medium text-text-charcoal hover:text-secondary-green hover:bg-secondary-green/10 justify-start"
+                          onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                          {item.label}
+                        </Button>
+                      </Link>
+                    ) : (
+                      <Button
+                        key={item.id}
+                        variant="ghost"
+                        className="text-base font-medium text-text-charcoal hover:text-secondary-green hover:bg-secondary-green/10 justify-start"
+                        onClick={() => handleNavigation(item)}
+                      >
+                        {item.label}
+                      </Button>
+                    )
                   ))}
                 </div>
               </SheetContent>
