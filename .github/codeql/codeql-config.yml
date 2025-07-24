@@ -1,0 +1,23 @@
+name: "AI Portfolio CodeQL Configuration"
+
+disable-default-queries: false
+
+queries:
+  - uses: security-extended
+  - uses: security-and-quality
+
+paths-ignore:
+  - node_modules/
+  - dist/
+  - coverage/
+  - test/
+  - "**/*.test.ts"
+  - "**/*.test.tsx"
+  - "**/*.spec.ts"
+  - "**/*.spec.tsx"
+
+paths:
+  - apps/
+  - packages/
+  - server/
+  - client/

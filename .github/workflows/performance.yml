@@ -1,0 +1,143 @@
+name: Performance Testing
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run performance tests weekly on Sundays at 3 AM UTC
+    - cron: '0 3 * * 0'
+
+jobs:
+  # Lighthouse CI for frontend performance
+  lighthouse:
+    name: Lighthouse Performance Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: '8'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build application
+        run: pnpm run build
+
+      - name: Start application
+        run: |
+          pnpm run start &
+          sleep 30 # Wait for app to start
+
+      - name: Run Lighthouse CI
+        run: |
+          npm install -g @lhci/cli@0.12.x
+          lhci autorun --config=.lighthouserc.json
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+      - name: Upload Lighthouse results
+        uses: actions/upload-artifact@v3
+        with:
+          name: lighthouse-results
+          path: .lighthouseci/
+
+  # Bundle size analysis
+  bundle-analysis:
+    name: Bundle Size Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: '8'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build and analyze bundle
+        run: |
+          pnpm run build
+          npx webpack-bundle-analyzer dist/stats.json --mode json > bundle-analysis.json
+
+      - name: Check bundle size limits
+        run: |
+          echo "Checking bundle size limits..."
+          # Add your bundle size validation logic here
+          if [ -f "dist/index.js" ]; then
+            size=$(stat -c%s "dist/index.js")
+            max_size=5242880  # 5MB limit
+            if [ $size -gt $max_size ]; then
+              echo "❌ Bundle size ($size bytes) exceeds limit ($max_size bytes)"
+              exit 1
+            else
+              echo "✅ Bundle size ($size bytes) within limit"
+            fi
+          fi
+
+      - name: Comment bundle size on PR
+        if: github.event_name == 'pull_request'
+        run: |
+          echo "Bundle size analysis would be posted as PR comment"
+          # Add logic to post bundle size comparison on PR
+
+  # Load testing
+  load-test:
+    name: Load Testing
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: |
+          npm install -g artillery@latest
+          npm install -g clinic
+
+      - name: Start application for testing
+        run: |
+          # Start your application in background
+          npm start &
+          sleep 30
+
+      - name: Run load tests
+        run: |
+          echo "Running load tests..."
+          # artillery run loadtest.yml
+          echo "Load test configuration would go here"
+
+      - name: Generate performance report
+        run: |
+          echo "# Performance Test Report" > performance-report.md
+          echo "Generated on: $(date)" >> performance-report.md
+          echo "Load test results would be included here"
+
+      - name: Upload performance artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: performance-results
+          path: performance-report.md
