@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accessibility Error Translator Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        .error-critical { color: #dc2626; background-color: #fef2f2; border-color: #dc2626; }
+        .error-high { color: #ea580c; background-color: #fff7ed; border-color: #ea580c; }
+        .error-medium { color: #ca8a04; background-color: #fefce8; border-color: #ca8a04; }
+        .error-low { color: #2563eb; background-color: #eff6ff; border-color: #2563eb; }
+        .error-info { color: #6b7280; background-color: #f9fafb; border-color: #6b7280; }
+        .error-success { color: #16a34a; background-color: #f0fdf4; border-color: #16a34a; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-6 py-8">
+        <div class="max-w-4xl mx-auto">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-gray-900 mb-4">
+                    🎯 Accessibility Error Translator
+                </h1>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                    Transform complex technical errors into user-friendly, color-coded, and icon-based communication
+                </p>
+            </div>
+
+            <!-- Color-Coded Severity System -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+                <h2 class="text-xl font-semibold mb-4">Color-Coded Severity System</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="error-critical border-2 rounded-lg p-4">
+                        <div class="flex items-center mb-2">
+                            <i data-lucide="alert-triangle" class="w-5 h-5 mr-2"></i>
+                            <span class="font-semibold">Critical</span>
+                        </div>
+                        <p class="text-sm">System failures, security breaches</p>
+                    </div>
+                    <div class="error-high border-2 rounded-lg p-4">
+                        <div class="flex items-center mb-2">
+                            <i data-lucide="alert-circle" class="w-5 h-5 mr-2"></i>
+                            <span class="font-semibold">High</span>
+                        </div>
+                        <p class="text-sm">Important validations, auth failures</p>
+                    </div>
+                    <div class="error-medium border-2 rounded-lg p-4">
+                        <div class="flex items-center mb-2">
+                            <i data-lucide="clock" class="w-5 h-5 mr-2"></i>
+                            <span class="font-semibold">Medium</span>
+                        </div>
+                        <p class="text-sm">Session timeouts, permission issues</p>
+                    </div>
+                    <div class="error-low border-2 rounded-lg p-4">
+                        <div class="flex items-center mb-2">
+                            <i data-lucide="info" class="w-5 h-5 mr-2"></i>
+                            <span class="font-semibold">Low</span>
+                        </div>
+                        <p class="text-sm">Performance warnings, minor validations</p>
+                    </div>
+                    <div class="error-info border-2 rounded-lg p-4">
+                        <div class="flex items-center mb-2">
+                            <i data-lucide="message-circle" class="w-5 h-5 mr-2"></i>
+                            <span class="font-semibold">Info</span>
+                        </div>
+                        <p class="text-sm">General information, announcements</p>
+                    </div>
+                    <div class="error-success border-2 rounded-lg p-4">
+                        <div class="flex items-center mb-2">
+                            <i data-lucide="check-circle" class="w-5 h-5 mr-2"></i>
+                            <span class="font-semibold">Success</span>
+                        </div>
+                        <p class="text-sm">Successful operations, confirmations</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Icon-Based Error Categories -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+                <h2 class="text-xl font-semibold mb-4">Icon-Based Error Categories</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                        <i data-lucide="alert-circle" class="w-6 h-6 text-red-500 mr-3"></i>
+                        <div>
+                            <div class="font-medium">Validation</div>
+                            <div class="text-sm text-gray-600">Data input errors</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                        <i data-lucide="zap" class="w-6 h-6 text-orange-500 mr-3"></i>
+                        <div>
+                            <div class="font-medium">Network</div>
+                            <div class="text-sm text-gray-600">Connection issues</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                        <i data-lucide="shield" class="w-6 h-6 text-yellow-500 mr-3"></i>
+                        <div>
+                            <div class="font-medium">Permission</div>
+                            <div class="text-sm text-gray-600">Access control</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                        <i data-lucide="clock" class="w-6 h-6 text-blue-500 mr-3"></i>
+                        <div>
+                            <div class="font-medium">Timeout</div>
+                            <div class="text-sm text-gray-600">Request timeouts</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                        <i data-lucide="alert-triangle" class="w-6 h-6 text-purple-500 mr-3"></i>
+                        <div>
+                            <div class="font-medium">System</div>
+                            <div class="text-sm text-gray-600">Internal errors</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                        <i data-lucide="shield-alert" class="w-6 h-6 text-red-600 mr-3"></i>
+                        <div>
+                            <div class="font-medium">Security</div>
+                            <div class="text-sm text-gray-600">Security alerts</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Error Examples -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+                <h2 class="text-xl font-semibold mb-4">Live Error Examples</h2>
+                <div class="space-y-4" id="errorExamples">
+                    <!-- Errors will be populated by JavaScript -->
+                </div>
+                <button onclick="addRandomError()" 
+                        class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+                    Add Random Error
+                </button>
+            </div>
+
+            <!-- Features -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-xl font-semibold mb-4">✨ Key Features</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="font-medium mb-2">🎨 Visual Hierarchy</h3>
+                        <ul class="text-sm text-gray-600 space-y-1">
+                            <li>• Color-coded severity levels</li>
+                            <li>• High contrast for accessibility</li>
+                            <li>• Consistent visual patterns</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="font-medium mb-2">♿ Accessibility</h3>
+                        <ul class="text-sm text-gray-600 space-y-1">
+                            <li>• ARIA labels for screen readers</li>
+                            <li>• Semantic HTML structure</li>
+                            <li>• Keyboard navigation support</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="font-medium mb-2">📱 Responsive Design</h3>
+                        <ul class="text-sm text-gray-600 space-y-1">
+                            <li>• Mobile-first approach</li>
+                            <li>• Flexible grid layouts</li>
+                            <li>• Touch-friendly interactions</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="font-medium mb-2">🔍 Clear Categorization</h3>
+                        <ul class="text-sm text-gray-600 space-y-1">
+                            <li>• Icon-based error types</li>
+                            <li>• Consistent messaging patterns</li>
+                            <li>• User-friendly language</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Sample errors data
+        const sampleErrors = [
+            {
+                severity: 'critical',
+                category: 'security',
+                icon: 'shield-alert',
+                title: 'Security Breach Detected',
+                message: 'Unauthorized access attempt blocked',
+                technical: 'Failed authentication attempt from IP 192.168.1.1'
+            },
+            {
+                severity: 'high',
+                category: 'validation',
+                icon: 'alert-circle',
+                title: 'Required Field Missing',
+                message: 'Please fill in your email address',
+                technical: 'ValidationError: email field is required'
+            },
+            {
+                severity: 'medium',
+                category: 'timeout',
+                icon: 'clock',
+                title: 'Session Expired',
+                message: 'Please log in again to continue',
+                technical: 'SessionTimeoutError: token expired after 3600s'
+            },
+            {
+                severity: 'low',
+                category: 'network',
+                icon: 'zap',
+                title: 'Slow Connection',
+                message: 'Content may load more slowly',
+                technical: 'NetworkWarning: RTT > 2000ms detected'
+            },
+            {
+                severity: 'info',
+                category: 'system',
+                icon: 'info',
+                title: 'Maintenance Scheduled',
+                message: 'System update planned for tonight',
+                technical: 'ScheduledMaintenance: 2025-07-25 02:00 UTC'
+            },
+            {
+                severity: 'success',
+                category: 'validation',
+                icon: 'check-circle',
+                title: 'Profile Updated',
+                message: 'Your changes have been saved successfully',
+                technical: 'UpdateSuccess: user_profile modified'
+            }
+        ];
+
+        // Render error examples
+        function renderErrors() {
+            const container = document.getElementById('errorExamples');
+            container.innerHTML = '';
+            
+            sampleErrors.forEach((error, index) => {
+                const errorDiv = document.createElement('div');
+                errorDiv.className = `error-${error.severity} border-2 rounded-lg p-4`;
+                errorDiv.innerHTML = `
+                    <div class="flex items-start">
+                        <i data-lucide="${error.icon}" class="w-5 h-5 mr-3 mt-0.5 flex-shrink-0"></i>
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between mb-2">
+                                <h3 class="font-semibold">${error.title}</h3>
+                                <span class="text-xs uppercase font-medium px-2 py-1 rounded-full bg-white bg-opacity-50">
+                                    ${error.severity}
+                                </span>
+                            </div>
+                            <p class="mb-2">${error.message}</p>
+                            <details class="text-sm">
+                                <summary class="cursor-pointer text-opacity-75 hover:text-opacity-100">
+                                    Technical Details
+                                </summary>
+                                <code class="block mt-2 p-2 bg-black bg-opacity-10 rounded text-xs">
+                                    ${error.technical}
+                                </code>
+                            </details>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(errorDiv);
+            });
+            
+            // Reinitialize icons for new elements
+            lucide.createIcons();
+        }
+
+        // Add random error function
+        function addRandomError() {
+            const randomError = sampleErrors[Math.floor(Math.random() * sampleErrors.length)];
+            const newError = {
+                ...randomError,
+                title: `${randomError.title} #${Date.now()}`,
+                message: `${randomError.message} (${new Date().toLocaleTimeString()})`
+            };
+            sampleErrors.push(newError);
+            renderErrors();
+        }
+
+        // Initial render
+        renderErrors();
+    </script>
+</body>
+</html>

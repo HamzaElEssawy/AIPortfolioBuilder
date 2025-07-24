@@ -1,8 +1,8 @@
 {
-  "name": "@workspace/api-gateway",
+  "name": "shared-utils",
   "version": "0.1.0",
   "private": true,
-  "main": "dist/index.js",
+  "main": "index.ts",
   "scripts": {
     "dev": "tsx index.ts",
     "build": "tsc -p tsconfig.json",

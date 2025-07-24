@@ -10,7 +10,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "*",
     "@google/generative-ai": "*",
-
+    "shared-utils": "workspace:*",
     "drizzle-orm": "*",
     "express": "*",
     "cors": "*"
