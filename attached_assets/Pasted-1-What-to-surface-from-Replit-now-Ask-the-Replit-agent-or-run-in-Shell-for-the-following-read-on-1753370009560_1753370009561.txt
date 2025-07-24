@@ -1,0 +1,57 @@
+1 · What to surface from Replit now
+Ask the Replit agent (or run in Shell) for the following read-only dumps:
+
+Command	Why you need it
+tree -L 2 (repo root)	Quick visual of current folder hierarchy (apps / packages / config files).
+git log --oneline --decorate --graph -12	Shows last dozen commits; confirms the “fix(ui): restore Tailwind…” commit is HEAD.
+git status --short	Verifies there’s no stray, uncommitted code.
+cat .replit	Confirms the run command still points to api-gateway dev.
+cat pnpm-workspace.yaml	Verifies workspace globs.
+cat apps/api-gateway/package.json (and apps/client/package.json)	Lets you review scripts & deps.
+cat packages/shared-utils/env.ts	Check env validation (nothing sensitive).
+cat replit.md	This doc may have TODOs, env notes, or design decisions worth keeping updated.
+gh run list --limit 5 (if GH CLI installed)	Recent CI runs & status.
+
+Prompt to send Replit-AI
+**“Dump the following to the console (no edits):
+
+bash
+Copy
+Edit
+tree -L 2
+git log --oneline --graph -12
+git status --short
+cat .replit
+cat pnpm-workspace.yaml
+cat apps/api-gateway/package.json
+cat apps/client/package.json
+cat packages/shared-utils/env.ts
+cat replit.md
+Then stop.”**
+
+Copy that output back here (or upload as a txt file).
+With those artifacts we can:
+
+Validate there’s no hidden drift.
+
+Freeze the state as v0.1 tag if you like.
+
+Decide next technical debt items (e.g. extract memory-store package, write more tests, hook CI badge in README).
+
+2 · Quick manual checklist while you wait
+Push the “Tailwind fixed” commit
+
+bash
+Copy
+Edit
+git push origin main
+– Watch GitHub Actions go green.
+
+Open the site in Incognito to ensure no cache illusions.
+
+Upload a small doc via the knowledge-base route and run a chat prompt – confirms RAG pipeline still works without Redis.
+
+Once we have the dumps
+I can give you a concise state-of-the-repo report and an updated backlog (lint debt = 0, test coverage %, next micro-service to isolate, etc.).
+
+Let me know once you have that output (or if anything in the gather-list should be added/removed).
