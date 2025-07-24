@@ -1,0 +1,120 @@
+1 · Checkpoint before changing anything
+bash
+Copy
+Edit
+# Make sure the working tree is clean
+git status
+# If there are un‑committed hacks, commit them on a temp branch
+git switch -c temp‑fixes
+git add -A && git commit -m "temp: placeholder UI to keep server alive"
+Now switch back to your main development branch:
+
+bash
+Copy
+Edit
+git switch main
+2 · Restore the original React UI without touching the server fixes
+All the design lived in the original component tree under
+apps/client/src/components and pages under src/pages.
+
+We only overwrote two files:
+
+apps/client/src/main.tsx
+
+apps/client/src/App.tsx
+
+(possibly) a handful of components where Ghostwriter added import React…
+
+2‑minute clean rollback
+bash
+Copy
+Edit
+# Revert just the files we stubbed out
+git checkout HEAD~3 -- apps/client/src/main.tsx apps/client/src/App.tsx
+# If you removed any folders like components/ui, restore them too
+git checkout HEAD~3 -- apps/client/src/components
+(Replace HEAD~3 with the commit before the “simple home page”
+commit—check git log --oneline for exact hash.)
+
+Commit:
+
+bash
+Copy
+Edit
+git add -A
+git commit -m "feat(ui): restore full design components"
+3 · Ensure path aliases and JSX runtime are correct
+Vite aliases (already fixed in vite.config.mts):
+
+ts
+Copy
+Edit
+alias: {
+  "@": fileURLToPath(new URL("./src", import.meta.url)),
+  "@shared-utils": fileURLToPath(
+    new URL("../../packages/shared-utils/src", import.meta.url)
+  )
+}
+tsconfig.json in apps/client:
+
+json
+Copy
+Edit
+{
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@shared-utils/*": ["../../packages/shared-utils/src/*"]
+    }
+  }
+}
+Remove stray import React from "react" lines that were
+re‑introduced. Run:
+
+bash
+Copy
+Edit
+npx eslint apps/client/src --ext .tsx --rule 'react/react-in-jsx-scope: error'
+Fix any files ESLint flags (delete that import).
+
+4 · Re‑run the client
+bash
+Copy
+Edit
+pnpm --filter apps/client dev
+Open the Replit URL → the original styled portfolio should re‑appear
+(ShadCN + Tailwind will load because Vite now resolves aliases).
+
+5 · Commit and push
+bash
+Copy
+Edit
+git push origin main
+GitHub Actions should pass:
+
+install → lint → test (green)
+
+no UI placeholder code left
+
+6 · If something is still broken visually
+Tailwind not applied?
+Confirm import "./index.css"; (or whatever your Tailwind CSS file is
+called) still exists in main.tsx.
+
+Component import errors?
+Run pnpm run lint – any missing path will surface.
+
+Design tokens lost?
+Verify tailwind.config.ts still points to apps/client/src/**/*.{ts,tsx}.
+
+☑️ After this
+The server fixes remain (api‑gateway entry, .replit run cmd).
+
+The full React UI is back.
+
+Now we can start functional QA on file‑upload, AI chat, etc.
+
+If you hit any specific error after restoring the UI (blank screen, red
+stack trace), paste that message and we’ll debug it next.
