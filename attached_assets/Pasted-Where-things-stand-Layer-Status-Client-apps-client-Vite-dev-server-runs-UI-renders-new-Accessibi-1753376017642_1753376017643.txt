@@ -1,0 +1,114 @@
+Where things stand
+Layer	Status
+Client (apps/client)	Vite dev server runs, UI renders, new Accessibility Error Translator demo works
+API‑gateway (apps/api‑gateway)	Runs fine on port 5000 (Redis‑optional)
+Ingestion‑worker	Starts, no blocking errors
+AI‑orchestrator	Fails at startup → Cannot find package 'shared-utils'
+Lint / tests	Lint passes after ignoring legacy JS; tests will pass once orchestrator issue fixed or excluded
+Run button	Still uses root dev script, so one failing workspace crashes the whole run
+
+Why the orchestrator still breaks
+* apps/ai‑orchestrator imports shared-utils.
+
+We renamed the package to @shared-utils in its own package.json, but:
+
+ai‑orchestrator’s package.json does not list "@shared-utils": "workspace:*" in dependencies.
+
+Its source files still import shared-utils instead of @shared-utils (or an alias).
+
+Therefore pnpm doesn’t link the workspace, and Node can’t resolve it.
+
+Two ways to stabilise the dev experience
+Option A – keep orchestrator offline for now (quick unblock)
+Update .replit so the Run button starts only the API‑gateway (and thus Vite):
+
+toml
+Copy
+Edit
+run = ["bash", "-c", "pnpm --filter @workspace/api-gateway dev"]
+– You already tested this manually (tsx index.ts); putting it in .replit means no more crashes.
+
+Commit & push: the portfolio site and gateway stay online; orchestrator can be wired up later when its dependency graph is clean.
+
+Option B – fully fix the orchestrator workspace (recommended long‑term)
+Add dependency
+
+bash
+Copy
+Edit
+npm pkg --workspace apps/ai-orchestrator set dependencies.@shared-utils="workspace:*"
+Fix imports inside apps/ai-orchestrator/src/**/*.ts
+
+Either:
+
+Change every import … from "shared-utils" → from "@shared-utils"
+(quick global replace), or
+
+Add an alias to apps/ai-orchestrator/tsconfig.json:
+
+json
+Copy
+Edit
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "shared-utils": ["../../packages/shared-utils/src"]
+    }
+  }
+}
+Re‑install & test
+
+bash
+Copy
+Edit
+pnpm install
+pnpm --filter @workspace/ai-orchestrator dev    # should start without ERR_MODULE_NOT_FOUND
+If it boots, the root dev script will work again and you can keep the parallel ‑r run.
+
+Minimal commit plan (safe)
+bash
+Copy
+Edit
+# 0. stay on tidy-monorepo branch
+git switch tidy-monorepo
+
+# Fix .replit for single‑service dev (Option A now, Option B later)
+sed -i 's|^run = .*|run = ["bash","-c","pnpm --filter @workspace/api-gateway dev"]|' .replit
+git add .replit
+git commit -m "build: run only api-gateway in dev to avoid orchestrator crash"
+
+# (Optional) push orchestrator fix if you want Option B
+# npm pkg --workspace apps/ai-orchestrator set dependencies.@shared-utils="workspace:*"
+# ...edit imports or tsconfig...
+# git add apps/ai-orchestrator
+# git commit -m "fix(ai-orchestrator): resolve @shared-utils workspace dependency"
+Push:
+
+bash
+Copy
+Edit
+git push -u origin tidy-monorepo
+GitHub Actions: npm run lint (green), npm run test (green once orchestrator setup file path fixed earlier).
+
+Replit Run button: starts quickly, portfolio + gateway alive, no crashes.
+
+Next backlog items (after the repo is green)
+Write or move real tests into each workspace (Vitest).
+
+Extract memory‑store into its own packages/memory-store for reuse.
+
+Remove large runtime folders (uploads/, attached_assets/) from git history with BFG or git filter-repo; keep them in .gitignore.
+
+Add a Dockerfile / Railway config when you’re ready to deploy.
+
+Enable orchestrator in production once dependency path is clean.
+
+Key takeaway
+The app crashes only because one workspace fails.
+
+Pointing the .replit run command at just the gateway is the quickest way to keep development smooth.
+
+You can incrementally fix the orchestrator without blocking daily work.
+
+Let me know which path (A or B) you’d like to proceed with, or paste any new error after adjusting the run command / dependencies—I’ll guide you through the next micro‑step.
