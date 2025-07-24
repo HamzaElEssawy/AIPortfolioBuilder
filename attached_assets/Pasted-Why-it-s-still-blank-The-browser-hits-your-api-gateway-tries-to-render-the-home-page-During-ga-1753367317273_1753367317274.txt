@@ -1,0 +1,113 @@
+Why it’s still blank
+The browser hits / → your api‑gateway tries to render the home page.
+
+During gateway bootstrap queueService.ts eagerly connects to Redis.
+
+Replit has no Redis → ECONNREFUSED 127.0.0.1:6379 → throw → Express
+global error handler returns
+{ "success": false, "error": { "code": "INTERNAL", … } }.
+
+React never mounts because the HTML request itself fails.
+
+So the fix is simply “don’t die when Redis is missing” (or, if you
+really want queues, spin up Redis in Replit—but that’s over‑kill right
+now).
+
+Minimal safe patch: fall back to in‑memory queue
+1 · Modify apps/api-gateway/src/queueService.ts
+ts
+Copy
+Edit
+import IORedis from "ioredis";
+import { Queue, Worker, QueueEvents } from "bullmq";
+
+const redisUrl = process.env.REDIS_URL;          // optional
+
+let connection: IORedis | null = null;
+
+if (redisUrl) {
+  try {
+    connection = new IORedis(redisUrl, { lazyConnect: true });
+    await connection.connect();
+    console.log("✅ Redis connected");
+  } catch (err) {
+    console.warn("⚠️  Redis unavailable, falling back to in‑memory queue");
+    connection = null;
+  }
+} else {
+  console.log("ℹ️  REDIS_URL not set, using in‑memory queue");
+}
+
+export const queue =
+  connection !== null
+    ? new Queue("ingest", { connection })
+    : {
+        // minimal stub so the rest of the code can call queue.add()
+        add: async (_name: string, data: any) => {
+          // immediately process job inline
+          import("./ingestJob.js").then((mod) => mod.default(data));
+          return { id: Date.now().toString() }; // mock job id
+        },
+      } as unknown as Queue;
+
+export const queueEvents =
+  connection !== null ? new QueueEvents("ingest", { connection }) : null;
+(If you reference a Worker elsewhere, gate that the same way.)
+
+2 · Make Redis truly optional in shared env
+packages/shared-utils/env.ts
+
+ts
+Copy
+Edit
+export const env = z.object({
+  PORT: z.string().default("3000"),
+  REDIS_URL: z.string().optional(),   // already optional
+  // …other vars
+}).parse(process.env);
+(no change if it already looks like that)
+
+3 · Remove redundant error logging loop
+If you added a manual setInterval(connect…) retry earlier, delete it.
+The stub above silences the reconnect spam.
+
+4 · Commit & push
+bash
+Copy
+Edit
+git add apps/api-gateway/src/queueService.ts
+git commit -m "fix(queue): make Redis optional, inline processing fallback"
+git push
+5 · Run locally in Replit
+bash
+Copy
+Edit
+pnpm --filter @workspace/api-gateway dev
+Console should show:
+
+cpp
+Copy
+Edit
+ℹ️  REDIS_URL not set, using in‑memory queue
+Gateway listening on :3000
+Open the preview URL:
+
+Portfolio UI renders (design restored).
+
+Navigation links load client‑side routes (no 404).
+
+File‑upload / AI chat endpoints hit the gateway and return 200.
+
+6 · CI passes
+GitHub Actions runs npm run lint && npm run test → green.
+
+If you do want real Redis later
+Add Upstash or a free Redis Cloud URL,
+set REDIS_URL in Replit secrets.
+
+Remove the stub branch; the code will auto‑connect.
+
+TL;DR
+The black screen is just the gateway aborting on a missing Redis.
+Patch queueService.ts as above → gateway boots → React UI shows again.
+After that we can test AI assistant flows and resume feature work.

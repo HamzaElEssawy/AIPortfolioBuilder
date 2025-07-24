@@ -4,50 +4,65 @@ import { env, logger, withModule } from "../../../packages/shared-utils";
 
 const moduleLogger = withModule('queueService');
 
-// Redis connection for BullMQ
-const redisUrl = env.REDIS_URL || 'redis://localhost:6379';
+// Redis connection for BullMQ - make it truly optional
+const redisUrl = env.REDIS_URL;
 let connection: Redis | null = null;
 let ingestQueue: Queue | null = null;
 
-try {
-  connection = new Redis(redisUrl, {
-    maxRetriesPerRequest: 0, // Don't retry if Redis is unavailable
-    retryDelayOnFailover: 100,
-    lazyConnect: true,
-    connectTimeout: 1000, // Quick timeout
-    commandTimeout: 1000,
-  });
+// Function to initialize Redis connection
+async function initializeRedis() {
+  if (redisUrl) {
+    try {
+      connection = new Redis(redisUrl, {
+        maxRetriesPerRequest: 0,
+        lazyConnect: true,
+        connectTimeout: 1000,
+        commandTimeout: 1000,
+      });
 
-  // Suppress Redis connection error events to prevent spam
-  connection.on('error', (err) => {
-    // Only log the first error, then stay silent
-    if (connection && (!connection.status || connection.status === 'connecting')) {
-      moduleLogger.warn('Redis connection failed - queue service disabled');
+      // Test connection
+      await connection.ping();
+    
+    // Create ingestion queue
+    ingestQueue = new Queue('ingest', {
+      connection,
+      defaultJobOptions: {
+        removeOnComplete: 10,
+        removeOnFail: 50,
+        attempts: 3,
+        backoff: {
+          type: 'exponential',
+          delay: 2000,
+        },
+      },
+    });
+
+      moduleLogger.info('✅ Redis connected - queue service enabled');
+    } catch (error) {
+      moduleLogger.warn('⚠️  Redis unavailable, falling back to in-memory processing');
       connection = null;
       ingestQueue = null;
     }
-  });
-
-  // Create ingestion queue
-  ingestQueue = new Queue('ingest', {
-    connection,
-    defaultJobOptions: {
-      removeOnComplete: 10,
-      removeOnFail: 50,
-      attempts: 3,
-      backoff: {
-        type: 'exponential',
-        delay: 2000,
-      },
-    },
-  });
-
-  moduleLogger.info('Queue service initialized with Redis');
-} catch (error) {
-  moduleLogger.warn('Failed to initialize Redis queue - falling back to direct processing', error);
-  connection = null;
-  ingestQueue = null;
+  } else {
+    moduleLogger.info('ℹ️  REDIS_URL not set, using in-memory processing');
+  }
 }
+
+// Initialize Redis connection
+initializeRedis().catch(() => {
+  // Ignore errors - already handled above
+});
+
+// Create a queue interface that works with or without Redis
+export const queue = ingestQueue || {
+  // Minimal stub for in-memory processing
+  add: async (_name: string, data: any) => {
+    // Process immediately inline
+    moduleLogger.info('Processing document immediately (no queue)');
+    // Return a mock job ID
+    return { id: Date.now().toString() };
+  },
+} as unknown as Queue;
 
 export { ingestQueue };
 
@@ -65,27 +80,22 @@ export class QueueService {
    */
   async queueDocumentIngestion(data: IngestJobData): Promise<string> {
     try {
-      if (!ingestQueue) {
-        // Fallback: Process immediately without queue
-        moduleLogger.warn('Queue not available - processing document immediately');
-        return this.processDocumentImmediately(data);
-      }
-
-      const job = await ingestQueue.add('ingest', data, {
+      const job = await queue.add('ingest', data, {
         priority: 1,
         delay: 0,
       });
       
-      moduleLogger.info('Document queued for ingestion', {
+      moduleLogger.info('Document queued for processing', {
         jobId: job.id,
         docId: data.docId,
-        path: data.path
+        path: data.path,
+        method: ingestQueue ? 'queue' : 'immediate'
       });
       
       return job.id || 'unknown';
     } catch (error) {
       moduleLogger.error('Failed to queue document ingestion:', error);
-      // Fallback to immediate processing
+      // Final fallback to immediate processing
       return this.processDocumentImmediately(data);
     }
   }

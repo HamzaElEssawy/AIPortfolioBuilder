@@ -18,8 +18,7 @@ import fs from "fs";
 import { documentProcessor } from "./services/documentProcessor";
 import { orchestratorClient } from "./services/orchestratorClient";
 import { queueService } from "./src/queueService";
-import { knowledgeBaseDocuments } from "../shared/schema";
-import { eq } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 import { 
   insertKnowledgeBaseDocumentSchema,
   insertUserProfileSchema,
@@ -28,8 +27,7 @@ import {
   conversationSessions,
   userProfile 
 } from "../shared/schema";
-import { eq, desc } from "drizzle-orm";
-import { env, logger, withModule, AppError } from "@shared-utils";
+import { env, logger, withModule, AppError } from "../../packages/shared-utils";
 import { asyncHandler } from "./src/middleware/errorHandler";
 
 const moduleLogger = withModule('routes');
@@ -253,7 +251,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       category: document.category,
       uploadedAt: document.uploadedAt,
       processedAt: document.processedAt,
-      metadata: document.metadata ? JSON.parse(document.metadata) : null
+      summary: document.summary,
+      keyInsights: document.keyInsights
     });
   }));
 
@@ -937,7 +936,7 @@ What would be most helpful for your current career goals?`;
       const { limit = 50 } = req.query;
       
       // Conversation history temporarily disabled during AI service restructuring  
-      const history = [];
+      const history: any[] = [];
       
       res.json(history);
     } catch (error) {
@@ -1794,9 +1793,9 @@ What would be most helpful for your current career goals?`;
               tempImages.delete(tempImageId);
               console.log("Temporary image cleaned up");
               
-            } catch (imageError) {
+            } catch (imageError: any) {
               console.error("Error creating portfolio image:", imageError);
-              console.error("Error stack:", imageError.stack);
+              console.error("Error stack:", imageError?.stack);
             }
           } else {
             console.log("Invalid temporary image data:", tempImage);
@@ -2244,7 +2243,7 @@ What would be most helpful for your current career goals?`;
       });
 
       // Clean up old temp images (older than 1 hour)
-      for (const [key, value] of tempImages.entries()) {
+      for (const [key, value] of Array.from(tempImages.entries())) {
         if (Date.now() - value.timestamp > 3600000) { // 1 hour
           tempImages.delete(key);
         }
