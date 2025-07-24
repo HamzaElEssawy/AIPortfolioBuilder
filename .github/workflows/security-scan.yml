@@ -77,7 +77,7 @@ jobs:
           echo "Audit completed. Check audit-results.json for details."
 
       - name: Upload security artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: security-scan-results
           path: |
