@@ -1,0 +1,14 @@
+node_modules/
+dist/
+build/
+coverage/
+*.min.js
+.next/
+.turbo/
+.cache/
+.local/
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+*.log
+.env*

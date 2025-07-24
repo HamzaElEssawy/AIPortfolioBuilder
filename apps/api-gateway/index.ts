@@ -1,33 +1,34 @@
-import express, { type Request, Response, NextFunction } from "express";
+import express from "express";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import compression from "compression";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic } from "./vite";
 import { performanceMiddleware } from "./performance";
-import { env, logger } from "@shared-utils";
+import { env, logger } from "../../packages/shared-utils/index.js";
 import { cacheMiddleware } from "./cache";
-import { workflowManager } from "./workflow";
 import { errorHandler, notFoundHandler } from "./src/middleware/errorHandler";
 
 const app = express();
 
 // Trust proxy for accurate IP identification
-app.set('trust proxy', true);
+app.set("trust proxy", true);
 
 // Security middleware
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-      fontSrc: ["'self'", "https://fonts.gstatic.com"],
-      imgSrc: ["'self'", "data:", "https:", "blob:"],
-      connectSrc: ["'self'", "ws:", "wss:"]
-    }
-  }
-}));
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+        styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+        fontSrc: ["'self'", "https://fonts.gstatic.com"],
+        imgSrc: ["'self'", "data:", "https:", "blob:"],
+        connectSrc: ["'self'", "ws:", "wss:"],
+      },
+    },
+  })
+);
 
 // Compression middleware
 app.use(compression());
@@ -36,8 +37,8 @@ app.use(compression());
 app.use(performanceMiddleware);
 
 // Cache middleware for public routes
-app.use('/api/portfolio', cacheMiddleware(300)); // 5 minutes
-app.use('/api/seo', cacheMiddleware(600)); // 10 minutes
+app.use("/api/portfolio", cacheMiddleware(300)); // 5 minutes
+app.use("/api/seo", cacheMiddleware(600)); // 10 minutes
 
 // Rate limiting - More generous for portfolio browsing
 const limiter = rateLimit({
@@ -45,11 +46,11 @@ const limiter = rateLimit({
   max: 1000, // Much more generous for portfolio browsing
   message: {
     error: "Too many requests from this IP, please try again later.",
-    retryAfter: "15 minutes"
+    retryAfter: "15 minutes",
   },
   standardHeaders: true,
   legacyHeaders: false,
-  skip: () => env.NODE_ENV === 'development'
+  skip: () => env.NODE_ENV === "development",
 });
 
 const apiLimiter = rateLimit({
@@ -57,9 +58,9 @@ const apiLimiter = rateLimit({
   max: 500, // More reasonable for admin dashboard usage
   message: {
     error: "Too many API requests from this IP, please try again later.",
-    retryAfter: "15 minutes"
+    retryAfter: "15 minutes",
   },
-  skip: () => env.NODE_ENV === 'development'
+  skip: () => env.NODE_ENV === "development",
 });
 
 const authLimiter = rateLimit({
@@ -67,43 +68,47 @@ const authLimiter = rateLimit({
   max: 5, // limit each IP to 5 auth requests per windowMs
   message: {
     error: "Too many authentication attempts, please try again later.",
-    retryAfter: "15 minutes"
+    retryAfter: "15 minutes",
   },
-  skip: () => env.NODE_ENV === 'development'
+  skip: () => env.NODE_ENV === "development",
 });
 
 app.use(limiter);
-app.use('/api/', apiLimiter);
-app.use('/api/admin/login', authLimiter);
+app.use("/api/", apiLimiter);
+app.use("/api/admin/login", authLimiter);
 
 // Body parsing middleware - bypass for file uploads
 app.use((req, res, next) => {
   // Skip body parsing entirely for upload endpoints
-  if (req.path === '/api/admin/knowledge-base/upload' || 
-      req.path === '/api/admin/temp-image' ||
-      req.path.includes('/upload')) {
+  if (
+    req.path === "/api/admin/knowledge-base/upload" ||
+    req.path === "/api/admin/temp-image" ||
+    req.path.includes("/upload")
+  ) {
     return next();
   }
-  
+
   // Apply JSON parsing for non-upload routes
   express.json({ limit: "50mb" })(req, res, next);
 });
 
 app.use((req, res, next) => {
   // Skip URL encoding for upload endpoints
-  if (req.path === '/api/admin/knowledge-base/upload' || 
-      req.path === '/api/admin/temp-image' ||
-      req.path.includes('/upload')) {
+  if (
+    req.path === "/api/admin/knowledge-base/upload" ||
+    req.path === "/api/admin/temp-image" ||
+    req.path.includes("/upload")
+  ) {
     return next();
   }
-  
+
   express.urlencoded({ extended: false })(req, res, next);
 });
 
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
-  let capturedJsonResponse: Record<string, any> | undefined = undefined;
+  let capturedJsonResponse: Record<string, unknown> | undefined = undefined;
 
   const originalResJson = res.json;
   res.json = function (bodyJson, ...args) {
@@ -151,11 +156,14 @@ app.use((req, res, next) => {
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
   const port = env.PORT;
-  server.listen({
-    port,
-    host: "0.0.0.0",
-    reusePort: true,
-  }, () => {
-    logger.info(`serving on port ${port}`);
-  });
+  server.listen(
+    {
+      port,
+      host: "0.0.0.0",
+      reusePort: true,
+    },
+    () => {
+      logger.info(`serving on port ${port}`);
+    }
+  );
 })();

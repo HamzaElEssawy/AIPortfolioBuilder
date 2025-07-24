@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from 'express';
-import { AppError, withModule } from '../../../../packages/shared-utils';
+import { Request, Response, NextFunction } from "express";
+import { AppError, withModule } from "../../../../packages/shared-utils";
 
-const moduleLogger = withModule('errorHandler');
+const moduleLogger = withModule("errorHandler");
 
 export interface ErrorResponse {
   success: false;
@@ -34,19 +34,19 @@ export function errorHandler(
       error: {
         code: err.code,
         message: err.message,
-        details: err.details
-      }
+        details: err.details,
+      },
     };
 
-    moduleLogger.warn('Application error occurred', {
+    moduleLogger.warn("Application error occurred", {
       code: err.code,
       message: err.message,
       statusCode: err.statusCode,
       details: err.details,
       path: req.path,
       method: req.method,
-      userAgent: req.get('User-Agent'),
-      ip: req.ip
+      userAgent: req.get("User-Agent"),
+      ip: req.ip,
     });
 
     res.status(err.statusCode).json(errorResponse);
@@ -54,25 +54,25 @@ export function errorHandler(
   }
 
   // Handle generic errors
-  moduleLogger.error('Unhandled error occurred', {
+  moduleLogger.error("Unhandled error occurred", {
     message: err.message,
     stack: err.stack,
     name: err.name,
     path: req.path,
     method: req.method,
-    userAgent: req.get('User-Agent'),
+    userAgent: req.get("User-Agent"),
     ip: req.ip,
     body: req.body,
     query: req.query,
-    params: req.params
+    params: req.params,
   });
 
   const errorResponse: ErrorResponse = {
     success: false,
     error: {
-      code: 'INTERNAL',
-      message: 'An internal server error occurred'
-    }
+      code: "INTERNAL",
+      message: "An internal server error occurred",
+    },
   };
 
   res.status(500).json(errorResponse);
@@ -81,9 +81,10 @@ export function errorHandler(
 /**
  * Async route wrapper that catches errors and passes them to error handler
  */
-export function asyncHandler<T extends Request = Request, U extends Response = Response>(
-  fn: (req: T, res: U, next: NextFunction) => Promise<any>
-) {
+export function asyncHandler<
+  T extends Request = Request,
+  U extends Response = Response,
+>(fn: (req: T, res: U, next: NextFunction) => Promise<any>) {
   return (req: T, res: U, next: NextFunction) => {
     Promise.resolve(fn(req, res, next)).catch(next);
   };
@@ -92,7 +93,11 @@ export function asyncHandler<T extends Request = Request, U extends Response = R
 /**
  * Not found handler - should be used after all routes
  */
-export function notFoundHandler(req: Request, res: Response, next: NextFunction): void {
+export function notFoundHandler(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void {
   const error = AppError.notFound(`Route ${req.method} ${req.path} not found`);
   next(error);
 }
@@ -100,7 +105,10 @@ export function notFoundHandler(req: Request, res: Response, next: NextFunction)
 /**
  * Validation error helper
  */
-export function createValidationError(message: string, errors: Record<string, any>): AppError {
+export function createValidationError(
+  message: string,
+  errors: Record<string, any>
+): AppError {
   return AppError.badRequest(message, { validation: errors });
 }
 
@@ -109,10 +117,10 @@ export function createValidationError(message: string, errors: Record<string, an
  */
 export function createDatabaseError(originalError: Error): AppError {
   // Don't expose internal database details in production
-  const isDevelopment = process.env.NODE_ENV === 'development';
-  
+  const isDevelopment = process.env.NODE_ENV === "development";
+
   return AppError.internal(
-    'Database operation failed',
+    "Database operation failed",
     isDevelopment ? { originalError: originalError.message } : undefined
   );
 }
@@ -120,13 +128,17 @@ export function createDatabaseError(originalError: Error): AppError {
 /**
  * Authorization error helper
  */
-export function createAuthError(message: string = 'Authentication required'): AppError {
+export function createAuthError(
+  message: string = "Authentication required"
+): AppError {
   return AppError.unauthorized(message);
 }
 
 /**
  * Permission error helper
  */
-export function createPermissionError(message: string = 'Insufficient permissions'): AppError {
+export function createPermissionError(
+  message: string = "Insufficient permissions"
+): AppError {
   return AppError.forbidden(message);
 }

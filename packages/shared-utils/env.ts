@@ -6,8 +6,13 @@ const envSchema = z.object({
   REDIS_URL: z.string().url().optional(),
   ANTHROPIC_API_KEY: z.string().min(1).optional(),
   GEMINI_API_KEY: z.string().min(1).optional(),
-  NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
-  SESSION_SECRET: z.string().min(32).default("default-session-secret-change-in-production"),
+  NODE_ENV: z
+    .enum(["development", "production", "test"])
+    .default("development"),
+  SESSION_SECRET: z
+    .string()
+    .min(32)
+    .default("default-session-secret-change-in-production"),
   ADMIN_USERNAME: z.string().min(1).default("admin"),
   ADMIN_PASSWORD: z.string().min(1).default("admin"),
 });
@@ -19,7 +24,7 @@ function validateEnvironment(): Environment {
     return envSchema.parse(process.env);
   } catch (error) {
     console.error("Environment validation failed:", error);
-    process.exit(1);
+    throw new Error("Environment validation failed");
   }
 }
 
