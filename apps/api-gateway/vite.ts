@@ -3,9 +3,9 @@ import fs from "fs";
 import path from "path";
 import { createServer as createViteServer, createLogger } from "vite";
 import { type Server } from "http";
-import viteConfig from "../../vite.config";
+// import viteConfig from "../../vite.config.js"; // Commented out due to top-level await issue
 import { nanoid } from "nanoid";
-import { logger, withModule } from "@shared-utils";
+import { logger, withModule } from "../../packages/shared-utils/index.js";
 
 const viteLogger = createLogger();
 const moduleLogger = withModule('vite');
@@ -14,12 +14,25 @@ export async function setupVite(app: Express, server: Server) {
   const serverOptions = {
     middlewareMode: true,
     hmr: { server },
-    allowedHosts: true,
+    allowedHosts: true as const,
   };
 
+  // Create a basic vite config without importing the problematic config file
+  const currentDir = path.dirname(new URL(import.meta.url).pathname);
   const vite = await createViteServer({
-    ...viteConfig,
     configFile: false,
+    root: path.resolve(currentDir, "..", "..", "client"),
+    resolve: {
+      alias: {
+        "@": path.resolve(currentDir, "..", "..", "client", "src"),
+        "@shared": path.resolve(currentDir, "..", "shared"),
+        "@assets": path.resolve(currentDir, "..", "..", "attached_assets"),
+      },
+    },
+    build: {
+      outDir: path.resolve(currentDir, "..", "..", "dist/public"),
+      emptyOutDir: true,
+    },
     customLogger: {
       ...viteLogger,
       error: (msg, options) => {
@@ -37,7 +50,8 @@ export async function setupVite(app: Express, server: Server) {
 
     try {
       const clientTemplate = path.resolve(
-        import.meta.dirname,
+        currentDir,
+        "..",
         "..",
         "client",
         "index.html",
