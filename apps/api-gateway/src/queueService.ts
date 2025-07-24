@@ -11,9 +11,21 @@ let ingestQueue: Queue | null = null;
 
 try {
   connection = new Redis(redisUrl, {
-    maxRetriesPerRequest: 3,
+    maxRetriesPerRequest: 0, // Don't retry if Redis is unavailable
     retryDelayOnFailover: 100,
     lazyConnect: true,
+    connectTimeout: 1000, // Quick timeout
+    commandTimeout: 1000,
+  });
+
+  // Suppress Redis connection error events to prevent spam
+  connection.on('error', (err) => {
+    // Only log the first error, then stay silent
+    if (connection && (!connection.status || connection.status === 'connecting')) {
+      moduleLogger.warn('Redis connection failed - queue service disabled');
+      connection = null;
+      ingestQueue = null;
+    }
   });
 
   // Create ingestion queue
@@ -33,6 +45,8 @@ try {
   moduleLogger.info('Queue service initialized with Redis');
 } catch (error) {
   moduleLogger.warn('Failed to initialize Redis queue - falling back to direct processing', error);
+  connection = null;
+  ingestQueue = null;
 }
 
 export { ingestQueue };
