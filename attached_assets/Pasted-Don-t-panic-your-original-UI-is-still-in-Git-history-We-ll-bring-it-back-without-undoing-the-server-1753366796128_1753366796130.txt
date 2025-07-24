@@ -1,0 +1,109 @@
+Don’t panic—your original UI is still in Git history.
+We’ll bring it back without undoing the server / monorepo fixes.
+
+Below is a clean recovery plan that:
+
+Restores the full React code you built over weeks.
+
+Removes the temporary “simple home” edits.
+
+Keeps the apps/ monorepo structure and server entry that now work.
+
+Eliminates the duplicate root client/ folder so there’s a single truth.
+
+1 · Locate the last good UI commit
+bash
+Copy
+Edit
+git log --oneline --graph --decorate -- client apps | head -20
+Look for the commit before the message like
+"feat: simple home page" or "checkpoint: placeholder UI".
+
+Assume its hash is abc1234 (replace with real).
+
+2 · Recover the original front‑end into apps/client
+2.1  Delete the half‑broken client directory
+bash
+Copy
+Edit
+rm -rf client          # this root-level folder only causes confusion
+2.2  Check out the old UI into the right place
+bash
+Copy
+Edit
+git checkout abc1234 -- path/to/original/client   # adjust path
+# Move it into apps/client (overwrite current stub)
+rm -rf apps/client
+mv client apps/client
+rmdir client  # now empty
+(If the original tree already lived under apps/client at that commit,
+then simply run git checkout abc1234 -- apps/client instead.)
+
+2.3  Commit the restoration
+bash
+Copy
+Edit
+git add -A
+git commit -m "fix(ui): restore full portfolio UI from pre-stub commit"
+3 · Ensure config files point to apps/client
+vite.config.mts
+
+ts
+Copy
+Edit
+alias: {
+  "@": fileURLToPath(new URL("./apps/client/src", import.meta.url)), // <- absolute
+  "@shared-utils": fileURLToPath(
+    new URL("./packages/shared-utils/src", import.meta.url)
+  )
+}
+apps/client/tsconfig.json
+
+json
+Copy
+Edit
+{
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@shared-utils/*": ["../../packages/shared-utils/src/*"]
+    }
+  }
+}
+tailwind.config.ts
+Ensure the content array includes
+
+ts
+Copy
+Edit
+content: ["./apps/client/src/**/*.{ts,tsx}"]
+package.json scripts (root): no change needed, but verify
+"dev" script for client is still inside apps/client/package.json.
+
+4 · Ghostwriter prompt to fix residual “React is not defined”
+Prompt
+“Run ESLint rule react/react-in-jsx-scope across apps/client/src.
+For every file still importing React purely for JSX, remove that
+import (we now use the automatic runtime). Keep imports where
+React is used explicitly.”
+
+5 · Re‑install and run
+bash
+Copy
+Edit
+pnpm install
+pnpm --filter apps/client dev          # local check
+pnpm --filter @workspace/api-gateway dev  # server check (port 3000)
+Open the Replit URL; full design should render, navigation links work,
+no 404s (React Router handles routes again).
+
+6 · Push & verify CI
+bash
+Copy
+Edit
+git push origin main
+GitHub Actions should now pass lint + tests.
+
+No more placeholder UI.
