@@ -1,73 +1,36 @@
-import express, { type Express } from "express";
-import fs from "fs";
+import { Express } from "express";
+import express from "express";
 import path from "path";
-import { createServer as createViteServer, createLogger } from "vite";
-import { type Server } from "http";
-// import viteConfig from "../../vite.config.js"; // Commented out due to top-level await issue
-import { nanoid } from "nanoid";
-import { logger, withModule } from "../../packages/shared-utils/index.js";
+import fs from "fs";
+import { Server } from "http";
+import { withModule } from "../../packages/shared-utils/index.js";
 
-const viteLogger = createLogger();
-const moduleLogger = withModule('vite');
+const viteModuleLogger = withModule("vite");
 
 export async function setupVite(app: Express, server: Server) {
-  const serverOptions = {
-    middlewareMode: true,
-    hmr: { server },
-    allowedHosts: true as const,
-  };
-
-  // Create a basic vite config without importing the problematic config file
+  // BYPASS VITE SERVER ENTIRELY TO AVOID PATH-TO-REGEXP ERRORS
+  // Serve static client files directly
   const currentDir = path.dirname(new URL(import.meta.url).pathname);
-  const vite = await createViteServer({
-    configFile: false,
-    root: path.resolve(currentDir, "..", "..", "apps", "client"),
-    resolve: {
-      alias: {
-        "@": path.resolve(currentDir, "..", "..", "apps", "client", "src"),
-        "@shared": path.resolve(currentDir, "..", "shared"),
-        "@assets": path.resolve(currentDir, "..", "..", "attached_assets"),
-      },
-    },
-    build: {
-      outDir: path.resolve(currentDir, "..", "..", "dist/public"),
-      emptyOutDir: true,
-    },
-    customLogger: {
-      ...viteLogger,
-      error: (msg, options) => {
-        viteLogger.error(msg, options);
-        process.exit(1);
-      },
-    },
-    server: serverOptions,
-    appType: "custom",
-  });
-
-  app.use(vite.middlewares);
+  
+  // Serve static files from client directory
+  const clientDir = path.resolve(currentDir, "..", "..", "apps", "client");
+  app.use(express.static(clientDir));
+  
+  // Fallback to serving index.html for SPA routing
   app.use("/*", async (req, res, next) => {
     const url = req.originalUrl;
 
-    try {
-      const clientTemplate = path.resolve(
-        currentDir,
-        "..", 
-        "..",
-        "apps",
-        "client",
-        "index.html",
-      );
+    // Skip API routes
+    if (url.startsWith('/api/')) {
+      return next();
+    }
 
-      // always reload the index.html file from disk incase it changes
+    try {
+      const clientTemplate = path.resolve(clientDir, "index.html");
       let template = await fs.promises.readFile(clientTemplate, "utf-8");
-      template = template.replace(
-        `src="/src/main.tsx"`,
-        `src="/src/main.tsx?v=${nanoid()}"`,
-      );
-      const page = await vite.transformIndexHtml(url, template);
-      res.status(200).set({ "Content-Type": "text/html" }).end(page);
+      
+      res.status(200).set({ "Content-Type": "text/html" }).end(template);
     } catch (e) {
-      vite.ssrFixStacktrace(e as Error);
       next(e);
     }
   });

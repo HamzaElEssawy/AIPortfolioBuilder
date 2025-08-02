@@ -1,0 +1,94 @@
+Let’s get back to a **known-good state** in three **unbreakable** steps, then we’ll tackle each broken workspace one at a time.
+
+---
+
+## 1 · Pin the Run button to **only** API-Gateway
+
+> This guarantees your portfolio and gateway stay online, no matter what the other services do.
+
+1. Open `.replit` in the editor.
+2. Replace **any** existing `run = …` with:
+
+   ```toml
+   run = ["bash","-c","pnpm --filter @workspace/api-gateway dev"]
+   ```
+3. Save, hit **Run**.
+
+   * You should see only the API-gateway (and its embedded Vite) start on port 5000.
+   * The portfolio UI loads at [http://localhost:5000](http://localhost:5000).
+
+If that works, you have a stable baseline again.
+
+---
+
+## 2 · Commit & tag this baseline
+
+```bash
+git add .replit
+git commit -m "build: isolate dev to api-gateway for stability"
+git tag v0.1-gateway-only
+git push origin main --tags
+```
+
+*If anything goes sideways, you can rollback in one command:*
+
+```bash
+git checkout v0.1-gateway-only
+```
+
+---
+
+## 3 · Fix each remaining service **one at a time**
+
+With the gateway stable, let’s unblock the others:
+
+1. **AI-orchestrator**
+
+   * Add its missing dependency and correct its imports (we’ve covered that).
+   * To test:
+
+     ```bash
+     pnpm --filter @workspace/ai-orchestrator dev
+     ```
+2. **Ingestion-worker**
+
+   * Locate the real `vectorEmbeddings` export:
+
+     ```bash
+     grep -R "export.*vectorEmbeddings" -n apps shared packages
+     ```
+   * Update its import path accordingly.
+   * Test in isolation:
+
+     ```bash
+     pnpm --filter @workspace/ingestion-worker dev
+     ```
+3. **Client**
+
+   * Ensure your `vite.config.ts` alias points at `apps/client/src`.
+   * Verify `apps/client/package.json` exists with React/Vite deps.
+   * Test:
+
+     ```bash
+     pnpm --filter @workspace/client dev
+     ```
+
+After each service is green in isolation, you can bring back the **root** parallel run:
+
+```bash
+# once all 4 services start cleanly:
+git checkout main
+# (revert .replit to use the root dev script)
+git checkout v0.1-pre-clean .replit   # or manually restore
+pnpm run dev
+```
+
+---
+
+### Why this helps
+
+* You’ll never be blocked by another service’s crash.
+* Each fix is local: you test one workspace at a time.
+* You preserve your working gateway and UI so you can continue demos without interruption.
+
+Let me know when the gateway-only run is stable, and we’ll move on to unblocking the orchestrator next.

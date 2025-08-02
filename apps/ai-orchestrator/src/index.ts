@@ -62,7 +62,7 @@ app.post('/chat', async (req, res) => {
 });
 
 // Start server
-const port = env.PORT || 3001;
+const port = 3001; // Fixed port to avoid conflict with API Gateway
 app.listen(port, () => {
   moduleLogger.info(`AI Orchestrator server running on port ${port}`);
 });

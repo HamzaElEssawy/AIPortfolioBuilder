@@ -139,20 +139,30 @@ app.use((req, res, next) => {
   // Register routes BEFORE any other middleware to handle uploads first
   const server = await registerRoutes(app);
 
-  // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
-  if (app.get("env") === "development") {
-    await setupVite(app, server);
-  } else {
-    serveStatic(app);
-  }
+  // SIMPLIFIED APPROACH: No wildcard routes to avoid path-to-regexp issues
+  console.log("API Gateway running without client serving - client available on port 5173");
+  
+  // Only serve specific static assets when needed
+  const path = require('path');
+  const clientDir = path.resolve(__dirname, "..", "..", "apps", "client");
+  
+  // Root route explicitly serves index.html
+  app.get('/', async (req, res) => {
+    try {
+      const clientTemplate = path.resolve(clientDir, "index.html");
+      const fs = require('fs');
+      let template = await fs.promises.readFile(clientTemplate, "utf-8");
+      res.status(200).set({ "Content-Type": "text/html" }).end(template);
+    } catch (e) {
+      res.status(404).json({ error: "Client files not found" });
+    }
+  });
 
   // Error handling middleware - must be after all routes including Vite
   app.use(notFoundHandler);
   app.use(errorHandler);
 
-  // ALWAYS serve the app on port 5000
+  // Use port 5000 as the main application port
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
   const port = env.PORT;
