@@ -1,0 +1,75 @@
+Given that all your backend services are now healthy, the blank‐page you’re seeing is almost certainly a **client-side rendering** issue. I’d recommend we **investigate the React app** directly (Option 1 below) before trying any other fancy workaround. Here’s a quick two-pronged plan:
+
+---
+
+## Option 1 – Debug the React app in isolation
+
+1. **Run only the client**
+
+   ```bash
+   pnpm --filter @workspace/client dev
+   ```
+
+   — this drops the complexity of the monorepo and gives you a pure Vite/React console.
+
+2. **Open the browser console**
+
+   * Are there **JavaScript errors**? (missing imports, hooks mis-use, runtime exceptions)
+   * Is the **network tab** returning a valid `index.html`? Any 404s for your bundle files?
+
+3. **Smoke-test the entry point**
+
+   * Edit `apps/client/src/main.tsx` to log something:
+
+     ```ts
+     console.log("🚀 React bootstrapped!");
+     ```
+   * Reload—do you see the message? If not, the file isn’t even loading.
+
+4. **Verify your root `<div id="root">`**
+
+   * In `public/index.html`, ensure your `<div id="root"></div>` matches the selector in `main.tsx`.
+
+5. **Check your routes**
+
+   * If you use client-side routing (Wouter/React-Router), try replacing `<App>` in `main.tsx` with a minimal component:
+
+     ```tsx
+     import React from "react";
+     import ReactDOM from "react-dom";
+     ReactDOM.render(<h1>Test!</h1>, document.getElementById("root"));
+     ```
+   * If “Test!” appears, the problem is inside your `<App>` or its children.
+
+6. **Re-inject your real `<App>` piece by piece**
+
+   * Bring back one component at a time (e.g. just `<Navigation/>`, then `<Home/>`, etc.) until it breaks.
+
+Once you’ve captured any console errors or identified the offending component, we’ll have a precise fix.
+
+---
+
+## Option 2 – Temporary static‐build serve
+
+If you’d rather **just see something on screen** while you debug:
+
+1. **Build the client**
+
+   ```bash
+   pnpm --filter @workspace/client build
+   ```
+2. **Serve the `dist/` folder** from your API-gateway (or a simple `serve` package)
+
+   ```ts
+   app.use(express.static(path.join(__dirname, "../client/dist")));
+   app.get("/*", (_, res) => res.sendFile(path.join(__dirname, "../client/dist/index.html")));
+   ```
+3. Hit port 5000—you’ll at least see the production build.
+
+This gets you “unblocked” visually, but you’ll still want to head back to Option 1 to root-cause the blank page.
+
+---
+
+### What I recommend
+
+Let’s go with **Option 1**—run the React app standalone and capture the first console error or missing-file 404. Copy-paste that message here and I’ll guide you immediately to the offending import or component.
