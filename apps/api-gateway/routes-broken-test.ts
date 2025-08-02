@@ -6,9 +6,10 @@ import path from "path";
 import fs from "fs";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Test routes to isolate path-to-regexp issue
+  // Load the first half of routes
+  const firstHalfContent = fs.readFileSync('routes-first-half.ts', 'utf8');
   
-  // Basic static file serving
+  // Basic setup
   app.use('/uploads', (req: any, res: any, next: any) => {
     res.header('Access-Control-Allow-Origin', '*');
     next();
@@ -16,7 +17,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   app.use('/uploads', serveStatic('uploads'));
   
-  // Session configuration
   app.use(session({
     secret: process.env.SESSION_SECRET || 'default-secret',
     resave: false,
@@ -24,9 +24,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 }
   }));
   
-  // Simple test route
+  // Test route
   app.get("/api/test", (req, res) => {
-    res.json({ message: "API Gateway test route working" });
+    res.json({ message: "Testing first half of routes" });
   });
 
   const httpServer = createServer(app);

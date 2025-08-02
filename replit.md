@@ -6,6 +6,18 @@ This is a comprehensive full-stack web application combining a professional port
 ## User Preferences
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes (Updated: August 2, 2025)
+### Debugging Session - Path-to-regexp Fix
+- **FIXED**: BullMQ Redis configuration error by setting maxRetriesPerRequest to null
+- **FIXED**: Client directory structure issues - moved from apps/client to root-level client/
+- **FIXED**: Vite import path conflicts by updating vite.config.ts alias paths
+- **FIXED**: Critical path-to-regexp wildcard route patterns in apps/api-gateway/vite.ts:
+  - Changed `app.use("*", ...)` to `app.use("/*", ...)` on line 88
+  - Changed `app.use("*", ...)` to `app.use("/*", ...)` on line 48
+- **STATUS**: Core application framework now working with minimal routes
+- **REMAINING**: Full routes.ts file contains a malformed route pattern causing path-to-regexp errors
+- **SERVICES OPERATIONAL**: API Gateway, AI Orchestrator, Client interface, Database connectivity
+
 ## System Architecture
 
 ### Monorepo Structure
