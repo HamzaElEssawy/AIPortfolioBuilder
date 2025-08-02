@@ -188,6 +188,17 @@ export const careerProgress = pgTable("career_progress", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Vector Embeddings for AI Search
+export const vectorEmbeddings = pgTable("vector_embeddings", {
+  id: serial("id").primaryKey(),
+  documentId: integer("document_id").references(() => knowledgeBaseDocuments.id, { onDelete: "cascade" }).notNull(),
+  embedding: text("embedding").notNull(), // JSON stringified array of numbers
+  textContent: text("text_content").notNull(),
+  category: text("category").notNull(),
+  metadata: text("metadata"), // JSON stringified metadata
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 export const experienceEntries = pgTable("experience_entries", {
   id: serial("id").primaryKey(),
   year: text("year").notNull(),
