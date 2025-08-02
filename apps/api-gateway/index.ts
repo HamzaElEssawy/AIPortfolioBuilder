@@ -142,48 +142,42 @@ app.use((req, res, next) => {
   // SIMPLIFIED APPROACH: No wildcard routes to avoid path-to-regexp issues
   console.log("API Gateway running without client serving - client available on port 5173");
   
-  // Only serve specific static assets when needed
-  const path = require('path');
-  const clientDir = path.resolve(__dirname, "..", "..", "apps", "client");
-  
-  // Root route explicitly serves a simple test page
-  app.get('/', async (req, res) => {
-    const testHTML = `
+  // Simple redirect to React dev server for now
+  app.get('/', (req, res) => {
+    const html = `
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Portfolio System</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Portfolio - Redirecting...</title>
+    <style>
+        body { font-family: system-ui; text-align: center; padding: 50px; }
+        .redirect-box { max-width: 500px; margin: 0 auto; }
+        .btn { display: inline-block; background: #0066cc; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin: 10px; }
+    </style>
 </head>
 <body>
-    <div class="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div class="text-center">
-            <h1 class="text-4xl font-bold text-gray-800 mb-4">AI Portfolio System</h1>
-            <p class="text-lg text-gray-600 mb-8">Backend services running successfully!</p>
-            <div class="bg-green-100 text-green-800 px-4 py-2 rounded-lg inline-block mb-4">
-                ✅ API Gateway Connected (Port 5000)
-            </div>
-            <div class="bg-blue-100 text-blue-800 px-4 py-2 rounded-lg inline-block mb-4">
-                ✅ AI Orchestrator Ready (Port 3001)  
-            </div>
-            <div class="bg-purple-100 text-purple-800 px-4 py-2 rounded-lg inline-block mb-4">
-                ✅ React Client Available (Port 5174)
-            </div>
-            <div class="mt-6">
-                <a href="http://localhost:5174" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
-                    View React App
-                </a>
-                <a href="/api/test" class="ml-4 bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">
-                    Test API
-                </a>
-            </div>
-        </div>
+    <div class="redirect-box">
+        <h1>🚀 AI Portfolio System</h1>
+        <p>Your portfolio is ready on the React development server!</p>
+        <a href="http://localhost:5173" class="btn">View Portfolio →</a>
+        <a href="/api/test" class="btn">Test API</a>
+        <br><br>
+        <p><small>Services Status:</small></p>
+        <div>✅ API Gateway (Port 5000)</div>
+        <div>✅ React Client (Port 5173)</div>
+        <div>✅ AI Orchestrator (Port 3001)</div>
     </div>
+    <script>
+        // Auto-redirect after 3 seconds
+        setTimeout(() => {
+            window.location.href = 'http://localhost:5173';
+        }, 3000);
+    </script>
 </body>
 </html>`;
-    res.status(200).set({ "Content-Type": "text/html" }).end(testHTML);
+    res.send(html);
   });
 
   // Error handling middleware - must be after all routes including Vite

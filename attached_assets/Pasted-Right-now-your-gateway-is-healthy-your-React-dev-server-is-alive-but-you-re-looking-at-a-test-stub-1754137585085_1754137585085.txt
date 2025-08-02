@@ -1,0 +1,96 @@
+Right now your gateway is healthy, your React dev server is alive—but you’re looking at a *test-stub* page instead of your real portfolio. Let’s restore your full UI in three safe steps:
+
+---
+
+## 1 · Revert the placeholder “AI Portfolio System” page
+
+We need to get rid of the stub in `apps/client/src/App.tsx` (or equivalent file) and re-inject your original `<App>` that renders your portfolio.
+
+If you tagged v0.1-pre-clean before introducing the stub, you can simply pull that file back:
+
+```bash
+# (on your tidy-monorepo or main branch)
+git checkout v0.1-pre-clean -- apps/client/src/App.tsx
+git checkout v0.1-pre-clean -- apps/client/src/pages/Home.tsx
+git checkout v0.1-pre-clean -- apps/client/src/components/Navigation.tsx
+# (add any other files you know were overwritten)
+```
+
+Otherwise, manually open `apps/client/src/App.tsx` in the editor and replace its contents with your original code:
+
+```tsx
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Navigation from "./components/Navigation";
+import Home from "./pages/Home";
+import CaseStudies from "./pages/CaseStudies";
+// … other imports …
+
+export default function App() {
+  return (
+    <Router>
+      <Navigation />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/case-studies" element={<CaseStudies />} />
+        {/* … other routes … */}
+      </Routes>
+    </Router>
+  );
+}
+```
+
+Save and commit:
+
+```bash
+git add apps/client/src/App.tsx
+git commit -m "feat(client): restore full portfolio routes and UI"
+```
+
+---
+
+## 2 · Verify the portfolio renders in isolation
+
+Run the client on its own:
+
+```bash
+pnpm --filter @workspace/client dev
+```
+
+In the browser (usually [http://localhost:5173](http://localhost:5173) or 5174), you should see your complete portfolio with all sections (hero, about, case studies, skills, timeline, contact, etc.). If you still only see a blank or partial UI:
+
+1. **Open the console** (F12) for errors—missing imports, undefined components, etc.
+2. **Check the network tab** that `bundle.js` and CSS are loading.
+3. **Ensure your `vite.config.ts` alias** is still pointing at `"apps/client/src"`.
+
+Fix any 404s or import errors, then re-run until your full homepage appears.
+
+---
+
+## 3 · Bring back the root “Run” script (if desired)
+
+Once your portfolio is intact in isolation, re-enable the parallel dev flow:
+
+1. Edit `.replit` (or your workflow) back to:
+
+   ```toml
+   run = ["bash","-c","pnpm run dev"]
+   ```
+2. Restore the root `package.json` dev script:
+
+   ```bash
+   git checkout v0.1-pre-clean -- package.json .replit
+   ```
+3. Commit & push:
+
+   ```bash
+   git add .replit package.json
+   git commit -m "build: restore root dev script for full monorepo start"
+   git push
+   ```
+
+Now when you click **Run**, all four services (gateway, client, orchestrator, worker) will spin up together—and your real portfolio UI will load on `/`.
+
+---
+
+Once you confirm the portfolio is back, we can go service-by-service to re-wire any other new features (like your Accessibility Translator) into their proper routes and nav links. Let me know how the isolated client render goes!
